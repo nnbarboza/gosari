@@ -132,9 +132,13 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .meal-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .meal-k{font-size:13.5px;font-weight:600;white-space:nowrap}
 .meal-k span{font-size:10.5px;font-weight:500;color:var(--ink2);margin-left:2px}
+.meal-t{display:flex;align-items:center;gap:7px}
+.meal-h{font-size:11px;font-weight:600;color:var(--ink3);font-variant-numeric:tabular-nums;
+  background:#F2F4F6;border-radius:5px;padding:1px 5px}
 .meal-plus{width:29px;height:29px;border-radius:50%;border:1.5px solid #BFEBCD;color:var(--green-d);
   display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:400;
   background:var(--green-xl);flex-shrink:0}
+.meal-plus.edit{font-size:12px;border-color:var(--line2);background:#F7F8F9}
 .meal-ch{color:var(--ink3);font-size:15px;flex-shrink:0}
 .btn-add{width:100%;border:1.5px dashed var(--line2);border-radius:14px;padding:13px;margin-top:12px;
   font-size:13.5px;font-weight:600;color:var(--green-d);display:flex;align-items:center;justify-content:center;gap:7px}
@@ -143,6 +147,13 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ---------- SEMANA ---------- */
 .wk{width:100%;border-collapse:collapse}
 .wk th{font-size:10.5px;font-weight:500;color:var(--ink3);padding:0 0 9px;text-align:center}
+.wk th .h-d{display:block;margin-bottom:4px}
+.wk th .h-s{display:block;font-size:9.5px;font-weight:700;border-radius:4px;padding:1px 0;
+  min-width:20px;margin:0 auto;font-variant-numeric:tabular-nums}
+.wk th .h-s.ok{background:var(--green-l);color:#2F6B41}
+.wk th .h-s.mid{background:#FEF3C7;color:#8A6212}
+.wk th .h-s.bad{background:#FEE2E2;color:#A03030}
+.wk th .h-s.nada{color:#D0D5DD}
 .wk th.h-g{text-align:left;padding-left:2px}
 .wk th.h-c,.wk th.h-f{font-size:10px;white-space:nowrap;padding-left:5px}
 .wk td{padding:5px 0;vertical-align:middle}
@@ -152,6 +163,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .wk .c-n{font-size:11.5px;color:var(--ink2);text-align:center;white-space:nowrap;padding-left:6px;
   font-variant-numeric:tabular-nums}
 .wk .c-n b{color:var(--ink);font-weight:600}
+.wk .c-n b.ex{color:var(--red)}
 .wk tbody tr+tr td{border-top:1px solid #F7F8F9}
 .d{width:11px;height:11px;border-radius:50%;background:var(--dot);display:inline-block}
 .d.ok{background:var(--green)}
@@ -568,7 +580,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       <button class="card-link" data-go="s-soon">Ver detalle ›</button>
     </div>
     <table class="wk" id="wk"></table>
-    <div class="tip" id="tip" style="display:none"><span>☀️</span><span id="tipTx"></span></div>
   </div>
 
   <div class="pie">
@@ -673,13 +684,13 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div id="itemsExtra"></div>
   <div class="add-rows">
     <button class="add-row" data-pick="bebida">
-      <span class="ai" style="background:#EAF4FD">💧</span>
-      <span class="ab"><span class="an">Bebida</span><span class="ad">Añade agua, refrescos, café, etc.</span></span>
+      <span class="ai" style="background:#EAF4FD" id="icoBebida">💧</span>
+      <span class="ab"><span class="an">Bebida</span></span>
       <span class="aa">＋ Añadir</span>
     </button>
     <button class="add-row" data-pick="otros">
-      <span class="ai" style="background:#FEF6E7">🌾</span>
-      <span class="ab"><span class="an">Otros</span><span class="ad">Añade pan, salsas, snacks, postres, etc.</span></span>
+      <span class="ai" style="background:#FEF6E7" id="icoOtros">🌾</span>
+      <span class="ab"><span class="an">Otros</span></span>
       <span class="aa">＋ Añadir</span>
     </button>
   </div>
@@ -902,7 +913,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v0.4.0';
+var APP_VERSION = 'v0.5.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -926,11 +937,14 @@ var GRUPOS = [
   { key:'verduras',       label:'Verduras',             emoji:'🥦', ico:'grp_verduras',       obj:7, tipo:'pos' },
   { key:'fruta',          label:'Fruta',                emoji:'🍎', ico:'grp_fruta',          obj:7, tipo:'pos' },
   { key:'legumbres',      label:'Legumbres',            emoji:'🫘', ico:'grp_legumbres',      obj:4, tipo:'pos' },
-  { key:'proteina',       label:'Proteína de calidad',  emoji:'🥩', ico:'grp_proteina',       obj:7, tipo:'pos' },
   { key:'pescado',        label:'Pescado',              emoji:'🐟', ico:'grp_pescado',        obj:3, tipo:'pos' },
-  { key:'ultraprocesado', label:'Ultraprocesados',      emoji:'🚫', ico:'grp_ultraprocesado', obj:2, tipo:'lim' },
-  { key:'libre',          label:'Comida libre',         emoji:'🎉', ico:'grp_libre',          obj:1, tipo:'lim' }
+  { key:'carnes_rojas',   label:'Carnes rojas',         emoji:'🥩', ico:'grp_carnes_rojas',   obj:3, tipo:'lim', pen:3 },
+  { key:'ultraprocesado', label:'Ultraprocesados',      emoji:'🚫', ico:'grp_ultraprocesado', obj:2, tipo:'lim', pen:5 },
+  { key:'permitido',      label:'Permitido',            emoji:'🎉', ico:'grp_permitido',      obj:1, tipo:'lim', pen:3 }
 ];
+
+/* Nombres antiguos → nuevos, para que los registros ya guardados se sigan leyendo */
+var GRUPOS_ALIAS = { proteina:'carnes_rojas', libre:'permitido' };
 
 /* --- Macros mostrados en "Resumen de hoy" --- */
 var MACROS = [
@@ -1053,7 +1067,10 @@ function masDias(fecha, n){
 }
 function gruposDe(v){
   if(!v) return [];
-  return String(v).split(',').map(function(s){return s.trim().toLowerCase();}).filter(Boolean);
+  return String(v).split(',').map(function(s){
+    var k = s.trim().toLowerCase();
+    return GRUPOS_ALIAS[k] || k;
+  }).filter(Boolean);
 }
 
 function toast(msg, err){
@@ -1097,7 +1114,9 @@ function api(action, params){
             Proteína y fibra: pasarse NO penaliza.
    15 pts — grupos positivos presentes hoy (verduras, fruta,
             legumbres, proteina, pescado) → 3 pts cada uno.
-   10 pts — día limpio: −5 por cada grupo límite presente hoy.
+   10 pts — día limpio: se descuenta la penalización de cada grupo
+            de límite presente hoy (ultraprocesado −5, carnes rojas −3,
+            permitido −3). Nunca baja de 0.
    Sin comidas registradas → score null (muestra "–").
    ============================================================ */
 function scoreMacro(ratio, sinTecho){
@@ -1121,8 +1140,10 @@ function calcScore(tot, obj, grupos){
   var hits = pos.filter(function(g){ return grupos.indexOf(g.key) >= 0; }).length;
   var pGrupos = (hits/pos.length) * SCORE_W.grupos;
 
-  var lims = GRUPOS.filter(function(g){ return g.tipo==='lim' && grupos.indexOf(g.key) >= 0; }).length;
-  var pLimpio = Math.max(0, SCORE_W.limpio - lims*5);
+  var castigo = GRUPOS.reduce(function(a,g){
+    return a + ((g.tipo==='lim' && grupos.indexOf(g.key) >= 0) ? (g.pen || 5) : 0);
+  }, 0);
+  var pLimpio = Math.max(0, SCORE_W.limpio - castigo);
 
   return Math.round(pMacros + pGrupos + pLimpio);
 }
@@ -1130,7 +1151,7 @@ function calcScore(tot, obj, grupos){
 /* --- Mensajes de la mascota: score + contexto (entreno / libre) --- */
 function mensajeMascota(score, ctx){
   if(score === null) return { mood:'espera', b:'¡Buenos días!', t:'Aún no has registrado nada. <span class="hl">Empieza por el desayuno.</span>' };
-  if(ctx.libre)    return { mood:'fiesta',  b:'¡Disfrútalo!', t:'Hoy toca <span class="hl">comida libre</span>. Mañana volvemos.' };
+  if(ctx.libre)    return { mood:'fiesta',  b:'¡Disfrútalo!', t:'Hoy toca <span class="hl">permitido</span>. Mañana volvemos.' };
   if(score >= 85)  return { mood:'top',     b:'¡Vas genial!',  t:'Estás construyendo <span class="hl">hábitos increíbles.</span>' };
   if(score >= 70)  return { mood:'bien',    b:'Buen día.',     t:ctx.entreno ? 'Día de entreno <span class="hl">bien cubierto.</span>' : 'Vas <span class="hl">por buen camino.</span>' };
   if(score >= 50)  return { mood:'neutro',  b:'Se puede mejorar.', t:ctx.entreno ? 'Entrenas hoy: <span class="hl">suma proteína.</span>' : 'Aún hay <span class="hl">margen de mejora.</span>' };
@@ -1160,6 +1181,13 @@ function gruposDeDia(comidas){
   });
   return out;
 }
+/* Score de cualquier día. null = sin nada registrado. */
+function scoreDe(fecha){
+  var com = comidasDe(fecha);
+  if(!com.length) return null;
+  return calcScore(totalesDe(com), objetivoDe(fecha), gruposDeDia(com));
+}
+
 function esEntreno(fecha){
   if(!state.data) return false;
   var r = state.data.dias.filter(function(d){ return fkey(d.fecha) === fecha; })[0];
@@ -1200,7 +1228,7 @@ function renderResumen(){
   var grupos = gruposDeDia(com);
 
   /* --- Scoring --- */
-  var score = com.length ? calcScore(tot, obj, grupos) : null;
+  var score = com.length ? calcScore(tot, obj, grupos) : null;   /* = scoreDe(state.hoy) */
   var pct = score === null ? 0 : Math.max(0, Math.min(100, score));
   var C = 2 * Math.PI * 57;
   $('#ringFg').setAttribute('stroke-dasharray', C.toFixed(1));
@@ -1208,7 +1236,7 @@ function renderResumen(){
   $('#ringFg').setAttribute('stroke', pct >= 70 ? '#22C55E' : (pct >= 45 ? '#F5A623' : '#EF4444'));
   $('#scoreNum').textContent = score === null ? '–' : score;
 
-  var m = mensajeMascota(score, { entreno: esEntreno(state.hoy), libre: grupos.indexOf('libre') >= 0 });
+  var m = mensajeMascota(score, { entreno: esEntreno(state.hoy), libre: grupos.indexOf('permitido') >= 0 });
   $('#scoreMsg').innerHTML = '<b>' + m.b + '</b>' + m.t;
   $('#mascota').innerHTML = '<img src="img/mascota/' + m.mood + '.webp" alt="" data-fb="' + MASCOTA_EMOJI[m.mood] + '">';
 
@@ -1248,9 +1276,10 @@ function renderComidas(){
     var kcal = 0, nombres = [];
     g.forEach(function(x){ x.items.forEach(function(i){ kcal += num(i.kcal); nombres.push(i.nombre); }); });
 
-    var desc = hecho ? nombres.join(' · ') : 'Sin registrar';
+    var hora = hecho ? String(g[0].hora||'').slice(0,5) : '';
     var der = hecho
-      ? '<span class="meal-k">' + fmt(kcal) + '<span>kcal</span></span><span class="meal-ch">›</span>'
+      ? '<span class="meal-k">' + fmt(kcal) + '<span>kcal</span></span>' +
+        '<span class="meal-plus edit">✏️</span>'
       : '<span class="meal-plus">＋</span>';
 
     return '<button class="meal ' + (hecho ? 'done' : 'todo') + '" ' +
@@ -1258,8 +1287,9 @@ function renderComidas(){
       '<span class="meal-st">' + (hecho ? '✓' : '') + '</span>' +
       '<span class="meal-dot">' + icono(t.ico, t.emoji, 19) + '</span>' +
       '<span class="meal-body">' +
-        '<span class="meal-t">' + esc(t.label) + '</span>' +
-        '<span class="meal-d">' + esc(desc) + '</span>' +
+        '<span class="meal-t">' + esc(t.label) +
+          (hora ? '<span class="meal-h">' + esc(hora) + '</span>' : '') + '</span>' +
+        (hecho ? '<span class="meal-d">' + esc(nombres.join(' · ')) + '</span>' : '') +
       '</span>' +
       '<span class="meal-r">' + der + '</span>' +
     '</button>';
@@ -1410,8 +1440,14 @@ function renderSemana(){
   });
 
   var head = '<thead><tr><th class="h-g">Grupo alimentario</th>' +
-    DIAS_L.map(function(d){ return '<th>' + d + '</th>'; }).join('') +
-    '<th class="h-c wk-sep">Consumido</th><th class="h-f">Te falta</th></tr></thead>';
+    DIAS_L.map(function(d, i){
+      var f = fechas[i];
+      var sc = f > state.hoy ? null : scoreDe(f);
+      var cls = sc === null ? 'nada' : (sc >= 70 ? 'ok' : (sc >= 45 ? 'mid' : 'bad'));
+      return '<th><span class="h-d">' + d + '</span>' +
+        '<span class="h-s ' + cls + '">' + (sc === null ? '·' : sc) + '</span></th>';
+    }).join('') +
+    '<th class="h-c wk-sep">Consumido</th></tr></thead>';
 
   var body = GRUPOS.map(function(g){
     var dias = porDia.map(function(d){
@@ -1424,33 +1460,15 @@ function renderSemana(){
     }).join('');
 
     var cnt = porDia.filter(function(d){ return d.grupos.indexOf(g.key) >= 0; }).length;
-    var falta;
-    if(g.tipo === 'pos') falta = cnt >= g.obj ? '—' : (g.obj - cnt) + ' día' + ((g.obj-cnt)>1?'s':'');
-    else                 falta = cnt > g.obj ? 'excedido' : 'margen ' + (g.obj - cnt);
+    var mal = g.tipo === 'lim' ? cnt > g.obj : false;
 
     return '<tr>' +
       '<td><div class="c-g">' + icono(g.ico, g.emoji, 16) + esc(g.label) + '</div></td>' + dias +
-      '<td class="c-n wk-sep"><b>' + cnt + '</b> / ' + g.obj + '</td>' +
-      '<td class="c-n">' + falta + '</td>' +
+      '<td class="c-n wk-sep"><b' + (mal ? ' class="ex"' : '') + '>' + cnt + '</b> / ' + g.obj + '</td>' +
     '</tr>';
   }).join('');
 
   $('#wk').innerHTML = head + '<tbody>' + body + '</tbody>';
-
-  /* sugerencia: los 2 grupos positivos más lejos de su objetivo */
-  var pend = GRUPOS.filter(function(g){ return g.tipo === 'pos'; }).map(function(g){
-    var cnt = porDia.filter(function(d){ return d.grupos.indexOf(g.key) >= 0; }).length;
-    return { g:g, falta:g.obj - cnt };
-  }).filter(function(x){ return x.falta > 0; })
-    .sort(function(a,b){ return b.falta - a.falta; }).slice(0,2);
-
-  if(pend.length){
-    $('#tipTx').textContent = 'Sugerencia: intenta incluir ' +
-      pend.map(function(x){ return x.g.label.toLowerCase(); }).join(' y ') + ' esta semana.';
-    $('#tip').style.display = 'flex';
-  } else {
-    $('#tip').style.display = 'none';
-  }
 }
 
 /* ============================================================
@@ -1569,7 +1587,7 @@ function renderConsejo(){
   var t = totalDraft(), obj = objetivoDe(state.hoy);
   var bien = [], falta = '';
 
-  if(g.indexOf('proteina') >= 0 || g.indexOf('pescado') >= 0) bien.push('proteína de calidad');
+  if(g.indexOf('pescado') >= 0) bien.push('pescado');
   if(g.indexOf('verduras') >= 0) bien.push('verduras');
   if(g.indexOf('legumbres') >= 0) bien.push('legumbres');
   if(g.indexOf('fruta') >= 0) bien.push('fruta');
