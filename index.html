@@ -42,19 +42,34 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ---------- ICONOS PROPIOS (img/iconos/*.webp con respaldo a emoji) ---------- */
+.ico{display:inline-flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;
+  vertical-align:middle}
+.ico img{width:100%;height:100%;object-fit:contain;display:block}
+
 /* ---------- HEADER ---------- */
 .hd{padding:14px 0 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .hd h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.6px}
 .hd p{margin:5px 0 0;font-size:13.5px;color:var(--ink2);line-height:1.35;max-width:230px}
-.toggle-entreno{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line2);
-  border-radius:999px;padding:8px 10px 8px 12px;box-shadow:var(--shadow);flex-shrink:0}
-.toggle-entreno .te-ico{font-size:15px;line-height:1}
-.toggle-entreno .te-tx{font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--ink2);text-transform:uppercase;white-space:nowrap}
-.sw{width:42px;height:25px;border-radius:999px;background:var(--line2);position:relative;transition:background .2s;flex-shrink:0}
-.sw::after{content:'';position:absolute;top:2.5px;left:2.5px;width:20px;height:20px;border-radius:50%;
-  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform .2s}
+
+/* toggle día de entreno — discreto */
+.te{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line2);
+  border-radius:999px;padding:5px 7px 5px 9px;flex-shrink:0;margin-top:4px}
+.te.on{border-color:#BFEBCD;background:var(--green-xl)}
+.te .te-ico{width:14px;height:14px;font-size:12px;opacity:.55}
+.te.on .te-ico{opacity:1}
+.te .te-tx{font-size:10px;font-weight:600;color:var(--ink3);white-space:nowrap;letter-spacing:.1px}
+.te.on .te-tx{color:#2F6B41}
+.sw{width:30px;height:17px;border-radius:999px;background:var(--line2);position:relative;
+  transition:background .2s;flex-shrink:0}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .2s}
 .sw.on{background:var(--green)}
-.sw.on::after{transform:translateX(17px)}
+.sw.on::after{transform:translateX(13px)}
+/* el switch de "comí fuera" sí es de tamaño normal */
+.fuera .sw{width:42px;height:25px}
+.fuera .sw::after{width:20px;height:20px;top:2.5px;left:2.5px}
+.fuera .sw.on::after{transform:translateX(17px)}
 
 /* ---------- CARD ---------- */
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
@@ -97,23 +112,32 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .bar>i.over{background:var(--amber)}
 .bar>i.way-over{background:var(--red)}
 
-/* ---------- COMIDAS ---------- */
-.meals{position:relative}
-.meal{display:flex;align-items:center;gap:11px;padding:9px 0;position:relative}
-.meal-time{width:40px;flex-shrink:0;font-size:11.5px;font-weight:600;color:var(--ink2);text-align:right;
-  font-variant-numeric:tabular-nums}
-.meal-dot{position:relative;flex-shrink:0;width:38px;height:38px;border-radius:50%;background:var(--green-xl);
-  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:16px}
-.meal-line{position:absolute;left:53px;width:1.5px;background:var(--line2)}
+/* ---------- COMIDAS DE HOY (5 slots fijos) ---------- */
+.meals{position:relative;padding-left:2px}
+.meal{display:flex;align-items:center;gap:12px;padding:8px 0;position:relative;width:100%;text-align:left}
+.meal-st{width:15px;height:15px;border-radius:50%;flex-shrink:0;z-index:1;background:var(--card);
+  border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;
+  font-size:8px;color:#fff;font-weight:700}
+.meal.done .meal-st{background:var(--green);border-color:var(--green)}
+.meal-line{position:absolute;left:7px;width:2px;background:var(--line);z-index:0}
+.meal-dot{position:relative;flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--card);
+  border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:17px}
+.meal.done .meal-dot{border-color:#CFEBD8;background:var(--green-xl)}
+.meal-dot .ico{width:19px;height:19px}
 .meal-body{flex:1;min-width:0}
 .meal-t{font-size:14.5px;font-weight:600;letter-spacing:-.2px}
+.meal.todo .meal-t{color:var(--ink2)}
 .meal-d{font-size:12.5px;color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.meal-k{font-size:14px;font-weight:600;flex-shrink:0;white-space:nowrap}
-.meal-k span{font-size:11px;font-weight:500;color:var(--ink2);margin-left:2px}
-.meal-ch{color:var(--ink3);font-size:15px;flex-shrink:0;margin-left:2px}
-.meal-empty{text-align:center;padding:26px 10px;color:var(--ink2);font-size:13.5px;line-height:1.5}
-.btn-add{width:100%;border:1.5px dashed var(--line2);border-radius:14px;padding:14px;margin-top:10px;
-  font-size:14px;font-weight:600;color:var(--green-d);display:flex;align-items:center;justify-content:center;gap:7px}
+.meal.todo .meal-d{color:var(--ink3)}
+.meal-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.meal-k{font-size:13.5px;font-weight:600;white-space:nowrap}
+.meal-k span{font-size:10.5px;font-weight:500;color:var(--ink2);margin-left:2px}
+.meal-plus{width:29px;height:29px;border-radius:50%;border:1.5px solid #BFEBCD;color:var(--green-d);
+  display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:400;
+  background:var(--green-xl);flex-shrink:0}
+.meal-ch{color:var(--ink3);font-size:15px;flex-shrink:0}
+.btn-add{width:100%;border:1.5px dashed var(--line2);border-radius:14px;padding:13px;margin-top:12px;
+  font-size:13.5px;font-weight:600;color:var(--green-d);display:flex;align-items:center;justify-content:center;gap:7px}
 .btn-add:active{background:var(--green-xl)}
 
 /* ---------- SEMANA ---------- */
@@ -144,11 +168,11 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   border-top:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-around;
   padding:9px 4px calc(9px + var(--safe-b));z-index:100}
 .nav-i{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink3);padding:2px 0}
-.nav-i .ni{font-size:20px;line-height:1;filter:grayscale(1) opacity(.55)}
-.nav-i span{font-size:10px;font-weight:500}
+.nav-i .ico{width:22px;height:22px;font-size:19px;opacity:.5}
+.nav-i .nl{font-size:10px;font-weight:500}
 .nav-i.on{color:var(--green-d)}
-.nav-i.on .ni{filter:none}
-.nav-i.on span{font-weight:600}
+.nav-i.on .ico{opacity:1}
+.nav-i.on .nl{font-weight:600}
 .nav-fab{flex:0 0 auto;width:54px;height:54px;border-radius:50%;background:var(--green);color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:29px;font-weight:300;line-height:1;
   margin:-14px 4px 0;box-shadow:0 5px 16px rgba(34,197,94,.4)}
@@ -281,6 +305,61 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .vacio{text-align:center;padding:22px 14px;color:var(--ink2);font-size:13px;line-height:1.5;
   border:1.5px dashed var(--line2);border-radius:var(--r);margin-bottom:9px}
 
+/* ---------- PANTALLA COMIDAS (catálogo) ---------- */
+.cat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:12px 0 4px}
+.cat-top h2{margin:0;font-size:27px;font-weight:700;letter-spacing:-.7px}
+.btn-pill{display:inline-flex;align-items:center;gap:7px;background:var(--green-xl);color:var(--green-d);
+  border:1px solid #DAF2E2;border-radius:999px;padding:9px 15px 9px 10px;font-size:13.5px;
+  font-weight:600;flex-shrink:0}
+.btn-pill .pl{width:22px;height:22px;border-radius:50%;background:#fff;display:flex;align-items:center;
+  justify-content:center;font-size:14px;font-weight:400}
+.srch-row{display:flex;gap:9px;margin:16px 0 18px}
+.srch{flex:1;min-width:0;position:relative}
+.srch input{width:100%;border:1px solid var(--line2);border-radius:14px;padding:13px 13px 13px 40px;
+  font-size:14.5px;font-family:inherit;background:var(--card);color:var(--ink)}
+.srch input:focus{outline:none;border-color:var(--green)}
+.srch svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none}
+.btn-filt{border:1px solid var(--line2);background:var(--card);border-radius:14px;padding:0 15px;
+  font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.btn-filt.on{border-color:var(--green);color:var(--green-d);background:var(--green-xl)}
+
+.grp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:13px;
+  overflow:hidden;box-shadow:var(--shadow)}
+.grp-h{display:flex;align-items:center;gap:12px;padding:14px;width:100%;text-align:left}
+.grp-h .gi{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0}
+.grp-h .gi .ico{width:20px;height:20px}
+.grp-h .gb{flex:1;min-width:0}
+.grp-h .gn{font-size:15.5px;font-weight:600;letter-spacing:-.25px;display:flex;align-items:center;gap:8px}
+.grp-h .gc{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;min-width:22px;text-align:center}
+.grp-h .gd{font-size:12px;color:var(--ink2);margin-top:2px}
+.grp-h .gx{color:var(--ink3);font-size:15px;flex-shrink:0}
+
+.fd{display:flex;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid var(--line);width:100%;
+  text-align:left}
+.fd-i{width:56px;height:56px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;font-size:24px;overflow:hidden;background:#F5F6F7}
+.fd-i img{width:100%;height:100%;object-fit:cover}
+.fd-b{flex:1;min-width:0}
+.fd-n{font-size:14px;font-weight:600;letter-spacing:-.2px;line-height:1.3;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fd-m{font-size:11.5px;color:var(--ink2);margin-top:3px;line-height:1.35}
+.fd-x{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--ink3);font-size:17px;flex-shrink:0;letter-spacing:1px}
+.grp-more{width:100%;padding:13px;border-top:1px solid var(--line);font-size:13.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:6px}
+.grp-more .cv{font-size:11px;transition:transform .2s;display:inline-block}
+.grp-more.abierto .cv{transform:rotate(180deg)}
+.grp-vacio{padding:16px 14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink3);
+  text-align:center;line-height:1.5}
+
+/* pie: versión + actualizar */
+.pie{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);text-align:center}
+.pie-b{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);background:var(--card);
+  border-radius:999px;padding:10px 17px;font-size:13px;font-weight:600;color:var(--ink2)}
+.pie-b:active{background:#F3F4F5}
+.pie-v{font-size:11px;color:var(--ink3);margin-top:9px}
+
 /* ---------- SHEET (modal inferior) ---------- */
 .sheet-bg{position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:400;display:none;
   align-items:flex-end;justify-content:center}
@@ -362,9 +441,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       <h1 id="saludo">¡Hola! 👋</h1>
       <p>Sigue tu plan. Pequeñas decisiones, grandes resultados.</p>
     </div>
-    <button class="toggle-entreno" id="btnEntreno">
-      <span class="te-ico">🏋️</span>
-      <span class="te-tx">Día de<br>entreno</span>
+    <button class="te" id="btnEntreno">
+      <span class="te-ico" id="teIco">🏋️</span>
+      <span class="te-tx">Entreno</span>
       <span class="sw" id="swEntreno"></span>
     </button>
   </div>
@@ -413,7 +492,69 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <div class="tip" id="tip" style="display:none"><span>☀️</span><span id="tipTx"></span></div>
   </div>
 
+  <div class="pie">
+    <button class="pie-b" id="btnRefresh">🔄 Actualizar app</button>
+    <div class="pie-v" id="ver"></div>
+  </div>
+
 </div></section>
+
+<!-- ================= COMIDAS (catálogo) ================= -->
+<section class="screen" id="s-comidas"><div class="wrap">
+
+  <div class="top" style="justify-content:center"><div class="top-t">Gosari</div></div>
+
+  <div class="cat-top">
+    <h2>Comidas</h2>
+    <button class="btn-pill" id="btnNuevaCat"><span class="pl">＋</span> Nueva comida</button>
+  </div>
+  <p class="pg-s">Tu base de alimentos. Encuentra, organiza y añade nuevas comidas.</p>
+
+  <div class="srch-row">
+    <div class="srch">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2"
+        stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="catQ" placeholder="Buscar comida" autocomplete="off">
+    </div>
+    <button class="btn-filt" id="btnFiltrar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round"><path d="M4 7h16M7 12h10M10 17h4"/></svg>
+      <span id="filtTx">Filtrar</span>
+    </button>
+  </div>
+
+  <div id="catGrupos"></div>
+
+</div></section>
+
+<!-- ================= SHEET: FILTROS ================= -->
+<div class="sheet-bg" id="shFilt"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3>Filtrar</h3>
+    <button class="sheet-x" data-close="shFilt">✕</button></div></div>
+  <div class="sheet-b">
+    <div class="fld" style="margin-bottom:16px"><label>Grupos alimentarios</label>
+      <div class="gchips" id="filtGrupos"></div></div>
+    <div class="fld" style="margin-bottom:6px"><label>Ordenar por</label>
+      <div class="gchips" id="filtOrden"></div></div>
+    <button class="btn-g" data-close="shFilt">Ver resultados</button>
+    <button class="btn-o" id="filtReset">Quitar filtros</button>
+  </div>
+</div></div>
+
+<!-- ================= SHEET: ACCIONES DE UNA COMIDA ================= -->
+<div class="sheet-bg" id="shAcc"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3 id="accT">Comida</h3>
+    <button class="sheet-x" data-close="shAcc">✕</button></div></div>
+  <div class="sheet-b">
+    <div class="fd" style="border:none;padding:0 0 14px">
+      <div class="fd-i" id="accImg"></div>
+      <div class="fd-b"><div class="fd-n" id="accN"></div><div class="fd-m" id="accM"></div></div>
+    </div>
+    <button class="btn-g" id="accUsar">＋ Añadir a la comida de hoy</button>
+    <button class="btn-o" id="accEditar">✏️ Editar datos</button>
+    <button class="btn-o" id="accBorrar" style="color:var(--red)">🗑️ Eliminar de mi base</button>
+  </div>
+</div></div>
 
 <!-- ================= AÑADIR COMIDA ================= -->
 <section class="screen" id="s-add"><div class="wrap">
@@ -568,74 +709,105 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 </div></section>
 
 <!-- ================= NAV ================= -->
-<nav class="nav">
-  <button class="nav-i on" data-nav="s-home"><span class="ni">🏠</span><span>Inicio</span></button>
-  <button class="nav-i" data-nav="s-soon" data-t="Comidas"><span class="ni">🍽️</span><span>Comidas</span></button>
-  <button class="nav-fab" id="fab">＋</button>
-  <button class="nav-i" data-nav="s-soon" data-t="Gastos"><span class="ni">💼</span><span>Gastos</span></button>
-  <button class="nav-i" data-nav="s-soon" data-t="Perfil"><span class="ni">👤</span><span>Perfil</span></button>
-</nav>
-
-<button class="fab-ref" id="btnRefresh" title="Refrescar app">🔄</button>
-<div class="ver" id="ver"></div>
+<nav class="nav" id="nav"></nav>
 
 <script>
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v0.2.0';
+var APP_VERSION = 'v0.3.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
 
+/* ============================================================
+   ICONOS PROPIOS
+   Cada icono intenta cargar img/iconos/<nombre>.webp.
+   Si el archivo no existe todavía, cae al emoji automáticamente.
+   Para reemplazar un icono: subir el .webp con ese nombre. Nada más.
+   ============================================================ */
+function icono(nombre, emoji, px){
+  px = px || 20;
+  return '<span class="ico" style="width:' + px + 'px;height:' + px + 'px;font-size:' +
+    Math.round(px*0.92) + 'px">' +
+    '<img src="img/iconos/' + nombre + '.webp" alt="" data-fb="' + emoji + '">' +
+    '</span>';
+}
+
 /* --- Grupos alimentarios: objetivo semanal en días --- */
 var GRUPOS = [
-  { key:'verduras',       label:'Verduras',             emoji:'🥦', obj:7, tipo:'pos' },
-  { key:'fruta',          label:'Fruta',                emoji:'🍎', obj:7, tipo:'pos' },
-  { key:'legumbres',      label:'Legumbres',            emoji:'🥑', obj:4, tipo:'pos' },
-  { key:'proteina',       label:'Proteína de calidad',  emoji:'🥩', obj:7, tipo:'pos' },
-  { key:'pescado',        label:'Pescado',              emoji:'🐟', obj:3, tipo:'pos' },
-  { key:'ultraprocesado', label:'Ultraprocesados',      emoji:'🚫', obj:2, tipo:'lim' },
-  { key:'libre',          label:'Comida libre',         emoji:'🎉', obj:1, tipo:'lim' }
+  { key:'verduras',       label:'Verduras',             emoji:'🥦', ico:'grp_verduras',       obj:7, tipo:'pos' },
+  { key:'fruta',          label:'Fruta',                emoji:'🍎', ico:'grp_fruta',          obj:7, tipo:'pos' },
+  { key:'legumbres',      label:'Legumbres',            emoji:'🫘', ico:'grp_legumbres',      obj:4, tipo:'pos' },
+  { key:'proteina',       label:'Proteína de calidad',  emoji:'🥩', ico:'grp_proteina',       obj:7, tipo:'pos' },
+  { key:'pescado',        label:'Pescado',              emoji:'🐟', ico:'grp_pescado',        obj:3, tipo:'pos' },
+  { key:'ultraprocesado', label:'Ultraprocesados',      emoji:'🚫', ico:'grp_ultraprocesado', obj:2, tipo:'lim' },
+  { key:'libre',          label:'Comida libre',         emoji:'🎉', ico:'grp_libre',          obj:1, tipo:'lim' }
 ];
 
 /* --- Macros mostrados en "Resumen de hoy" --- */
 var MACROS = [
-  { key:'kcal',            label:'Calorías',      emoji:'🔥', unidad:'',  objKey:'kcal',            peso:22 },
-  { key:'proteinas_g',     label:'Proteínas',     emoji:'💪', unidad:'g', objKey:'proteinas_g',     peso:22 },
-  { key:'carbohidratos_g', label:'Carbohidratos', emoji:'🌾', unidad:'g', objKey:'carbohidratos_g', peso:10 },
-  { key:'grasas_g',        label:'Grasas',        emoji:'💧', unidad:'g', objKey:'grasas_g',        peso:10 },
-  { key:'fibra_g',         label:'Fibra',         emoji:'🌿', unidad:'g', objKey:'fibra_g',         peso:11 }
+  { key:'kcal',            label:'Calorías',      emoji:'🔥', ico:'mac_kcal',    unidad:'',  objKey:'kcal',            peso:22 },
+  { key:'proteinas_g',     label:'Proteínas',     emoji:'💪', ico:'mac_pro',     unidad:'g', objKey:'proteinas_g',     peso:22 },
+  { key:'carbohidratos_g', label:'Carbohidratos', emoji:'🌾', ico:'mac_car',     unidad:'g', objKey:'carbohidratos_g', peso:10 },
+  { key:'grasas_g',        label:'Grasas',        emoji:'💧', ico:'mac_gra',     unidad:'g', objKey:'grasas_g',        peso:10 },
+  { key:'fibra_g',         label:'Fibra',         emoji:'🌿', ico:'mac_fib',     unidad:'g', objKey:'fibra_g',         peso:11 }
+];
+
+/* --- Navegación inferior --- */
+var NAV = [
+  { id:'s-home',    label:'Inicio',  ico:'nav_inicio',  emoji:'🏠' },
+  { id:'s-comidas', label:'Comidas', ico:'nav_comidas', emoji:'🍽️' },
+  { id:'s-soon',    label:'Gastos',  ico:'nav_gastos',  emoji:'💼' },
+  { id:'s-soon',    label:'Perfil',  ico:'nav_perfil',  emoji:'👤' }
 ];
 
 /* --- Reparto del scoring (suma 100) --- */
 var SCORE_W = { macros:75, grupos:15, limpio:10 };
 
-/* --- Categorías de ítem dentro de una comida --- */
+/* --- Categorías del catálogo. `orden` = orden en la pantalla Comidas --- */
 var CATS = {
-  plato:       { label:'Comida principal', emoji:'🥗', bg:'#EFF9F1' },
-  bebida:      { label:'Bebida',           emoji:'💧', bg:'#EAF4FD' },
-  acompanante: { label:'Acompañamiento',   emoji:'🌾', bg:'#FEF6E7' },
-  postre:      { label:'Postre',           emoji:'🍰', bg:'#FDF0F4' }
+  plato:       { label:'Comida principal', plural:'Comidas',          desc:'Platos principales y recetas completas',
+                 emoji:'🍽️', ico:'cat_plato',  bg:'#EFF9F1', tint:'#2F6B41', chip:'#DCFCE7', orden:1 },
+  postre:      { label:'Postre',           plural:'Postres',          desc:'Opciones dulces y saludables',
+                 emoji:'🍰', ico:'cat_postre', bg:'#FDF0F4', tint:'#C2405F', chip:'#FCE1E9', orden:2 },
+  snack:       { label:'Snack',            plural:'Snacks',           desc:'Para picar entre horas',
+                 emoji:'🥜', ico:'cat_snack',  bg:'#FEF6E7', tint:'#B07A12', chip:'#FDECC8', orden:3 },
+  acompanante: { label:'Acompañamiento',   plural:'Acompañamientos',  desc:'Guarniciones y acompañamientos',
+                 emoji:'🍚', ico:'cat_acomp', bg:'#EAF4FD', tint:'#2A6FA8', chip:'#D7EAFA', orden:4 },
+  bebida:      { label:'Bebida',           plural:'Bebidas',          desc:'Agua, refrescos, café e infusiones',
+                 emoji:'💧', ico:'cat_bebida', bg:'#E9F6F8', tint:'#1F7A88', chip:'#D2EEF2', orden:5 },
+  comprada:    { label:'Comprada',         plural:'Compradas',        desc:'Productos envasados y comidas listas',
+                 emoji:'🛍️', ico:'cat_comprada', bg:'#F4EFFB', tint:'#6D4BA8', chip:'#E7DCFA', orden:6 }
 };
+var CATS_ORDEN = Object.keys(CATS).sort(function(a,b){ return CATS[a].orden - CATS[b].orden; });
 
-/* --- Tipos de comida del día --- */
+/* --- Los 5 huecos fijos del día. Siempre visibles en Inicio. --- */
 var TIPOS = [
-  { key:'desayuno', label:'Desayuno', desde:0  },
-  { key:'snack',    label:'Snack',    desde:10 },
-  { key:'comida',   label:'Comida',   desde:12 },
-  { key:'merienda', label:'Merienda', desde:16 },
-  { key:'cena',     label:'Cena',     desde:20 }
+  { key:'desayuno', label:'Desayuno', ico:'slot_desayuno', emoji:'☀️',  desde:0,  hora:'08:00' },
+  { key:'snack1',   label:'Snack',    ico:'slot_snack',    emoji:'🥨',  desde:10, hora:'11:00' },
+  { key:'comida',   label:'Comida',   ico:'slot_comida',   emoji:'🍽️', desde:12, hora:'14:00' },
+  { key:'snack2',   label:'Snack',    ico:'slot_snack',    emoji:'🥨',  desde:16, hora:'17:30' },
+  { key:'cena',     label:'Cena',     ico:'slot_cena',     emoji:'🌙',  desde:20, hora:'20:30' }
 ];
+function tipoDef(k){
+  k = String(k||'').toLowerCase();
+  if(k === 'snack') k = 'snack1';
+  if(k === 'merienda') k = 'snack2';
+  for(var i=0;i<TIPOS.length;i++) if(TIPOS[i].key === k) return TIPOS[i];
+  return null;
+}
 
 var state = { user:null, data:null, hoy:null, screen:'s-home' };
 
 /* Borrador de la comida que se está componiendo */
 var draft = null;
-function nuevoDraft(){
-  var h = new Date().getHours();
-  var tipo = 'comida';
-  for(var i=0;i<TIPOS.length;i++) if(h >= TIPOS[i].desde) tipo = TIPOS[i].key;
+function nuevoDraft(tipo){
+  if(!tipo){
+    var h = new Date().getHours();
+    tipo = 'comida';
+    for(var i=0;i<TIPOS.length;i++) if(h >= TIPOS[i].desde) tipo = TIPOS[i].key;
+  }
   return {
     grupo_id:'', tipo_comida:tipo, hora:horaAhora(), items:[],
     fuera:false, gasto:'', pagado_por:'', foto:''
@@ -825,10 +997,14 @@ function render(){
   renderResumen();
   renderComidas();
   renderSemana();
+  if(state.screen === 's-comidas') renderCatalogo();
 }
 
 function renderEntreno(){
-  $('#swEntreno').className = 'sw' + (esEntreno(state.hoy) ? ' on' : '');
+  var on = esEntreno(state.hoy);
+  $('#swEntreno').className = 'sw' + (on ? ' on' : '');
+  $('#btnEntreno').classList.toggle('on', on);
+  $('#teIco').innerHTML = icono('ui_entreno', '🏋️', 14);
 }
 
 function renderResumen(){
@@ -854,7 +1030,7 @@ function renderResumen(){
     var r = o > 0 ? v/o : 0;
     var cls = r > 1.15 ? ' way-over' : (r > 1.02 ? ' over' : '');
     return '<div class="macro">' +
-      '<div class="macro-l">' + mc.emoji + ' ' + mc.label + '</div>' +
+      '<div class="macro-l">' + icono(mc.ico, mc.emoji, 13) + ' ' + mc.label + '</div>' +
       '<div class="macro-v">' + fmt(v) + (mc.unidad ? '<span>' + mc.unidad + '</span>' : '') + '</div>' +
       '<div class="macro-g">/ ' + fmt(o) + ' ' + (mc.unidad || 'kcal') + '</div>' +
       '<div class="bar"><i class="' + cls.trim() + '" style="width:' + Math.min(100, r*100).toFixed(0) + '%"></i></div>' +
@@ -862,36 +1038,176 @@ function renderResumen(){
   }).join('');
 }
 
-var TIPO_ICO = { desayuno:'☀️', snack:'➕', comida:'🔆', merienda:'➕', cena:'🌙' };
+/* Agrupa las comidas del día por grupo_id (una comida = plato + extras). */
+function gruposDelDia(fecha){
+  var com = comidasDe(fecha), mapa = {}, orden = [];
+  com.forEach(function(c){
+    var gid = String(c.grupo_id || c.id);
+    if(!mapa[gid]){ mapa[gid] = { grupo_id:gid, tipo:tipoKey(c.tipo_comida), hora:c.hora, items:[] }; orden.push(gid); }
+    mapa[gid].items.push(c);
+  });
+  return orden.map(function(g){ return mapa[g]; });
+}
+function tipoKey(v){ var t = tipoDef(v); return t ? t.key : 'comida'; }
+
+/* Los 5 huecos del día, siempre visibles: hechos con check, pendientes con + */
 function renderComidas(){
-  var com = comidasDe(state.hoy), el = $('#meals');
-  if(!com.length){
-    el.innerHTML = '<div class="meal-empty">Todavía no has registrado nada hoy.<br>Empieza por tu primera comida 🥣</div>';
-    return;
-  }
-  el.innerHTML = com.map(function(c){
-    var tipo = String(c.tipo_comida||'').trim().toLowerCase();
-    var ico  = TIPO_ICO[tipo] || '🍽️';
-    return '<div class="meal" data-id="' + esc(c.id) + '">' +
-      '<div class="meal-time">' + esc(String(c.hora||'').slice(0,5)) + '</div>' +
-      '<div class="meal-dot">' + ico + '</div>' +
-      '<div class="meal-body">' +
-        '<div class="meal-t">' + esc(tipo ? tipo.charAt(0).toUpperCase()+tipo.slice(1) : 'Comida') + '</div>' +
-        '<div class="meal-d">' + esc(c.nombre||'') + '</div>' +
-      '</div>' +
-      '<div class="meal-k">' + fmt(num(c.kcal)) + '<span>kcal</span></div>' +
-      '<div class="meal-ch">›</div>' +
-    '</div>';
+  var grupos = gruposDelDia(state.hoy), el = $('#meals');
+
+  var html = TIPOS.map(function(t){
+    var g = grupos.filter(function(x){ return x.tipo === t.key; });
+    var hecho = g.length > 0;
+    var kcal = 0, nombres = [];
+    g.forEach(function(x){ x.items.forEach(function(i){ kcal += num(i.kcal); nombres.push(i.nombre); }); });
+
+    var desc = hecho ? nombres.join(' · ') : 'Sin registrar';
+    var der = hecho
+      ? '<span class="meal-k">' + fmt(kcal) + '<span>kcal</span></span><span class="meal-ch">›</span>'
+      : '<span class="meal-plus">＋</span>';
+
+    return '<button class="meal ' + (hecho ? 'done' : 'todo') + '" ' +
+        'data-slot="' + t.key + '" data-gid="' + esc(hecho ? g[0].grupo_id : '') + '">' +
+      '<span class="meal-st">' + (hecho ? '✓' : '') + '</span>' +
+      '<span class="meal-dot">' + icono(t.ico, t.emoji, 19) + '</span>' +
+      '<span class="meal-body">' +
+        '<span class="meal-t">' + esc(t.label) + '</span>' +
+        '<span class="meal-d">' + esc(desc) + '</span>' +
+      '</span>' +
+      '<span class="meal-r">' + der + '</span>' +
+    '</button>';
   }).join('');
-  /* línea vertical del timeline */
-  var first = el.querySelector('.meal'), all = el.querySelectorAll('.meal');
+
+  /* comidas extra fuera de los 5 huecos (por si alguna vez hay dos cenas) */
+  var usados = {};
+  TIPOS.forEach(function(t){ usados[t.key] = 0; });
+  grupos.forEach(function(g){ usados[g.tipo] = (usados[g.tipo]||0) + 1; });
+
+  el.innerHTML = html;
+
+  /* línea vertical que une los puntos de estado */
+  var all = el.querySelectorAll('.meal');
   if(all.length > 1){
-    var top = first.offsetTop + 28, bot = all[all.length-1].offsetTop + 28;
+    var top = all[0].offsetTop + 20;
+    var bot = all[all.length-1].offsetTop + 20;
     var l = document.createElement('div');
     l.className = 'meal-line';
-    l.style.top = top + 'px'; l.style.height = (bot - top) + 'px';
+    l.style.top = top + 'px'; l.style.height = Math.max(0, bot - top) + 'px';
     el.insertBefore(l, el.firstChild);
   }
+}
+
+/* ============================================================
+   PANTALLA COMIDAS (catálogo)
+   ============================================================ */
+var cat = { q:'', grupos:[], orden:'uso', abiertos:{} };
+var ORDENES = [
+  { key:'uso',    label:'Más usadas' },
+  { key:'nombre', label:'A-Z' },
+  { key:'kcal',   label:'Menos kcal' }
+];
+
+function catFiltrado(){
+  var q = cat.q.trim().toLowerCase();
+  return (state.data ? state.data.catalogo : []).filter(function(c){
+    if(q && (String(c.nombre)+' '+String(c.ingredientes||'')).toLowerCase().indexOf(q) < 0) return false;
+    if(cat.grupos.length){
+      var g = gruposDe(c.grupos);
+      for(var i=0;i<cat.grupos.length;i++) if(g.indexOf(cat.grupos[i]) < 0) return false;
+    }
+    return true;
+  }).sort(function(a,b){
+    if(cat.orden === 'nombre') return String(a.nombre).localeCompare(String(b.nombre), 'es');
+    if(cat.orden === 'kcal')   return num(a.kcal) - num(b.kcal);
+    return num(b.veces_usado) - num(a.veces_usado);
+  });
+}
+
+function fichaHTML(c){
+  var cd = CATS[String(c.categoria||'plato').toLowerCase()] || CATS.plato;
+  var img = c.imagen
+    ? '<img src="img/comidas/' + esc(c.imagen) + '" alt="" data-fb="' + cd.emoji + '">'
+    : cd.emoji;
+  var macros = [
+    fmt(c.kcal) + ' kcal',
+    fmt(c.proteinas_g) + ' g proteína',
+    fmt(c.carbohidratos_g) + ' g carbohidratos',
+    fmt(c.grasas_g) + ' g grasas'
+  ].join(' • ');
+  return '<div class="fd">' +
+    '<span class="fd-i">' + img + '</span>' +
+    '<span class="fd-b"><span class="fd-n">' + esc(c.nombre) + '</span>' +
+      '<span class="fd-m">' + macros + '</span></span>' +
+    '<button class="fd-x" data-acc="' + esc(c.id) + '">···</button>' +
+  '</div>';
+}
+
+function renderCatalogo(){
+  var lista = catFiltrado();
+  var hayFiltro = cat.q.trim() || cat.grupos.length;
+
+  var html = CATS_ORDEN.map(function(k){
+    var cd = CATS[k];
+    var items = lista.filter(function(c){ return String(c.categoria||'plato').toLowerCase() === k; });
+    if(hayFiltro && !items.length) return '';
+
+    var abierto = !!cat.abiertos[k];
+    var vis = abierto ? items : items.slice(0, 3);
+
+    var cuerpo = items.length
+      ? vis.map(fichaHTML).join('') +
+        (items.length > 3
+          ? '<button class="grp-more' + (abierto?' abierto':'') + '" data-mas="' + k + '" ' +
+              'style="color:' + cd.tint + '">' +
+              (abierto ? 'Ver menos' : 'Ver ' + (cd.plural === 'Comidas' ? 'todas las comidas'
+                : 'todos los ' + cd.plural.toLowerCase())) +
+              ' <span class="cv">⌄</span></button>'
+          : '')
+      : '<div class="grp-vacio">Todavía no tienes nada aquí.<br>Añádelo con «Nueva comida».</div>';
+
+    return '<div class="grp">' +
+      '<button class="grp-h" data-cabecera="' + k + '" style="background:' + cd.bg + '">' +
+        '<span class="gi" style="background:#fff">' + icono(cd.ico, cd.emoji, 20) + '</span>' +
+        '<span class="gb"><span class="gn">' + esc(cd.plural) +
+          '<span class="gc" style="background:' + cd.chip + ';color:' + cd.tint + '">' + items.length + '</span>' +
+          '</span><span class="gd">' + esc(cd.desc) + '</span></span>' +
+        '<span class="gx">›</span>' +
+      '</button>' + cuerpo +
+    '</div>';
+  }).join('');
+
+  $('#catGrupos').innerHTML = html ||
+    '<div class="vacio">Nada coincide con la búsqueda.<br>Prueba con otro término o quita los filtros.</div>';
+
+  var n = cat.grupos.length;
+  $('#filtTx').textContent = n ? 'Filtros (' + n + ')' : 'Filtrar';
+  $('#btnFiltrar').classList.toggle('on', n > 0);
+}
+
+function renderFiltros(){
+  $('#filtGrupos').innerHTML = GRUPOS.map(function(g){
+    return '<button class="gchip' + (cat.grupos.indexOf(g.key)>=0?' on':'') + '" data-fg="' + g.key + '">' +
+      icono(g.ico, g.emoji, 15) + ' ' + esc(g.label) + '</button>';
+  }).join('');
+  $('#filtOrden').innerHTML = ORDENES.map(function(o){
+    return '<button class="gchip' + (cat.orden===o.key?' on':'') + '" data-fo="' + o.key + '">' +
+      esc(o.label) + '</button>';
+  }).join('');
+}
+
+/* --- Acciones sobre una comida del catálogo --- */
+var accId = '';
+function abrirAcciones(id){
+  var c = (state.data.catalogo||[]).filter(function(x){ return String(x.id) === String(id); })[0];
+  if(!c) return;
+  accId = id;
+  var cd = CATS[String(c.categoria||'plato').toLowerCase()] || CATS.plato;
+  $('#accT').textContent = cd.label;
+  $('#accImg').innerHTML = c.imagen
+    ? '<img src="img/comidas/' + esc(c.imagen) + '" alt="" data-fb="' + cd.emoji + '">' : cd.emoji;
+  $('#accN').textContent = c.nombre;
+  $('#accM').textContent = fmt(c.kcal) + ' kcal • ' + fmt(c.proteinas_g) + ' g proteína • ' +
+    fmt(c.carbohidratos_g) + ' g carbohidratos • ' + fmt(c.grasas_g) + ' g grasas';
+  $('#shAcc').classList.add('on');
 }
 
 var DIAS_L = ['L','M','X','J','V','S','D'];
@@ -925,7 +1241,7 @@ function renderSemana(){
     else                 falta = cnt > g.obj ? 'excedido' : 'margen ' + (g.obj - cnt);
 
     return '<tr>' +
-      '<td><div class="c-g"><i>' + g.emoji + '</i>' + esc(g.label) + '</div></td>' + dias +
+      '<td><div class="c-g">' + icono(g.ico, g.emoji, 16) + esc(g.label) + '</div></td>' + dias +
       '<td class="c-n wk-sep"><b>' + cnt + '</b> / ' + g.obj + '</td>' +
       '<td class="c-n">' + falta + '</td>' +
     '</tr>';
@@ -952,8 +1268,9 @@ function renderSemana(){
 /* ============================================================
    AÑADIR COMIDA
    ============================================================ */
-function abrirAdd(){
-  draft = nuevoDraft();
+function abrirAdd(tipo){
+  draft = nuevoDraft(tipo);
+  $('#addTitulo').textContent = 'Añadir comida';
   renderAdd();
   goScreen('s-add');
 }
@@ -1086,7 +1403,7 @@ function abrirPicker(destino){
   $('#pickT').textContent = destino === 'bebida' ? 'Añadir bebida'
     : (destino === 'otros' ? 'Añadir extra' : 'Selecciona una comida');
   $('#pickCats').innerHTML = (destino === 'otros'
-      ? [['acompanante','Acompañamientos'],['postre','Postres']]
+      ? [['acompanante','Acompañamientos'],['postre','Postres'],['snack','Snacks'],['comprada','Compradas']]
       : []
     ).map(function(c){
       return '<button class="chip' + (pick.filtro===c[0]?' on':'') + '" data-cat="' + c[0] + '">' + c[1] + '</button>';
@@ -1123,10 +1440,11 @@ function renderPickRes(){
 }
 
 /* ---------- Formulario de comida ---------- */
-var form = { editIdx:-1, guardarCat:true, grupos:[], catalogo_id:'' };
+var form = { editIdx:-1, guardarCat:true, grupos:[], catalogo_id:'', modo:'draft' };
 
 function abrirForm(opts){
   opts = opts || {};
+  form.modo = opts.modo || 'draft';
   form.editIdx = (opts.editIdx === undefined) ? -1 : opts.editIdx;
   form.catalogo_id = opts.catalogo_id || '';
   form.grupos = gruposDe(opts.grupos);
@@ -1135,6 +1453,9 @@ function abrirForm(opts){
   $('#formT').textContent = opts.titulo || (form.editIdx >= 0 ? 'Editar' : 'Nueva comida');
   $('#fNombre').value = opts.nombre || '';
   $('#fIngr').value   = opts.ingredientes || '';
+  $('#fCat').innerHTML = CATS_ORDEN.map(function(k){
+    return '<option value="' + k + '">' + esc(CATS[k].label) + '</option>';
+  }).join('');
   $('#fCat').value    = opts.categoria || (pick.destino === 'bebida' ? 'bebida'
                         : (pick.destino === 'otros' ? pick.filtro : 'plato'));
   $('#fKcal').value = opts.kcal || '';
@@ -1148,11 +1469,12 @@ function abrirForm(opts){
     ? '<div class="warn">⚠️ La IA no está segura de las cantidades. Revisa los números antes de guardar.</div>'
     : '';
 
-  /* si viene de una comida ya guardada en catálogo, no re-guardar */
-  var yaEnCat = !!opts.catalogo_id;
-  form.guardarCat = yaEnCat ? false : form.guardarCat;
-  $('#fGuardarCat').style.display = yaEnCat ? 'none' : 'flex';
-  $('#fGuardarCat').nextElementSibling.style.display = yaEnCat ? 'none' : 'block';
+  /* el checkbox solo aplica al componer una comida con algo que no está en el catálogo */
+  var ocultar = form.modo === 'catalogo' || !!opts.catalogo_id;
+  form.guardarCat = ocultar ? false : form.guardarCat;
+  $('#fGuardarCat').style.display = ocultar ? 'none' : 'flex';
+  $('#fGuardarCat').nextElementSibling.style.display = ocultar ? 'none' : 'block';
+  if(form.modo === 'catalogo') $('#fOk').textContent = opts.catalogo_id ? 'Guardar cambios' : 'Crear comida';
 
   renderFormChips();
   $('#shForm').classList.add('on');
@@ -1185,6 +1507,20 @@ function leerForm(){
 function confirmarForm(){
   var it = leerForm();
   if(!it.nombre){ toast('Ponle un nombre', true); return; }
+
+  /* --- Modo catálogo: se guarda directo en la base, sin tocar el borrador --- */
+  if(form.modo === 'catalogo'){
+    $('#shForm').classList.remove('on');
+    api('saveCatalogo', { payload: {
+      id: form.catalogo_id || '', nombre:it.nombre, categoria:it.categoria,
+      ingredientes:it.ingredientes, kcal:it.kcal, proteinas_g:it.proteinas_g,
+      carbohidratos_g:it.carbohidratos_g, grasas_g:it.grasas_g, fibra_g:it.fibra_g,
+      grupos:it.grupos, creado_por:state.user
+    }}).then(function(){ return cargar(); })
+      .then(function(){ renderCatalogo(); toast(form.catalogo_id ? 'Actualizada ✓' : 'Añadida a tu base 📗'); })
+      .catch(function(e){ toast('No se guardó: ' + e.message, true); });
+    return;
+  }
 
   if(form.editIdx >= 0) draft.items[form.editIdx] = it;
   else draft.items.push(it);
@@ -1292,6 +1628,38 @@ function analizarFoto(file){
     });
 }
 
+/* ---------- Abrir una comida ya guardada para editarla ---------- */
+function abrirComidaExistente(gid){
+  var filas = (state.data.comidas||[]).filter(function(c){
+    return String(c.grupo_id || c.id) === String(gid);
+  });
+  if(!filas.length) return;
+  var cab = filas[0];
+  draft = {
+    grupo_id: gid,
+    tipo_comida: tipoKey(cab.tipo_comida),
+    hora: String(cab.hora||'').slice(0,5) || horaAhora(),
+    fuera: truthy(cab.fuera_de_casa),
+    gasto: '', pagado_por: '', foto:'',
+    items: filas.map(function(c){
+      return { nombre:c.nombre, ingredientes:c.ingredientes||'',
+        categoria:String(c.categoria||'plato').toLowerCase(),
+        kcal:num(c.kcal), proteinas_g:num(c.proteinas_g), carbohidratos_g:num(c.carbohidratos_g),
+        grasas_g:num(c.grasas_g), fibra_g:num(c.fibra_g), grupos:String(c.grupos||''),
+        catalogo_id:c.catalogo_id||'' };
+    })
+  };
+  filas.forEach(function(c){
+    if(num(c.gasto) > 0){ draft.gasto = String(num(c.gasto)); draft.pagado_por = c.pagado_por||''; }
+  });
+  var td = tipoDef(draft.tipo_comida);
+  $('#addTitulo').textContent = 'Editar ' + (td ? td.label.toLowerCase() : 'comida');
+  renderAdd();
+  $('#inPago').value = draft.pagado_por || state.user || '';
+  $('#inGasto').value = draft.gasto;
+  goScreen('s-add');
+}
+
 /* ---------- Guardar la comida ---------- */
 function guardarComida(){
   if(!draft.items.length) return;
@@ -1322,10 +1690,24 @@ function guardarComida(){
 /* ============================================================
    NAVEGACIÓN
    ============================================================ */
+function renderNav(){
+  $('#nav').innerHTML =
+    NAV.slice(0,2).map(navBtn).join('') +
+    '<button class="nav-fab" id="fab">＋</button>' +
+    NAV.slice(2).map(navBtn).join('');
+}
+function navBtn(n){
+  return '<button class="nav-i" data-nav="' + n.id + '" data-t="' + esc(n.label) + '">' +
+    icono(n.ico, n.emoji, 22) + '<span class="nl">' + esc(n.label) + '</span></button>';
+}
+
 function goScreen(id, titulo){
   $$('.screen').forEach(function(s){ s.classList.toggle('on', s.id === id); });
-  $$('.nav-i').forEach(function(b){ b.classList.toggle('on', b.dataset.nav === id); });
+  $$('.nav-i').forEach(function(b){
+    b.classList.toggle('on', b.dataset.nav === id && (id !== 's-soon' || b.dataset.t === titulo));
+  });
   if(id === 's-soon' && titulo) $('#soonT').textContent = titulo;
+  if(id === 's-comidas') renderCatalogo();
   state.screen = id;
   window.scrollTo(0,0);
 }
@@ -1354,6 +1736,7 @@ function cargar(){
 
 function boot(){
   $('#ver').textContent = APP_VERSION;
+  renderNav();
   state.hoy = hoyStr();
 
   /* 1. Pintar desde caché al instante */
@@ -1481,6 +1864,72 @@ document.addEventListener('click', function(ev){
 
   if(ev.target.closest('#btnGuardar')){ guardarComida(); return; }
 
+  /* ---------- PANTALLA COMIDAS ---------- */
+  if((t = ev.target.closest('[data-mas]'))){
+    var kk = t.dataset.mas; cat.abiertos[kk] = !cat.abiertos[kk]; renderCatalogo(); return;
+  }
+  if((t = ev.target.closest('[data-cabecera]'))){
+    var ck = t.dataset.cabecera; cat.abiertos[ck] = !cat.abiertos[ck]; renderCatalogo(); return;
+  }
+  if(ev.target.closest('#btnNuevaCat')){
+    abrirForm({ modo:'catalogo', titulo:'Nueva comida', categoria:'plato' }); return;
+  }
+  if(ev.target.closest('#btnFiltrar')){ renderFiltros(); $('#shFilt').classList.add('on'); return; }
+  if((t = ev.target.closest('[data-fg]'))){
+    var fg = t.dataset.fg, ip = cat.grupos.indexOf(fg);
+    if(ip >= 0) cat.grupos.splice(ip,1); else cat.grupos.push(fg);
+    renderFiltros(); renderCatalogo(); return;
+  }
+  if((t = ev.target.closest('[data-fo]'))){ cat.orden = t.dataset.fo; renderFiltros(); renderCatalogo(); return; }
+  if(ev.target.closest('#filtReset')){
+    cat.grupos = []; cat.orden = 'uso'; renderFiltros(); renderCatalogo();
+    $('#shFilt').classList.remove('on'); return;
+  }
+  if((t = ev.target.closest('[data-acc]'))){ abrirAcciones(t.dataset.acc); return; }
+
+  if(ev.target.closest('#accUsar')){
+    var ca = (state.data.catalogo||[]).filter(function(x){ return String(x.id) === String(accId); })[0];
+    $('#shAcc').classList.remove('on');
+    if(!ca) return;
+    if(!draft || state.screen !== 's-add') draft = nuevoDraft();
+    draft.items.push({
+      nombre:ca.nombre, ingredientes:ca.ingredientes||'', categoria:String(ca.categoria||'plato').toLowerCase(),
+      kcal:num(ca.kcal), proteinas_g:num(ca.proteinas_g), carbohidratos_g:num(ca.carbohidratos_g),
+      grasas_g:num(ca.grasas_g), fibra_g:num(ca.fibra_g), grupos:String(ca.grupos||''), catalogo_id:ca.id
+    });
+    renderAdd(); goScreen('s-add'); return;
+  }
+  if(ev.target.closest('#accEditar')){
+    var ce = (state.data.catalogo||[]).filter(function(x){ return String(x.id) === String(accId); })[0];
+    $('#shAcc').classList.remove('on');
+    if(!ce) return;
+    abrirForm({ modo:'catalogo', titulo:'Editar comida', catalogo_id:ce.id,
+      nombre:ce.nombre, ingredientes:ce.ingredientes, categoria:String(ce.categoria||'plato').toLowerCase(),
+      kcal:ce.kcal, proteinas_g:ce.proteinas_g, carbohidratos_g:ce.carbohidratos_g,
+      grasas_g:ce.grasas_g, fibra_g:ce.fibra_g, grupos:ce.grupos });
+    return;
+  }
+  if(ev.target.closest('#accBorrar')){
+    var cb = (state.data.catalogo||[]).filter(function(x){ return String(x.id) === String(accId); })[0];
+    if(!cb) return;
+    if(!confirm('¿Eliminar «' + cb.nombre + '» de tu base?\nLas comidas ya registradas no se tocan.')) return;
+    $('#shAcc').classList.remove('on');
+    api('deleteCatalogo', { id:accId }).then(function(){
+      state.data.catalogo = state.data.catalogo.filter(function(x){ return String(x.id) !== String(accId); });
+      renderCatalogo(); toast('Eliminada');
+    }).catch(function(e){ toast('No se pudo borrar: ' + e.message, true); });
+    return;
+  }
+
+  /* ---------- SLOTS DE COMIDAS DE HOY ---------- */
+  if((t = ev.target.closest('[data-slot]'))){
+    if(!state.user){ toast('Elige usuario primero', true); return; }
+    var gid = t.dataset.gid;
+    if(gid) abrirComidaExistente(gid);
+    else { draft = nuevoDraft(t.dataset.slot); renderAdd(); goScreen('s-add'); }
+    return;
+  }
+
   if(ev.target.closest('#infoScore')){
     toast('Scoring 0-100: macros del día (75), grupos (15), día limpio (10)');
     return;
@@ -1509,6 +1958,7 @@ document.addEventListener('click', function(ev){
 /* Inputs de la pantalla Añadir */
 document.addEventListener('input', function(ev){
   var el = ev.target;
+  if(el.id === 'catQ'){ cat.q = el.value; renderCatalogo(); return; }
   if(!draft) return;
   if(el.id === 'pickQ'){ pick.q = el.value; renderPickRes(); return; }
   if(el.id === 'inHora'){ draft.hora = el.value; return; }
