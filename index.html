@@ -360,6 +360,85 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .pie-b:active{background:#F3F4F5}
 .pie-v{font-size:11px;color:var(--ink3);margin-top:9px}
 
+/* ---------- PANTALLA GASTOS ---------- */
+.gs-top{display:flex;align-items:center;justify-content:space-between;margin:14px 0 16px}
+.gs-top h2{margin:0;font-size:29px;font-weight:700;letter-spacing:-.8px}
+.gs-filt{width:40px;height:40px;border-radius:50%;background:var(--green-xl);display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.gs-filt.on{background:var(--green);color:#fff}
+
+.seg{display:flex;background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:4px;
+  margin-bottom:16px}
+.seg button{flex:1;padding:10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink2)}
+.seg button.on{background:var(--green-xl);color:var(--green-d)}
+
+.per{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px}
+.per-a{width:32px;height:32px;border-radius:50%;border:1px solid var(--line2);background:var(--card);
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink2);flex-shrink:0}
+.per-a:disabled{opacity:.3}
+.per-t{font-size:16px;font-weight:600;letter-spacing:-.3px;min-width:130px;text-align:center}
+
+.gs-tot{background:#F3F5F3;border-radius:var(--r);padding:18px;margin-bottom:16px;display:flex;
+  align-items:center;gap:10px;overflow:hidden}
+.gs-tot-b{flex:1;min-width:0}
+.gs-tot-l{font-size:13.5px;color:var(--ink2)}
+.gs-tot-v{font-size:33px;font-weight:700;letter-spacing:-1.2px;margin:5px 0 6px;line-height:1}
+.gs-tot-d{font-size:12.5px;color:var(--ink2)}
+.gs-tot-d b{font-weight:600}
+.gs-tot-d .up{color:var(--red)}
+.gs-tot-d .dn{color:var(--green-d)}
+.gs-mas{width:92px;flex-shrink:0;font-size:46px;text-align:center;line-height:1}
+.gs-mas img{width:100%;height:auto}
+
+.uchips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;margin-bottom:16px;scrollbar-width:none}
+.uchips::-webkit-scrollbar{display:none}
+.uchip{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line2);
+  border-radius:999px;padding:7px 13px 7px 7px;font-size:13px;font-weight:600;color:var(--ink2);
+  white-space:nowrap;flex-shrink:0}
+.uchip.on{border-color:var(--green);background:var(--green-xl);color:var(--green-d)}
+.uchip .ua{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+.uchip .uv{font-size:11.5px;font-weight:500;opacity:.75}
+
+.donut{display:flex;align-items:center;gap:6px}
+.donut-c{position:relative;width:150px;height:150px;flex-shrink:0}
+.donut-c svg{display:block;transform:rotate(-90deg)}
+.donut-t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center}
+.donut-t b{font-size:16px;font-weight:700;letter-spacing:-.5px}
+.donut-t span{font-size:10.5px;color:var(--ink2);margin-top:1px}
+.leg{flex:1;min-width:0;border-left:1px solid var(--line);padding-left:12px}
+.leg-i{display:flex;align-items:center;gap:9px;padding:7px 0;width:100%;text-align:left}
+.leg-d{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0}
+.leg-b{flex:1;min-width:0}
+.leg-n{font-size:12.5px;font-weight:600;letter-spacing:-.15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leg-v{font-size:11.5px;color:var(--ink2);margin-top:1px}
+.leg-p{font-size:12px;font-weight:700;flex-shrink:0}
+
+.rep{display:flex;align-items:center;gap:11px;padding:10px 0}
+.rep+.rep{border-top:1px solid var(--line)}
+.rep-a{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.rep-b{flex:1;min-width:0}
+.rep-n{font-size:14px;font-weight:600;letter-spacing:-.2px}
+.rep-d{font-size:11.5px;color:var(--ink2);margin-top:2px}
+.rep-s{font-size:13.5px;font-weight:700;white-space:nowrap;flex-shrink:0}
+.rep-s.pos{color:var(--green-d)}
+.rep-s.neg{color:var(--red)}
+.rep-s.cero{color:var(--ink3);font-weight:600}
+
+.gl{display:flex;align-items:center;gap:12px;padding:12px 0;width:100%;text-align:left}
+.gl+.gl{border-top:1px solid var(--line)}
+.gl-i{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0}
+.gl-b{flex:1;min-width:0}
+.gl-n{font-size:14px;font-weight:600;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gl-d{font-size:11.5px;color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gl-v{font-size:14px;font-weight:600;white-space:nowrap;flex-shrink:0}
+.gl-c{color:var(--ink3);font-size:14px;flex-shrink:0}
+.ord{font-size:12.5px;font-weight:600;color:var(--green-d);display:flex;align-items:center;gap:4px}
+
 /* ---------- SHEET (modal inferior) ---------- */
 .sheet-bg{position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:400;display:none;
   align-items:flex-end;justify-content:center}
@@ -612,10 +691,16 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <span class="ad">Registra el gasto y quién pagó.</span></span>
       <span class="sw" id="swFuera"></span>
     </button>
-    <div class="fuera-b">
-      <div class="fld"><label>Gasto (€)</label>
-        <input type="text" id="inGasto" inputmode="decimal" placeholder="0,00"></div>
-      <div class="fld"><label>Pagó</label><select id="inPago"></select></div>
+    <div class="fuera-b" style="flex-direction:column">
+      <div style="display:flex;gap:9px;width:100%">
+        <div class="fld"><label>Gasto (€)</label>
+          <input type="text" id="inGasto" inputmode="decimal" placeholder="0,00"></div>
+        <div class="fld"><label>Pagó</label><select id="inPago"></select></div>
+      </div>
+      <div class="fld" style="width:100%"><label>Categoría del gasto</label>
+        <div class="gchips" id="inTags"></div></div>
+      <div class="fld" style="width:100%"><label>Se reparte entre</label>
+        <div class="gchips" id="inParts"></div></div>
     </div>
   </div>
 
@@ -636,6 +721,108 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   </div>
 
 </div></section>
+
+<!-- ================= GASTOS ================= -->
+<section class="screen" id="s-gastos"><div class="wrap">
+
+  <div class="gs-top">
+    <h2>Gastos</h2>
+    <button class="gs-filt" id="gsFilt">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2"
+        stroke-linejoin="round"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>
+    </button>
+  </div>
+
+  <div class="seg" id="gsSeg">
+    <button data-per="mes" class="on">Mensual</button>
+    <button data-per="anio">Anual</button>
+  </div>
+
+  <div class="per">
+    <button class="per-a" data-mv="-1">‹</button>
+    <div class="per-t" id="gsPer">—</div>
+    <button class="per-a" data-mv="1" id="gsNext">›</button>
+  </div>
+
+  <div class="gs-tot">
+    <div class="gs-tot-b">
+      <div class="gs-tot-l">Total gastado</div>
+      <div class="gs-tot-v" id="gsTotal">0,00 €</div>
+      <div class="gs-tot-d" id="gsDelta"></div>
+    </div>
+    <div class="gs-mas" id="gsMas">🧾</div>
+  </div>
+
+  <div class="uchips" id="gsUsers"></div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-t">Por categoría</div></div>
+    <div class="donut">
+      <div class="donut-c"><svg id="gsDonut" width="150" height="150" viewBox="0 0 150 150"></svg>
+        <div class="donut-t"><b id="gsDonutV">0 €</b><span>Total</span></div></div>
+      <div class="leg" id="gsLeg"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-t">Reparto entre vosotros</div>
+      <span class="info-i" id="gsInfoRep">i</span></div>
+    <div id="gsRep"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-t">Gastos</div>
+      <button class="ord" id="gsOrd">Ordenar: <span id="gsOrdTx">Más reciente</span> ⌄</button></div>
+    <div id="gsLista"></div>
+  </div>
+
+  <button class="btn-save" id="btnNuevoGasto">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
+      stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+    Añadir gasto
+  </button>
+
+</div></section>
+
+<!-- ================= SHEET: GASTO ================= -->
+<div class="sheet-bg" id="shGasto"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3 id="gT">Nuevo gasto</h3>
+    <button class="sheet-x" data-close="shGasto">✕</button></div></div>
+  <div class="sheet-b">
+    <div class="grid2" style="margin-bottom:11px">
+      <div class="fld"><label>Importe (€)</label>
+        <input id="gImporte" type="text" inputmode="decimal" placeholder="0,00"></div>
+      <div class="fld"><label>Fecha</label><input id="gFecha" type="date"></div>
+    </div>
+    <div class="fld" style="margin-bottom:11px"><label>Descripción</label>
+      <input id="gDesc" placeholder="Ej. Restaurante La Terraza"></div>
+
+    <div class="fld" style="margin-bottom:14px"><label>Categoría</label>
+      <div class="gchips" id="gTags"></div></div>
+
+    <div class="fld" style="margin-bottom:14px"><label>Pagó</label><select id="gPago"></select></div>
+
+    <div class="fld" style="margin-bottom:4px"><label>Se reparte entre</label>
+      <div class="gchips" id="gParts"></div></div>
+    <p class="hint" id="gSplit"></p>
+
+    <button class="btn-g" id="gOk">Guardar gasto</button>
+    <button class="btn-o" id="gBorrar" style="color:var(--red);display:none">🗑️ Eliminar gasto</button>
+    <p class="hint" id="gLink" style="display:none"></p>
+  </div>
+</div></div>
+
+<!-- ================= SHEET: FILTRO DE GASTOS ================= -->
+<div class="sheet-bg" id="shGsFilt"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3>Filtrar gastos</h3>
+    <button class="sheet-x" data-close="shGsFilt">✕</button></div></div>
+  <div class="sheet-b">
+    <div class="fld" style="margin-bottom:6px"><label>Categorías</label>
+      <div class="gchips" id="gsFiltTags"></div></div>
+    <button class="btn-g" data-close="shGsFilt">Ver resultados</button>
+    <button class="btn-o" id="gsFiltReset">Quitar filtros</button>
+  </div>
+</div></div>
 
 <!-- ================= SHEET: BUSCADOR ================= -->
 <div class="sheet-bg" id="shPick"><div class="sheet">
@@ -715,7 +902,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v0.3.0';
+var APP_VERSION = 'v0.4.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -758,7 +945,7 @@ var MACROS = [
 var NAV = [
   { id:'s-home',    label:'Inicio',  ico:'nav_inicio',  emoji:'🏠' },
   { id:'s-comidas', label:'Comidas', ico:'nav_comidas', emoji:'🍽️' },
-  { id:'s-soon',    label:'Gastos',  ico:'nav_gastos',  emoji:'💼' },
+  { id:'s-gastos',  label:'Gastos',  ico:'nav_gastos',  emoji:'💼' },
   { id:'s-soon',    label:'Perfil',  ico:'nav_perfil',  emoji:'👤' }
 ];
 
@@ -810,7 +997,7 @@ function nuevoDraft(tipo){
   }
   return {
     grupo_id:'', tipo_comida:tipo, hora:horaAhora(), items:[],
-    fuera:false, gasto:'', pagado_por:'', foto:''
+    fuera:false, gasto:'', pagado_por:'', tag_gasto:'restaurante', participantes:[], foto:''
   };
 }
 function horaAhora(){
@@ -998,6 +1185,7 @@ function render(){
   renderComidas();
   renderSemana();
   if(state.screen === 's-comidas') renderCatalogo();
+  if(state.screen === 's-gastos')  renderGastos();
 }
 
 function renderEntreno(){
@@ -1330,12 +1518,20 @@ function renderFuera(){
   $('#swFuera').className = 'sw' + (draft.fuera ? ' on' : '');
   var sel = $('#inPago');
   if(!sel.options.length){
-    sel.innerHTML = '<option value="">—</option>' +
-      (state.data ? state.data.usuarios : []).map(function(u){
-        return '<option value="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</option>';
-      }).join('');
+    sel.innerHTML = (state.data ? state.data.usuarios : []).map(function(u){
+      return '<option value="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</option>';
+    }).join('');
     sel.value = draft.pagado_por || state.user || '';
   }
+  if(!draft.participantes.length && state.user) draft.participantes = [state.user];
+  $('#inTags').innerHTML = (state.data ? state.data.tags : []).map(function(t){
+    return '<button class="gchip' + (draft.tag_gasto===String(t.id).toLowerCase()?' on':'') +
+      '" data-dt="' + esc(t.id) + '">' + esc(t.icono) + ' ' + esc(t.nombre) + '</button>';
+  }).join('');
+  $('#inParts').innerHTML = (state.data ? state.data.usuarios : []).map(function(u){
+    return '<button class="gchip' + (draft.participantes.indexOf(u.username)>=0?' on':'') +
+      '" data-dp="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</button>';
+  }).join('');
 }
 
 function totalDraft(){
@@ -1640,7 +1836,7 @@ function abrirComidaExistente(gid){
     tipo_comida: tipoKey(cab.tipo_comida),
     hora: String(cab.hora||'').slice(0,5) || horaAhora(),
     fuera: truthy(cab.fuera_de_casa),
-    gasto: '', pagado_por: '', foto:'',
+    gasto: '', pagado_por: '', tag_gasto:'restaurante', participantes:[], foto:'',
     items: filas.map(function(c){
       return { nombre:c.nombre, ingredientes:c.ingredientes||'',
         categoria:String(c.categoria||'plato').toLowerCase(),
@@ -1649,9 +1845,16 @@ function abrirComidaExistente(gid){
         catalogo_id:c.catalogo_id||'' };
     })
   };
-  filas.forEach(function(c){
-    if(num(c.gasto) > 0){ draft.gasto = String(num(c.gasto)); draft.pagado_por = c.pagado_por||''; }
-  });
+  var gv = (state.data.gastos||[]).filter(function(g){
+    return String(g.comida_grupo_id) === String(gid);
+  })[0];
+  if(gv){
+    draft.fuera = true;
+    draft.gasto = String(num(gv.importe));
+    draft.pagado_por = gv.pagado_por || '';
+    draft.tag_gasto = String(gv.tag||'restaurante').toLowerCase();
+    draft.participantes = partesDe(gv);
+  }
   var td = tipoDef(draft.tipo_comida);
   $('#addTitulo').textContent = 'Editar ' + (td ? td.label.toLowerCase() : 'comida');
   renderAdd();
@@ -1672,7 +1875,10 @@ function guardarComida(){
     grupo_id: draft.grupo_id, username: state.user, fecha: state.hoy,
     hora: draft.hora, tipo_comida: draft.tipo_comida,
     fuera_de_casa: draft.fuera, gasto: draft.fuera ? num(draft.gasto) : 0,
-    pagado_por: draft.fuera ? draft.pagado_por : '',
+    pagado_por: draft.fuera ? (draft.pagado_por || state.user) : '',
+    tag_gasto: draft.tag_gasto,
+    participantes: draft.fuera ? draft.participantes.join(',') : '',
+    descripcion_gasto: '',
     items: draft.items
   }}).then(function(){
     return cargar();
@@ -1685,6 +1891,306 @@ function guardarComida(){
     btn.disabled = false;
     toast('No se guardó: ' + e.message, true);
   });
+}
+
+/* ============================================================
+   GASTOS
+   ============================================================ */
+var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto',
+             'Septiembre','Octubre','Noviembre','Diciembre'];
+var gs = { periodo:'mes', anio:0, mes:0, user:'', tags:[], orden:'reciente' };
+var ORD_GASTO = [
+  { key:'reciente', label:'Más reciente' },
+  { key:'antiguo',  label:'Más antiguo' },
+  { key:'caro',     label:'Mayor importe' },
+  { key:'barato',   label:'Menor importe' }
+];
+
+function tagDef(k){
+  k = String(k||'otro').trim().toLowerCase();
+  var t = (state.data ? state.data.tags : []).filter(function(x){ return String(x.id).toLowerCase() === k; })[0];
+  return t || { id:k, nombre:_cap(k), icono:'🧾', color:'#CBD5E1' };
+}
+function _cap(s){ s = String(s||''); return s.charAt(0).toUpperCase() + s.slice(1); }
+function eur(v){
+  var n = num(v), neg = n < 0;
+  n = Math.abs(n);
+  var e = Math.floor(n), c = Math.round((n - e) * 100);
+  if(c === 100){ e += 1; c = 0; }
+  return (neg ? '-' : '') + fmt(e) + ',' + String(c).padStart(2,'0') + ' €';
+}
+function partesDe(g){
+  var p = String(g.participantes||'').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+  if(!p.length && g.pagado_por) p = [String(g.pagado_por)];
+  return p;
+}
+
+/* Rango [desde, hasta) del periodo activo, y su anterior para comparar */
+function rangoGs(offset){
+  offset = offset || 0;
+  if(gs.periodo === 'anio'){
+    var a = gs.anio + offset;
+    return { desde:a+'-01-01', hasta:(a+1)+'-01-01', label:String(a) };
+  }
+  var m = gs.mes + offset, a2 = gs.anio;
+  while(m < 0){ m += 12; a2--; }
+  while(m > 11){ m -= 12; a2++; }
+  var ini = a2+'-'+String(m+1).padStart(2,'0')+'-01';
+  var m2 = m+1, a3 = a2;
+  if(m2 > 11){ m2 = 0; a3++; }
+  return { desde:ini, hasta:a3+'-'+String(m2+1).padStart(2,'0')+'-01', label:MESES[m]+' '+a2 };
+}
+
+function gastosEn(r, aplicarFiltros){
+  return (state.data ? state.data.gastos : []).filter(function(g){
+    var f = fkey(g.fecha);
+    if(!(f >= r.desde && f < r.hasta)) return false;
+    if(!aplicarFiltros) return true;
+    if(gs.tags.length && gs.tags.indexOf(String(g.tag||'otro').toLowerCase()) < 0) return false;
+    if(gs.user){
+      /* un gasto cuenta para el usuario si lo pagó o participa en el reparto */
+      if(String(g.pagado_por) !== gs.user && partesDe(g).indexOf(gs.user) < 0) return false;
+    }
+    return true;
+  });
+}
+function suma(lista){
+  return lista.reduce(function(a,g){ return a + num(g.importe); }, 0);
+}
+
+function renderGastos(){
+  if(!state.data) return;
+  if(!gs.anio){
+    var hoyP = state.hoy.split('-');
+    gs.anio = +hoyP[0]; gs.mes = +hoyP[1] - 1;
+  }
+  var r = rangoGs(0), rPrev = rangoGs(-1);
+  var lista = gastosEn(r, true);
+  var total = suma(lista);
+
+  $('#gsPer').textContent = r.label;
+  $('#gsTotal').textContent = eur(total);
+  $('#gsDonutV').textContent = eur(total);
+
+  /* no dejar avanzar más allá del periodo actual */
+  var hoyR = state.hoy;
+  $('#gsNext').disabled = r.hasta > hoyR;
+
+  /* delta contra el periodo anterior */
+  var prev = suma(gastosEn(rPrev, true));
+  var d = $('#gsDelta');
+  if(prev > 0){
+    var pct = Math.round((total - prev) / prev * 100);
+    var cls = pct > 0 ? 'up' : (pct < 0 ? 'dn' : '');
+    d.innerHTML = '<b class="' + cls + '">' + (pct > 0 ? '↑' : (pct < 0 ? '↓' : '')) + ' ' +
+      Math.abs(pct) + '%</b> vs. ' + esc(rPrev.label);
+  } else {
+    d.innerHTML = lista.length ? 'Sin datos del periodo anterior' : '';
+  }
+  $('#gsMas').innerHTML = icono('mas_gastos', '🧾', 76).replace('class="ico"','class="ico" ')
+    .replace('width:76px;height:76px','width:100%;height:auto');
+
+  renderGsUsers(r);
+  renderGsDonut(lista, total);
+  renderGsReparto(r);
+  renderGsLista(lista);
+
+  var n = gs.tags.length;
+  $('#gsFilt').classList.toggle('on', n > 0);
+}
+
+/* Chips de usuario con lo que ha pagado cada uno en el periodo */
+function renderGsUsers(r){
+  var todos = gastosEn(r, false).filter(function(g){
+    return !gs.tags.length || gs.tags.indexOf(String(g.tag||'otro').toLowerCase()) >= 0;
+  });
+  var us = (state.data.usuarios||[]);
+  var html = '<button class="uchip' + (gs.user===''?' on':'') + '" data-gu="">' +
+    '<span class="ua" style="background:var(--ink3)">∑</span>Todos ' +
+    '<span class="uv">' + eur(suma(todos)) + '</span></button>';
+
+  html += us.map(function(u){
+    var pagado = suma(todos.filter(function(g){ return String(g.pagado_por) === u.username; }));
+    var ini = String(u.nombre||u.username).trim().charAt(0).toUpperCase();
+    return '<button class="uchip' + (gs.user===u.username?' on':'') + '" data-gu="' + esc(u.username) + '">' +
+      '<span class="ua" style="background:' + esc(u.color||'#22C55E') + '">' + esc(ini) + '</span>' +
+      esc(u.nombre||u.username) + ' <span class="uv">' + eur(pagado) + '</span></button>';
+  }).join('');
+  $('#gsUsers').innerHTML = html;
+}
+
+/* Donut por tag, SVG a mano (sin librerías) */
+function renderGsDonut(lista, total){
+  var porTag = {};
+  lista.forEach(function(g){
+    var k = String(g.tag||'otro').toLowerCase();
+    porTag[k] = (porTag[k] || 0) + num(g.importe);
+  });
+  var arr = Object.keys(porTag).map(function(k){
+    return { k:k, v:porTag[k], def:tagDef(k) };
+  }).sort(function(a,b){ return b.v - a.v; });
+
+  var R = 58, W = 26, C = 2 * Math.PI * R, acum = 0;
+  var svg = '';
+  if(!total || !arr.length){
+    svg = '<circle cx="75" cy="75" r="' + R + '" fill="none" stroke="#EFF1F3" stroke-width="' + W + '"/>';
+  } else {
+    svg = arr.map(function(a){
+      var frac = a.v / total;
+      var seg = '<circle cx="75" cy="75" r="' + R + '" fill="none" stroke="' + esc(a.def.color) + '" ' +
+        'stroke-width="' + W + '" stroke-dasharray="' + (frac*C).toFixed(2) + ' ' + C.toFixed(2) + '" ' +
+        'stroke-dashoffset="' + (-acum*C).toFixed(2) + '"/>';
+      acum += frac;
+      return seg;
+    }).join('');
+  }
+  $('#gsDonut').innerHTML = svg;
+
+  $('#gsLeg').innerHTML = arr.length ? arr.map(function(a){
+    var pct = total ? Math.round(a.v/total*100) : 0;
+    return '<button class="leg-i" data-lt="' + esc(a.k) + '">' +
+      '<span class="leg-d" style="background:' + esc(a.def.color) + '33">' + esc(a.def.icono) + '</span>' +
+      '<span class="leg-b"><span class="leg-n">' + esc(a.def.nombre) + '</span>' +
+        '<span class="leg-v">' + eur(a.v) + '</span></span>' +
+      '<span class="leg-p" style="color:' + esc(a.def.color) + '">' + pct + '%</span>' +
+    '</button>';
+  }).join('') : '<div class="grp-vacio" style="border:none">Sin gastos en este periodo.</div>';
+}
+
+/* Quién puso cuánto y a quién le corresponde qué */
+function renderGsReparto(r){
+  var lista = gastosEn(r, false).filter(function(g){
+    return !gs.tags.length || gs.tags.indexOf(String(g.tag||'otro').toLowerCase()) >= 0;
+  });
+  var us = (state.data.usuarios||[]);
+  var pago = {}, toca = {};
+  us.forEach(function(u){ pago[u.username] = 0; toca[u.username] = 0; });
+
+  lista.forEach(function(g){
+    var imp = num(g.importe);
+    if(pago[g.pagado_por] !== undefined) pago[g.pagado_por] += imp;
+    var p = partesDe(g);
+    if(!p.length) return;
+    var cuota = imp / p.length;
+    p.forEach(function(x){ if(toca[x] !== undefined) toca[x] += cuota; });
+  });
+
+  var hay = us.some(function(u){ return pago[u.username] > 0 || toca[u.username] > 0; });
+  if(!hay){
+    $('#gsRep').innerHTML = '<div class="grp-vacio" style="border:none">Sin gastos que repartir.</div>';
+    return;
+  }
+
+  $('#gsRep').innerHTML = us.map(function(u){
+    var bal = pago[u.username] - toca[u.username];
+    var cls = Math.abs(bal) < 0.005 ? 'cero' : (bal > 0 ? 'pos' : 'neg');
+    var txt = Math.abs(bal) < 0.005 ? 'En paz' : (bal > 0 ? '+' + eur(bal) : eur(bal));
+    var ini = String(u.nombre||u.username).trim().charAt(0).toUpperCase();
+    return '<div class="rep">' +
+      '<span class="rep-a" style="background:' + esc(u.color||'#22C55E') + '">' + esc(ini) + '</span>' +
+      '<span class="rep-b"><span class="rep-n">' + esc(u.nombre||u.username) + '</span>' +
+        '<span class="rep-d">Puso ' + eur(pago[u.username]) + ' · le toca ' + eur(toca[u.username]) + '</span></span>' +
+      '<span class="rep-s ' + cls + '">' + txt + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+function renderGsLista(lista){
+  var l = lista.slice().sort(function(a,b){
+    if(gs.orden === 'caro')   return num(b.importe) - num(a.importe);
+    if(gs.orden === 'barato') return num(a.importe) - num(b.importe);
+    var fa = fkey(a.fecha), fb = fkey(b.fecha);
+    return gs.orden === 'antiguo' ? fa.localeCompare(fb) : fb.localeCompare(fa);
+  });
+  $('#gsOrdTx').textContent = (ORD_GASTO.filter(function(o){ return o.key === gs.orden; })[0]||{}).label;
+
+  if(!l.length){
+    $('#gsLista').innerHTML = '<div class="grp-vacio" style="border:none">' +
+      'No hay gastos en este periodo.<br>Añade uno con el botón de abajo.</div>';
+    return;
+  }
+  $('#gsLista').innerHTML = l.map(function(g){
+    var t = tagDef(g.tag);
+    return '<button class="gl" data-gid2="' + esc(g.id) + '">' +
+      '<span class="gl-i" style="background:' + esc(t.color) + '33">' + esc(t.icono) + '</span>' +
+      '<span class="gl-b"><span class="gl-n">' + esc(g.descripcion || t.nombre) + '</span>' +
+        '<span class="gl-d">' + esc(t.nombre) + ' • ' + fechaLarga(g.fecha) +
+        (g.comida_grupo_id ? ' • 🍽️' : '') + '</span></span>' +
+      '<span class="gl-v">' + eur(g.importe) + '</span><span class="gl-c">›</span>' +
+    '</button>';
+  }).join('');
+}
+
+function fechaLarga(f){
+  var p = fkey(f).split('-');
+  if(p.length !== 3) return String(f);
+  return (+p[2]) + ' ' + MESES[+p[1]-1] + ' ' + p[0];
+}
+
+/* ---------- Alta / edición de un gasto ---------- */
+var gEdit = { id:'', tag:'restaurante', parts:[], link:'' };
+
+function abrirGasto(id){
+  var g = id ? (state.data.gastos||[]).filter(function(x){ return String(x.id) === String(id); })[0] : null;
+  gEdit.id = g ? g.id : '';
+  gEdit.tag = g ? String(g.tag||'otro').toLowerCase() : 'restaurante';
+  gEdit.parts = g ? partesDe(g) : [state.user];
+  gEdit.link = g ? String(g.comida_grupo_id||'') : '';
+
+  $('#gT').textContent = g ? 'Editar gasto' : 'Nuevo gasto';
+  $('#gImporte').value = g ? String(num(g.importe)).replace('.', ',') : '';
+  $('#gFecha').value = g ? fkey(g.fecha) : state.hoy;
+  $('#gDesc').value = g ? (g.descripcion||'') : '';
+  $('#gPago').innerHTML = (state.data.usuarios||[]).map(function(u){
+    return '<option value="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</option>';
+  }).join('');
+  $('#gPago').value = g ? (g.pagado_por || state.user) : state.user;
+  $('#gBorrar').style.display = g ? 'block' : 'none';
+
+  $('#gLink').style.display = gEdit.link ? 'block' : 'none';
+  $('#gLink').textContent = gEdit.link
+    ? 'Este gasto viene de una comida registrada. Si borras la comida, el gasto se va con ella.'
+    : '';
+
+  renderGastoChips();
+  $('#shGasto').classList.add('on');
+}
+
+function renderGastoChips(){
+  $('#gTags').innerHTML = (state.data.tags||[]).map(function(t){
+    return '<button class="gchip' + (gEdit.tag===String(t.id).toLowerCase()?' on':'') +
+      '" data-gt="' + esc(t.id) + '">' + esc(t.icono) + ' ' + esc(t.nombre) + '</button>';
+  }).join('');
+  $('#gParts').innerHTML = (state.data.usuarios||[]).map(function(u){
+    return '<button class="gchip' + (gEdit.parts.indexOf(u.username)>=0?' on':'') +
+      '" data-gp="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</button>';
+  }).join('');
+  actualizarSplit();
+}
+function actualizarSplit(){
+  var imp = num($('#gImporte').value), n = gEdit.parts.length;
+  $('#gSplit').textContent = n > 1
+    ? 'Se divide a partes iguales: ' + eur(imp/n) + ' cada uno.'
+    : (n === 1 ? 'Lo asume una sola persona.' : 'Elige al menos a una persona.');
+}
+
+function guardarGasto(){
+  var imp = num($('#gImporte').value);
+  if(imp <= 0){ toast('Pon un importe', true); return; }
+  if(!gEdit.parts.length){ toast('Elige entre quiénes se reparte', true); return; }
+
+  api('saveGasto', { payload: {
+    id: gEdit.id, fecha: $('#gFecha').value || state.hoy, tag: gEdit.tag,
+    descripcion: $('#gDesc').value.trim(), importe: imp,
+    pagado_por: $('#gPago').value, participantes: gEdit.parts.join(','),
+    comida_grupo_id: gEdit.link, creado_por: state.user
+  }}).then(function(){ return cargar(); })
+    .then(function(){
+      $('#shGasto').classList.remove('on');
+      renderGastos();
+      toast(gEdit.id ? 'Gasto actualizado ✓' : 'Gasto guardado ✓');
+    })
+    .catch(function(e){ toast('No se guardó: ' + e.message, true); });
 }
 
 /* ============================================================
@@ -1708,6 +2214,7 @@ function goScreen(id, titulo){
   });
   if(id === 's-soon' && titulo) $('#soonT').textContent = titulo;
   if(id === 's-comidas') renderCatalogo();
+  if(id === 's-gastos')  renderGastos();
   state.screen = id;
   window.scrollTo(0,0);
 }
@@ -1725,11 +2232,21 @@ function pintarPicker(usuarios){
   $('#picker').classList.add('on');
 }
 
+/* El backend puede ser de una versión anterior y no devolver todas las tablas.
+   Normalizamos aquí para que ninguna pantalla reciba undefined. */
+var TABLAS = ['usuarios','objetivos','catalogo','comidas','dias','medidas','gastos','tags'];
+function normalizar(d){
+  d = d || {};
+  TABLAS.forEach(function(k){ if(!Array.isArray(d[k])) d[k] = []; });
+  if(!d.hoy) d.hoy = hoyStr();
+  return d;
+}
+
 function cargar(){
   return api('getBootstrap', { username: state.user }).then(function(d){
-    state.data = d;
-    state.hoy  = d.hoy || hoyStr();
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ u:state.user, d:d })); } catch(e){}
+    state.data = normalizar(d);
+    state.hoy  = state.data.hoy;
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ u:state.user, d:state.data })); } catch(e){}
     render();
   });
 }
@@ -1743,7 +2260,7 @@ function boot(){
   try {
     var c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
     var u = localStorage.getItem(USER_KEY);
-    if(c && u && c.u === u){ state.user = u; state.data = c.d; state.hoy = hoyStr(); render(); }
+    if(c && u && c.u === u){ state.user = u; state.data = normalizar(c.d); state.hoy = hoyStr(); render(); }
   } catch(e){}
 
   /* 2. Usuario desde URL (#/u/nico) o localStorage */
@@ -1757,7 +2274,7 @@ function boot(){
       .then(function(){ $('#splash').classList.add('out'); });
   } else {
     api('getBootstrap', {}).then(function(d){
-      state.data = d; state.hoy = d.hoy || hoyStr();
+      state.data = normalizar(d); state.hoy = state.data.hoy;
       $('#splash').classList.add('out');
       pintarPicker(d.usuarios || []);
     }).catch(function(e){
@@ -1862,6 +2379,13 @@ document.addEventListener('click', function(ev){
     return;
   }
 
+  if((t = ev.target.closest('[data-dt]'))){ draft.tag_gasto = t.dataset.dt; renderFuera(); return; }
+  if((t = ev.target.closest('[data-dp]'))){
+    var dp = t.dataset.dp, di = draft.participantes.indexOf(dp);
+    if(di >= 0) draft.participantes.splice(di,1); else draft.participantes.push(dp);
+    renderFuera(); return;
+  }
+
   if(ev.target.closest('#btnGuardar')){ guardarComida(); return; }
 
   /* ---------- PANTALLA COMIDAS ---------- */
@@ -1921,6 +2445,74 @@ document.addEventListener('click', function(ev){
     return;
   }
 
+  /* ---------- GASTOS ---------- */
+  if((t = ev.target.closest('[data-per]'))){
+    gs.periodo = t.dataset.per;
+    $$('#gsSeg [data-per]').forEach(function(b){ b.classList.toggle('on', b === t); });
+    renderGastos(); return;
+  }
+  if((t = ev.target.closest('[data-mv]'))){
+    if(t.disabled) return;
+    var paso = +t.dataset.mv;
+    if(gs.periodo === 'anio') gs.anio += paso;
+    else {
+      gs.mes += paso;
+      if(gs.mes < 0){ gs.mes = 11; gs.anio--; }
+      if(gs.mes > 11){ gs.mes = 0; gs.anio++; }
+    }
+    renderGastos(); return;
+  }
+  if((t = ev.target.closest('[data-gu]'))){ gs.user = t.dataset.gu; renderGastos(); return; }
+  if((t = ev.target.closest('[data-lt]'))){
+    var lt = t.dataset.lt, li = gs.tags.indexOf(lt);
+    if(li >= 0) gs.tags.splice(li,1); else gs.tags = [lt];
+    renderGastos(); return;
+  }
+  if(ev.target.closest('#gsOrd')){
+    var oi = 0;
+    ORD_GASTO.forEach(function(o,i){ if(o.key === gs.orden) oi = i; });
+    gs.orden = ORD_GASTO[(oi+1) % ORD_GASTO.length].key;
+    renderGastos(); return;
+  }
+  if(ev.target.closest('#gsFilt')){
+    $('#gsFiltTags').innerHTML = (state.data.tags||[]).map(function(tg){
+      return '<button class="gchip' + (gs.tags.indexOf(String(tg.id).toLowerCase())>=0?' on':'') +
+        '" data-gft="' + esc(tg.id) + '">' + esc(tg.icono) + ' ' + esc(tg.nombre) + '</button>';
+    }).join('');
+    $('#shGsFilt').classList.add('on'); return;
+  }
+  if((t = ev.target.closest('[data-gft]'))){
+    var ft = String(t.dataset.gft).toLowerCase(), fi = gs.tags.indexOf(ft);
+    if(fi >= 0) gs.tags.splice(fi,1); else gs.tags.push(ft);
+    t.classList.toggle('on'); renderGastos(); return;
+  }
+  if(ev.target.closest('#gsFiltReset')){
+    gs.tags = []; $('#shGsFilt').classList.remove('on'); renderGastos(); return;
+  }
+  if(ev.target.closest('#gsInfoRep')){
+    toast('Cada gasto se divide a partes iguales entre quienes participan');
+    return;
+  }
+  if(ev.target.closest('#btnNuevoGasto')){
+    if(!state.user){ toast('Elige usuario primero', true); return; }
+    abrirGasto(''); return;
+  }
+  if((t = ev.target.closest('[data-gid2]'))){ abrirGasto(t.dataset.gid2); return; }
+  if((t = ev.target.closest('[data-gt]'))){ gEdit.tag = t.dataset.gt; renderGastoChips(); return; }
+  if((t = ev.target.closest('[data-gp]'))){
+    var gp = t.dataset.gp, pi = gEdit.parts.indexOf(gp);
+    if(pi >= 0) gEdit.parts.splice(pi,1); else gEdit.parts.push(gp);
+    renderGastoChips(); return;
+  }
+  if(ev.target.closest('#gOk')){ guardarGasto(); return; }
+  if(ev.target.closest('#gBorrar')){
+    if(!confirm('¿Eliminar este gasto?')) return;
+    api('deleteGasto', { id:gEdit.id }).then(function(){ return cargar(); })
+      .then(function(){ $('#shGasto').classList.remove('on'); renderGastos(); toast('Gasto eliminado'); })
+      .catch(function(e){ toast('No se pudo borrar: ' + e.message, true); });
+    return;
+  }
+
   /* ---------- SLOTS DE COMIDAS DE HOY ---------- */
   if((t = ev.target.closest('[data-slot]'))){
     if(!state.user){ toast('Elige usuario primero', true); return; }
@@ -1959,6 +2551,7 @@ document.addEventListener('click', function(ev){
 document.addEventListener('input', function(ev){
   var el = ev.target;
   if(el.id === 'catQ'){ cat.q = el.value; renderCatalogo(); return; }
+  if(el.id === 'gImporte'){ actualizarSplit(); return; }
   if(!draft) return;
   if(el.id === 'pickQ'){ pick.q = el.value; renderPickRes(); return; }
   if(el.id === 'inHora'){ draft.hora = el.value; return; }
