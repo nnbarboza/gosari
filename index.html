@@ -119,6 +119,10 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;
   font-size:8px;color:#fff;font-weight:700}
 .meal.done .meal-st{background:var(--green);border-color:var(--green)}
+.meal.done.ambar .meal-st{background:var(--amber);border-color:var(--amber)}
+.meal.done.rojo .meal-st{background:var(--red);border-color:var(--red)}
+.meal.done.ambar .meal-dot{border-color:#F6DFAE;background:#FEF8EC}
+.meal.done.rojo .meal-dot{border-color:#F5C9C9;background:#FDF1F1}
 .meal-line{position:absolute;left:7px;width:2px;background:var(--line);z-index:0}
 .meal-dot{position:relative;flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--card);
   border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:17px}
@@ -133,8 +137,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .meal-k{font-size:13.5px;font-weight:600;white-space:nowrap}
 .meal-k span{font-size:10.5px;font-weight:500;color:var(--ink2);margin-left:2px}
 .meal-t{display:flex;align-items:center;gap:7px}
-.meal-h{font-size:11px;font-weight:600;color:var(--ink3);font-variant-numeric:tabular-nums;
-  background:#F2F4F6;border-radius:5px;padding:1px 5px}
+.meal-h{font-size:11px;font-weight:500;color:var(--ink3);font-variant-numeric:tabular-nums}
 .meal-plus{width:29px;height:29px;border-radius:50%;border:1.5px solid #BFEBCD;color:var(--green-d);
   display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:400;
   background:var(--green-xl);flex-shrink:0}
@@ -148,12 +151,14 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .wk{width:100%;border-collapse:collapse}
 .wk th{font-size:10.5px;font-weight:500;color:var(--ink3);padding:0 0 9px;text-align:center}
 .wk th .h-d{display:block;margin-bottom:4px}
-.wk th .h-s{display:block;font-size:9.5px;font-weight:700;border-radius:4px;padding:1px 0;
-  min-width:20px;margin:0 auto;font-variant-numeric:tabular-nums}
-.wk th .h-s.ok{background:var(--green-l);color:#2F6B41}
-.wk th .h-s.mid{background:#FEF3C7;color:#8A6212}
-.wk th .h-s.bad{background:#FEE2E2;color:#A03030}
-.wk th .h-s.nada{color:#D0D5DD}
+.wk th .h-d.hoy{color:var(--ink);font-weight:700}
+.wk th .h-s{display:flex;align-items:center;justify-content:center;width:21px;height:21px;
+  border-radius:50%;border:1.2px solid var(--line2);margin:0 auto;font-size:9px;font-weight:700;
+  color:var(--ink3);font-variant-numeric:tabular-nums}
+.wk th .h-s.ok{border-color:var(--green);color:var(--green-d)}
+.wk th .h-s.mid{border-color:var(--amber);color:#8A6212}
+.wk th .h-s.bad{border-color:var(--red);color:#A03030}
+.wk th .h-s.nada{border-style:dashed;border-color:#E4E7EC}
 .wk th.h-g{text-align:left;padding-left:2px}
 .wk th.h-c,.wk th.h-f{font-size:10px;white-space:nowrap;padding-left:5px}
 .wk td{padding:5px 0;vertical-align:middle}
@@ -316,6 +321,43 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
 .vacio{text-align:center;padding:22px 14px;color:var(--ink2);font-size:13px;line-height:1.5;
   border:1.5px dashed var(--line2);border-radius:var(--r);margin-bottom:9px}
+
+/* ---------- NAVEGADOR DE PERIODO EN CARDS ---------- */
+.navd{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.navd-a{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--ink2);flex-shrink:0}
+.navd-a:disabled{opacity:.25}
+.navd-t{font-size:12px;font-weight:600;color:var(--ink2);min-width:88px;text-align:center;
+  white-space:nowrap}
+.navd-s{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--green-d);background:var(--green-xl);margin-left:5px;flex-shrink:0}
+
+/* ---------- GRÁFICOS ---------- */
+.ch-t{font-size:12.5px;font-weight:600;color:var(--ink);margin:0 0 10px}
+.ch-n{font-size:11.5px;color:var(--ink2);line-height:1.45;margin-top:9px}
+.lg2{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px}
+.lg2-i{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink2)}
+.lg2-i i{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.lg2-i b{color:var(--ink);font-weight:600}
+.kpis{display:flex;gap:8px;margin-bottom:18px}
+.kpi{flex:1;background:#F7F8F9;border-radius:12px;padding:11px 8px;text-align:center;min-width:0}
+.kpi b{display:block;font-size:17px;font-weight:700;letter-spacing:-.5px}
+.kpi span{display:block;font-size:10px;color:var(--ink2);margin-top:3px;line-height:1.3}
+.pie-row{display:flex;align-items:center;gap:10px}
+.pie-w{position:relative;width:140px;height:140px;flex-shrink:0}
+.pie-w svg{transform:rotate(-90deg);display:block}
+.pie-c{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
+.pie-c b{font-size:13px;font-weight:700;white-space:pre-line;line-height:1.2}
+.pie-lg{flex:1;min-width:0}
+.pie-li{display:flex;align-items:center;gap:7px;padding:3.5px 0;font-size:11.5px}
+.pie-li i{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.pie-li .pl-n{flex:1;min-width:0;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pie-li .pl-v{font-weight:600;font-variant-numeric:tabular-nums}
+.pie-li .pl-v.ex{color:var(--red)}
+.mrow{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12px}
+.mrow+.mrow{border-top:1px solid var(--line)}
+.mrow-l{flex:1;min-width:0;display:flex;align-items:center;gap:5px;color:var(--ink2)}
+.mrow-v{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
 
 /* ---------- PANTALLA COMIDAS (catálogo) ---------- */
 .cat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:12px 0 4px}
@@ -563,21 +605,36 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div class="card">
     <div class="card-hd">
       <div class="card-t">Resumen de hoy</div>
-      <button class="card-link" data-go="s-soon">Ver detalle ›</button>
+      <button class="card-link" id="btnDetMacros">Ver detalle ›</button>
     </div>
     <div class="macros" id="macros"></div>
   </div>
 
   <div class="card">
-    <div class="card-hd"><div class="card-t">Comidas de hoy</div></div>
+    <div class="card-hd">
+      <div class="card-t">Comidas</div>
+      <div class="navd">
+        <button class="navd-a" data-dia="-1">‹</button>
+        <span class="navd-t" id="mealsDia">Hoy</span>
+        <button class="navd-a" data-dia="1" id="mealsNext">›</button>
+      </div>
+    </div>
     <div class="meals" id="meals"></div>
     <button class="btn-add" id="btnAdd"><span style="font-size:17px;font-weight:400">＋</span> Añadir comida o snack</button>
   </div>
 
   <div class="card">
     <div class="card-hd">
-      <div class="card-t">Tu semana de un vistazo</div>
-      <button class="card-link" data-go="s-soon">Ver detalle ›</button>
+      <div class="card-t">Tu semana</div>
+      <div class="navd">
+        <button class="navd-a" data-sem="-1">‹</button>
+        <span class="navd-t" id="wkPer">Esta semana</span>
+        <button class="navd-a" data-sem="1" id="wkNext">›</button>
+        <button class="navd-s" id="btnStats" title="Estadísticas">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2" stroke-linecap="round"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
+        </button>
+      </div>
     </div>
     <table class="wk" id="wk"></table>
   </div>
@@ -795,6 +852,20 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
 </div></section>
 
+<!-- ================= SHEET: DETALLE MACROS ================= -->
+<div class="sheet-bg" id="shMacros"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3>Consumo · <span id="dmT"></span></h3>
+    <button class="sheet-x" data-close="shMacros">✕</button></div></div>
+  <div class="sheet-b" id="dmBody"></div>
+</div></div>
+
+<!-- ================= SHEET: STATS DE GRUPOS ================= -->
+<div class="sheet-bg" id="shStats"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3>Grupos alimentarios</h3>
+    <button class="sheet-x" data-close="shStats">✕</button></div></div>
+  <div class="sheet-b" id="sgBody"></div>
+</div></div>
+
 <!-- ================= SHEET: GASTO ================= -->
 <div class="sheet-bg" id="shGasto"><div class="sheet">
   <div class="sheet-h"><div class="sheet-h1"><h3 id="gT">Nuevo gasto</h3>
@@ -913,7 +984,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v0.5.0';
+var APP_VERSION = 'v0.7.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -934,13 +1005,14 @@ function icono(nombre, emoji, px){
 
 /* --- Grupos alimentarios: objetivo semanal en días --- */
 var GRUPOS = [
-  { key:'verduras',       label:'Verduras',             emoji:'🥦', ico:'grp_verduras',       obj:7, tipo:'pos' },
-  { key:'fruta',          label:'Fruta',                emoji:'🍎', ico:'grp_fruta',          obj:7, tipo:'pos' },
-  { key:'legumbres',      label:'Legumbres',            emoji:'🫘', ico:'grp_legumbres',      obj:4, tipo:'pos' },
-  { key:'pescado',        label:'Pescado',              emoji:'🐟', ico:'grp_pescado',        obj:3, tipo:'pos' },
-  { key:'carnes_rojas',   label:'Carnes rojas',         emoji:'🥩', ico:'grp_carnes_rojas',   obj:3, tipo:'lim', pen:3 },
-  { key:'ultraprocesado', label:'Ultraprocesados',      emoji:'🚫', ico:'grp_ultraprocesado', obj:2, tipo:'lim', pen:5 },
-  { key:'permitido',      label:'Permitido',            emoji:'🎉', ico:'grp_permitido',      obj:1, tipo:'lim', pen:3 }
+  { key:'verduras',       label:'Verduras',             emoji:'🥦', ico:'grp_verduras',       obj:7, tipo:'pos', color:'#22C55E' },
+  { key:'fruta',          label:'Fruta',                emoji:'🍎', ico:'grp_fruta',          obj:7, tipo:'pos', color:'#84CC16' },
+  { key:'legumbres',      label:'Legumbres',            emoji:'🫘', ico:'grp_legumbres',      obj:4, tipo:'pos', color:'#A3A635' },
+  { key:'pescado',        label:'Pescado',              emoji:'🐟', ico:'grp_pescado',        obj:3, tipo:'pos', color:'#38BDF8' },
+  { key:'carnes_rojas',   label:'Carnes rojas',         emoji:'🥩', ico:'grp_carnes_rojas',   obj:3, tipo:'lim', pen:3, color:'#A78BFA' },
+  { key:'ultraprocesado', label:'Ultraprocesados',      emoji:'🚫', ico:'grp_ultraprocesado', obj:2, tipo:'lim', pen:5, color:'#F59E0B' },
+  { key:'capricho',       label:'Capricho',             emoji:'🍬', ico:'grp_capricho',       obj:3, tipo:'lim', pen:2, color:'#FB923C' },
+  { key:'permitido',      label:'Permitido',            emoji:'🎉', ico:'grp_permitido',      obj:1, tipo:'lim', pen:4, color:'#EF4444' }
 ];
 
 /* Nombres antiguos → nuevos, para que los registros ya guardados se sigan leyendo */
@@ -986,9 +1058,9 @@ var CATS_ORDEN = Object.keys(CATS).sort(function(a,b){ return CATS[a].orden - CA
 /* --- Los 5 huecos fijos del día. Siempre visibles en Inicio. --- */
 var TIPOS = [
   { key:'desayuno', label:'Desayuno', ico:'slot_desayuno', emoji:'☀️',  desde:0,  hora:'08:00' },
-  { key:'snack1',   label:'Snack',    ico:'slot_snack',    emoji:'🥨',  desde:10, hora:'11:00' },
+  { key:'snack1',   label:'Hamaiketako', ico:'slot_hamaiketako', emoji:'🥨', desde:10, hora:'11:00' },
   { key:'comida',   label:'Comida',   ico:'slot_comida',   emoji:'🍽️', desde:12, hora:'14:00' },
-  { key:'snack2',   label:'Snack',    ico:'slot_snack',    emoji:'🥨',  desde:16, hora:'17:30' },
+  { key:'snack2',   label:'Merienda',    ico:'slot_merienda',    emoji:'🍪', desde:16, hora:'17:30' },
   { key:'cena',     label:'Cena',     ico:'slot_cena',     emoji:'🌙',  desde:20, hora:'20:30' }
 ];
 function tipoDef(k){
@@ -999,7 +1071,7 @@ function tipoDef(k){
   return null;
 }
 
-var state = { user:null, data:null, hoy:null, screen:'s-home' };
+var state = { user:null, data:null, hoy:null, screen:'s-home', diaVer:null, semOff:0 };
 
 /* Borrador de la comida que se está componiendo */
 var draft = null;
@@ -1010,7 +1082,7 @@ function nuevoDraft(tipo){
     for(var i=0;i<TIPOS.length;i++) if(h >= TIPOS[i].desde) tipo = TIPOS[i].key;
   }
   return {
-    grupo_id:'', tipo_comida:tipo, hora:horaAhora(), items:[],
+    grupo_id:'', fecha:(state.diaVer || state.hoy), tipo_comida:tipo, hora:horaAhora(), items:[],
     fuera:false, gasto:'', pagado_por:'', tag_gasto:'restaurante', participantes:[], foto:''
   };
 }
@@ -1208,6 +1280,7 @@ function render(){
   if(!state.data) return;
   var u = (state.data.usuarios||[]).filter(function(x){ return String(x.username)===state.user; })[0];
   $('#saludo').innerHTML = '¡Hola, ' + esc(u ? u.nombre : state.user) + '! 👋';
+  if(!state.diaVer || state.diaVer > state.hoy) state.diaVer = state.hoy;
   renderEntreno();
   renderResumen();
   renderComidas();
@@ -1266,39 +1339,54 @@ function gruposDelDia(fecha){
 }
 function tipoKey(v){ var t = tipoDef(v); return t ? t.key : 'comida'; }
 
+/* Semáforo del check: rojo si hay permitido, ámbar si ultraprocesado
+   o capricho, verde si está limpio. */
+function semaforo(gruposDia){
+  if(gruposDia.indexOf('permitido') >= 0) return 'rojo';
+  if(gruposDia.indexOf('ultraprocesado') >= 0 || gruposDia.indexOf('capricho') >= 0) return 'ambar';
+  return 'verde';
+}
+
+var DIAS_LARGO = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+function etiquetaDia(f){
+  if(f === state.hoy) return 'Hoy';
+  if(f === masDias(state.hoy, -1)) return 'Ayer';
+  var p = f.split('-');
+  var d = new Date(+p[0], +p[1]-1, +p[2]);
+  return DIAS_LARGO[(d.getDay()+6)%7] + ' ' + (+p[2]) + ' ' + MESES_C[+p[1]-1];
+}
+var MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
 /* Los 5 huecos del día, siempre visibles: hechos con check, pendientes con + */
 function renderComidas(){
-  var grupos = gruposDelDia(state.hoy), el = $('#meals');
+  var f = state.diaVer || state.hoy;
+  var grupos = gruposDelDia(f), el = $('#meals');
+
+  $('#mealsDia').textContent = etiquetaDia(f);
+  $('#mealsNext').disabled = f >= state.hoy;
 
   var html = TIPOS.map(function(t){
     var g = grupos.filter(function(x){ return x.tipo === t.key; });
     var hecho = g.length > 0;
-    var kcal = 0, nombres = [];
-    g.forEach(function(x){ x.items.forEach(function(i){ kcal += num(i.kcal); nombres.push(i.nombre); }); });
+    var gr = [];
+    g.forEach(function(x){ x.items.forEach(function(i){
+      gruposDe(i.grupos).forEach(function(k){ if(gr.indexOf(k) < 0) gr.push(k); });
+    }); });
 
     var hora = hecho ? String(g[0].hora||'').slice(0,5) : '';
-    var der = hecho
-      ? '<span class="meal-k">' + fmt(kcal) + '<span>kcal</span></span>' +
-        '<span class="meal-plus edit">✏️</span>'
-      : '<span class="meal-plus">＋</span>';
+    var sem = hecho ? semaforo(gr) : '';
 
-    return '<button class="meal ' + (hecho ? 'done' : 'todo') + '" ' +
+    return '<button class="meal ' + (hecho ? 'done ' + sem : 'todo') + '" ' +
         'data-slot="' + t.key + '" data-gid="' + esc(hecho ? g[0].grupo_id : '') + '">' +
       '<span class="meal-st">' + (hecho ? '✓' : '') + '</span>' +
       '<span class="meal-dot">' + icono(t.ico, t.emoji, 19) + '</span>' +
-      '<span class="meal-body">' +
-        '<span class="meal-t">' + esc(t.label) +
-          (hora ? '<span class="meal-h">' + esc(hora) + '</span>' : '') + '</span>' +
-        (hecho ? '<span class="meal-d">' + esc(nombres.join(' · ')) + '</span>' : '') +
+      '<span class="meal-body"><span class="meal-t">' + esc(t.label) + '</span></span>' +
+      '<span class="meal-r">' +
+        (hora ? '<span class="meal-h">' + esc(hora) + '</span>' : '') +
+        '<span class="meal-plus' + (hecho ? ' edit' : '') + '">' + (hecho ? '✏️' : '＋') + '</span>' +
       '</span>' +
-      '<span class="meal-r">' + der + '</span>' +
     '</button>';
   }).join('');
-
-  /* comidas extra fuera de los 5 huecos (por si alguna vez hay dos cenas) */
-  var usados = {};
-  TIPOS.forEach(function(t){ usados[t.key] = 0; });
-  grupos.forEach(function(g){ usados[g.tipo] = (usados[g.tipo]||0) + 1; });
 
   el.innerHTML = html;
 
@@ -1429,9 +1517,23 @@ function abrirAcciones(id){
 }
 
 var DIAS_L = ['L','M','X','J','V','S','D'];
+
+function semanaFechas(){
+  var lunes = masDias(lunesDe(state.hoy), state.semOff * 7);
+  var f = []; for(var i=0;i<7;i++) f.push(masDias(lunes, i));
+  return f;
+}
+function etiquetaSemana(fechas){
+  if(state.semOff === 0) return 'Esta semana';
+  if(state.semOff === -1) return 'Semana pasada';
+  var a = fechas[0].split('-'), b = fechas[6].split('-');
+  return (+a[2]) + ' ' + MESES_C[+a[1]-1] + ' – ' + (+b[2]) + ' ' + MESES_C[+b[1]-1];
+}
+
 function renderSemana(){
-  var lunes = lunesDe(state.hoy);
-  var fechas = []; for(var i=0;i<7;i++) fechas.push(masDias(lunes, i));
+  var fechas = semanaFechas();
+  $('#wkPer').textContent = etiquetaSemana(fechas);
+  $('#wkNext').disabled = state.semOff >= 0;
 
   /* grupos presentes por día */
   var porDia = fechas.map(function(f){
@@ -1444,8 +1546,9 @@ function renderSemana(){
       var f = fechas[i];
       var sc = f > state.hoy ? null : scoreDe(f);
       var cls = sc === null ? 'nada' : (sc >= 70 ? 'ok' : (sc >= 45 ? 'mid' : 'bad'));
-      return '<th><span class="h-d">' + d + '</span>' +
-        '<span class="h-s ' + cls + '">' + (sc === null ? '·' : sc) + '</span></th>';
+      var hoyCls = f === state.hoy ? ' hoy' : '';
+      return '<th><span class="h-d' + hoyCls + '">' + d + '</span>' +
+        '<span class="h-s ' + cls + '">' + (sc === null ? '' : sc) + '</span></th>';
     }).join('') +
     '<th class="h-c wk-sep">Consumido</th></tr></thead>';
 
@@ -1476,7 +1579,12 @@ function renderSemana(){
    ============================================================ */
 function abrirAdd(tipo){
   draft = nuevoDraft(tipo);
-  $('#addTitulo').textContent = 'Añadir comida';
+  if(draft.fecha !== state.hoy){
+    var td = tipoDef(draft.tipo_comida);
+    if(td) draft.hora = td.hora;
+  }
+  $('#addTitulo').textContent = draft.fecha === state.hoy
+    ? 'Añadir comida' : 'Añadir · ' + etiquetaDia(draft.fecha).toLowerCase();
   renderAdd();
   goScreen('s-add');
 }
@@ -1851,6 +1959,7 @@ function abrirComidaExistente(gid){
   var cab = filas[0];
   draft = {
     grupo_id: gid,
+    fecha: fkey(cab.fecha) || state.hoy,
     tipo_comida: tipoKey(cab.tipo_comida),
     hora: String(cab.hora||'').slice(0,5) || horaAhora(),
     fuera: truthy(cab.fuera_de_casa),
@@ -1890,7 +1999,7 @@ function guardarComida(){
   $('#busy').classList.add('on');
 
   api('saveComidaGrupo', { payload: {
-    grupo_id: draft.grupo_id, username: state.user, fecha: state.hoy,
+    grupo_id: draft.grupo_id, username: state.user, fecha: (draft.fecha || state.hoy),
     hora: draft.hora, tipo_comida: draft.tipo_comida,
     fuera_de_casa: draft.fuera, gasto: draft.fuera ? num(draft.gasto) : 0,
     pagado_por: draft.fuera ? (draft.pagado_por || state.user) : '',
@@ -1909,6 +2018,206 @@ function guardarComida(){
     btn.disabled = false;
     toast('No se guardó: ' + e.message, true);
   });
+}
+
+/* ============================================================
+   GRÁFICOS (SVG a mano, sin librerías)
+   ============================================================ */
+
+/**
+ * Columnas apiladas.
+ * cols   = [{ label, valores:{serieKey: n}, extra? }]
+ * series = [{ key, label, color }]
+ * opts   = { alto, unidad, objetivo }
+ */
+function barrasApiladas(cols, series, opts){
+  opts = opts || {};
+  var W = 320, H = opts.alto || 170, padB = 22, padT = 10, padL = 4;
+  var n = cols.length || 1;
+  var bw = Math.min(30, (W - padL*2) / n * 0.62);
+  var paso = (W - padL*2) / n;
+
+  var totales = cols.map(function(c){
+    return series.reduce(function(a,s){ return a + num(c.valores[s.key]); }, 0);
+  });
+  var max = Math.max.apply(null, totales.concat([num(opts.objetivo)]));
+  if(!max) max = 1;
+  var esc = (H - padT - padB) / max;
+
+  var barras = cols.map(function(c, i){
+    var x = padL + paso*i + (paso - bw)/2;
+    var y = H - padB;
+    var seg = series.map(function(s){
+      var v = num(c.valores[s.key]);
+      if(v <= 0) return '';
+      var h = v * esc;
+      y -= h;
+      return '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) +
+        '" height="' + h.toFixed(1) + '" fill="' + s.color + '"/>';
+    }).join('');
+    var vacia = totales[i] <= 0
+      ? '<rect x="' + x.toFixed(1) + '" y="' + (H-padB-3) + '" width="' + bw.toFixed(1) +
+        '" height="3" rx="1.5" fill="#EDEFF1"/>' : '';
+    var lbl = '<text x="' + (x + bw/2).toFixed(1) + '" y="' + (H - padB + 13) +
+      '" text-anchor="middle" font-size="9.5" fill="#98A2B3">' + esc_(c.label) + '</text>';
+    return seg + vacia + lbl;
+  }).join('');
+
+  var linea = '';
+  if(num(opts.objetivo) > 0){
+    var yo = H - padB - num(opts.objetivo)*esc;
+    linea = '<line x1="0" y1="' + yo.toFixed(1) + '" x2="' + W + '" y2="' + yo.toFixed(1) +
+      '" stroke="#98A2B3" stroke-width="1" stroke-dasharray="3 3"/>' +
+      '<text x="' + (W-2) + '" y="' + (yo-4).toFixed(1) + '" text-anchor="end" font-size="8.5" ' +
+      'fill="#98A2B3">objetivo</text>';
+  }
+
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" preserveAspectRatio="xMidYMid meet">' +
+    '<line x1="0" y1="' + (H-padB) + '" x2="' + W + '" y2="' + (H-padB) + '" stroke="#E9ECEF"/>' +
+    linea + barras + '</svg>';
+}
+function esc_(s){ return String(s).replace(/[&<>]/g, function(m){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m]; }); }
+
+/** Leyenda compartida por los gráficos */
+function leyenda(series, valores, sufijo){
+  return '<div class="lg2">' + series.map(function(s){
+    var v = valores ? valores[s.key] : null;
+    return '<span class="lg2-i"><i style="background:' + s.color + '"></i>' + esc(s.label) +
+      (v !== null && v !== undefined ? ' <b>' + fmt(v) + (sufijo||'') + '</b>' : '') + '</span>';
+  }).join('') + '</div>';
+}
+
+/** Donut simple a partir de [{label, valor, color}] */
+function pastel(datos, centroTx){
+  var total = datos.reduce(function(a,d){ return a + num(d.valor); }, 0);
+  var R = 54, W = 24, C = 2*Math.PI*R, acum = 0;
+  var segs = total
+    ? datos.filter(function(d){ return num(d.valor) > 0; }).map(function(d){
+        var frac = num(d.valor)/total;
+        var s = '<circle cx="70" cy="70" r="' + R + '" fill="none" stroke="' + d.color +
+          '" stroke-width="' + W + '" stroke-dasharray="' + (frac*C).toFixed(2) + ' ' + C.toFixed(2) +
+          '" stroke-dashoffset="' + (-acum*C).toFixed(2) + '"/>';
+        acum += frac; return s;
+      }).join('')
+    : '<circle cx="70" cy="70" r="' + R + '" fill="none" stroke="#EFF1F3" stroke-width="' + W + '"/>';
+  return '<div class="pie-w"><svg viewBox="0 0 140 140" width="140" height="140">' + segs + '</svg>' +
+    '<div class="pie-c"><b>' + esc(centroTx||fmt(total)) + '</b></div></div>';
+}
+
+/* ---------- Modal: detalle de macros de la semana ---------- */
+var MAC_SERIES = [
+  { key:'proteinas_g',     label:'Proteínas',     color:'#22C55E' },
+  { key:'carbohidratos_g', label:'Carbohidratos', color:'#84CC16' },
+  { key:'grasas_g',        label:'Grasas',        color:'#FBBF24' }
+];
+
+function abrirDetalleMacros(){
+  var fechas = semanaFechas();
+  var obj = objetivoDe(state.hoy);
+
+  /* kcal aportadas por cada macro: 4/4/9 */
+  var cols = fechas.map(function(f, i){
+    var t = totalesDe(comidasDe(f));
+    return { label:DIAS_L[i], valores:{
+      proteinas_g: num(t.proteinas_g)*4,
+      carbohidratos_g: num(t.carbohidratos_g)*4,
+      grasas_g: num(t.grasas_g)*9
+    }, kcal:num(t.kcal) };
+  });
+
+  var dias = cols.filter(function(c){ return c.kcal > 0; });
+  var media = dias.length ? dias.reduce(function(a,c){ return a + c.kcal; }, 0) / dias.length : 0;
+
+  var suma = { proteinas_g:0, carbohidratos_g:0, grasas_g:0, fibra_g:0 };
+  fechas.forEach(function(f){
+    var t = totalesDe(comidasDe(f));
+    Object.keys(suma).forEach(function(k){ suma[k] += num(t[k]); });
+  });
+
+  $('#dmT').textContent = etiquetaSemana(fechas);
+  $('#dmBody').innerHTML =
+    '<div class="kpis">' +
+      '<div class="kpi"><b>' + fmt(media) + '</b><span>kcal/día de media</span></div>' +
+      '<div class="kpi"><b>' + fmt(obj.kcal) + '</b><span>objetivo diario</span></div>' +
+      '<div class="kpi"><b>' + dias.length + '/7</b><span>días registrados</span></div>' +
+    '</div>' +
+    '<div class="ch-t">Calorías por día, repartidas por macro</div>' +
+    barrasApiladas(cols, MAC_SERIES, { objetivo:num(obj.kcal), alto:180 }) +
+    leyenda(MAC_SERIES, null) +
+    '<div class="ch-n">Cada macro se convierte a calorías: proteínas y carbohidratos ×4, grasas ×9. ' +
+    'Por eso la altura de la barra es el total de kcal del día.</div>' +
+    '<div class="ch-t" style="margin-top:18px">Media diaria vs objetivo</div>' +
+    MACROS.map(function(m){
+      var med = dias.length ? suma[m.key] / dias.length : 0;
+      if(m.key === 'kcal') med = media;
+      var o = num(obj[m.objKey]);
+      var r = o ? Math.min(1, med/o) : 0;
+      return '<div class="mrow"><span class="mrow-l">' + icono(m.ico, m.emoji, 13) + ' ' + esc(m.label) + '</span>' +
+        '<span class="mrow-v">' + fmt(med) + ' / ' + fmt(o) + (m.unidad||'') + '</span>' +
+        '<span class="bar" style="flex-basis:80px"><i style="width:' + (r*100).toFixed(0) + '%"></i></span></div>';
+    }).join('');
+
+  $('#shMacros').classList.add('on');
+}
+
+/* ---------- Modal: estadísticas de grupos ---------- */
+function abrirStatsGrupos(){
+  var fechas = semanaFechas();
+
+  /* pastel: días en que aparece cada grupo esta semana */
+  var datos = GRUPOS.map(function(g){
+    var d = fechas.filter(function(f){
+      return gruposDeDia(comidasDe(f)).indexOf(g.key) >= 0;
+    }).length;
+    return { label:g.label, valor:d, color:g.color, key:g.key, obj:g.obj, tipo:g.tipo, ico:g.ico, emoji:g.emoji };
+  });
+  var totalDias = datos.reduce(function(a,d){ return a + d.valor; }, 0);
+
+  /* columnas apiladas: últimos 6 meses */
+  var hoyP = state.hoy.split('-');
+  var meses = [];
+  for(var i=5;i>=0;i--){
+    var m = +hoyP[1]-1-i, a = +hoyP[0];
+    while(m < 0){ m += 12; a--; }
+    meses.push({ anio:a, mes:m });
+  }
+  var series = GRUPOS.map(function(g){ return { key:g.key, label:g.label, color:g.color }; });
+  var cols = meses.map(function(mm){
+    var pre = mm.anio + '-' + String(mm.mes+1).padStart(2,'0');
+    var dias = {};
+    (state.data.comidas||[]).forEach(function(c){
+      var f = fkey(c.fecha);
+      if(f.indexOf(pre) !== 0) return;
+      gruposDe(c.grupos).forEach(function(k){
+        if(!dias[k]) dias[k] = {};
+        dias[k][f] = 1;
+      });
+    });
+    var val = {};
+    GRUPOS.forEach(function(g){ val[g.key] = dias[g.key] ? Object.keys(dias[g.key]).length : 0; });
+    return { label:MESES_C[mm.mes], valores:val };
+  });
+
+  $('#sgBody').innerHTML =
+    '<div class="ch-t">Grupos de ' + etiquetaSemana(fechas).toLowerCase() + '</div>' +
+    '<div class="pie-row">' +
+      pastel(datos, totalDias ? totalDias + '\\ndías' : '—') +
+      '<div class="pie-lg">' + datos.map(function(d){
+        var mal = d.tipo === 'lim' && d.valor > d.obj;
+        return '<div class="pie-li"><i style="background:' + d.color + '"></i>' +
+          '<span class="pl-n">' + esc(d.label) + '</span>' +
+          '<span class="pl-v' + (mal ? ' ex' : '') + '">' + d.valor + '/' + d.obj + '</span></div>';
+      }).join('') + '</div>' +
+    '</div>' +
+    '<div class="ch-n">Cuenta días, no raciones: un grupo suma 1 aunque lo comas tres veces ese día.</div>' +
+    '<div class="ch-t" style="margin-top:20px">Últimos 6 meses</div>' +
+    barrasApiladas(cols, series, { alto:180 }) +
+    leyenda(series, null) +
+    '<div class="ch-n">Días del mes en los que aparece cada grupo. Las barras altas ' +
+    'son meses con más variedad registrada.</div>';
+
+  $('#shStats').classList.add('on');
 }
 
 /* ============================================================
@@ -2531,12 +2840,27 @@ document.addEventListener('click', function(ev){
     return;
   }
 
+  /* ---------- NAVEGACIÓN DE DÍA Y SEMANA ---------- */
+  if((t = ev.target.closest('[data-dia]'))){
+    if(t.disabled) return;
+    state.diaVer = masDias(state.diaVer || state.hoy, +t.dataset.dia);
+    if(state.diaVer > state.hoy) state.diaVer = state.hoy;
+    renderComidas(); return;
+  }
+  if((t = ev.target.closest('[data-sem]'))){
+    if(t.disabled) return;
+    state.semOff = Math.min(0, state.semOff + (+t.dataset.sem));
+    renderSemana(); return;
+  }
+  if(ev.target.closest('#btnStats')){ abrirStatsGrupos(); return; }
+  if(ev.target.closest('#btnDetMacros')){ abrirDetalleMacros(); return; }
+
   /* ---------- SLOTS DE COMIDAS DE HOY ---------- */
   if((t = ev.target.closest('[data-slot]'))){
     if(!state.user){ toast('Elige usuario primero', true); return; }
     var gid = t.dataset.gid;
     if(gid) abrirComidaExistente(gid);
-    else { draft = nuevoDraft(t.dataset.slot); renderAdd(); goScreen('s-add'); }
+    else abrirAdd(t.dataset.slot);
     return;
   }
 
