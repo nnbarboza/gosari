@@ -81,22 +81,34 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .info-i{width:15px;height:15px;border-radius:50%;border:1.3px solid var(--ink3);color:var(--ink3);
   font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-style:italic}
 
-/* ---------- SCORING ---------- */
-.score-row{display:flex;align-items:center;gap:6px}
-.score-ring{position:relative;width:132px;height:132px;flex-shrink:0}
-.score-ring svg{transform:rotate(-90deg);display:block}
-.score-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-size:44px;font-weight:700;letter-spacing:-2px}
-.score-side{flex:1;display:flex;align-items:center;gap:0;min-width:0}
-.bubble{background:#F4F5F6;border-radius:14px;padding:11px 13px;font-size:13px;line-height:1.4;
-  color:var(--ink2);position:relative;flex:1;min-width:0}
-.bubble b{color:var(--ink);font-weight:600;display:block}
-.bubble .hl{color:var(--green-d);font-weight:700}
-.bubble::after{content:'';position:absolute;right:-6px;top:50%;margin-top:-6px;width:12px;height:12px;
-  background:#F4F5F6;transform:rotate(45deg)}
-.mascota{width:82px;height:96px;flex-shrink:0;display:flex;align-items:flex-end;justify-content:center;
-  font-size:52px;line-height:1;margin-left:6px}
-.mascota img{width:100%;height:100%;object-fit:contain}
+/* ---------- SCORING (dos anillos) ---------- */
+.rings2{display:flex;align-items:center;gap:8px}
+.rg{flex-shrink:0;text-align:center}
+.rg-c{position:relative}
+.rg-c svg{display:block;transform:rotate(-90deg)}
+.rg-n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-weight:700;letter-spacing:-1.5px}
+.rg-l{font-size:10.5px;font-weight:600;color:var(--ink3);margin-top:5px;letter-spacing:.2px}
+.rg-big .rg-c{width:104px;height:104px}
+.rg-big .rg-n{font-size:34px}
+.rg-sm .rg-c{width:78px;height:78px}
+.rg-sm .rg-n{font-size:24px;letter-spacing:-1px}
+.mascota{flex:1;min-width:0;height:96px;display:flex;align-items:flex-end;justify-content:center;
+  font-size:48px;line-height:1}
+.mascota img{max-width:100%;max-height:100%;width:auto;object-fit:contain}
+.bubble2{background:#F4F5F6;border-radius:13px;padding:11px 13px;font-size:13px;line-height:1.4;
+  color:var(--ink2);margin-top:14px}
+.bubble2 b{color:var(--ink);font-weight:600;display:block}
+.bubble2 .hl{color:var(--green-d);font-weight:700}
+.fact{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.fact-c{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 10px;
+  font-size:11.5px;font-weight:600;white-space:nowrap}
+.fact-c.si{background:var(--green-xl);color:#2F6B41}
+.fact-c.no{background:#FFF6E8;color:#8A6212}
+.fact-c i{font-style:normal;font-size:10px}
+.semmsg{font-size:12px;color:var(--ink2);line-height:1.4;margin-top:11px;padding-top:10px;
+  border-top:1px solid var(--line);display:flex;gap:6px;align-items:flex-start}
+.semmsg::before{content:'📅';flex-shrink:0}
 
 /* ---------- MACROS ---------- */
 .macros{display:flex;gap:0}
@@ -590,21 +602,32 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <div class="card-hd">
       <div class="card-t">Tu scoring <span class="info-i" id="infoScore">i</span></div>
     </div>
-    <div class="score-row">
-      <div class="score-ring">
-        <svg width="132" height="132" viewBox="0 0 132 132">
-          <circle cx="66" cy="66" r="57" fill="none" stroke="#F0F1F2" stroke-width="11"/>
-          <circle id="ringFg" cx="66" cy="66" r="57" fill="none" stroke="#22C55E" stroke-width="11"
-                  stroke-linecap="round" stroke-dasharray="358" stroke-dashoffset="358"
-                  style="transition:stroke-dashoffset .8s ease, stroke .4s"/>
-        </svg>
-        <div class="score-num" id="scoreNum">–</div>
+    <div class="rings2">
+      <div class="rg rg-big">
+        <div class="rg-c">
+          <svg viewBox="0 0 104 104"><circle cx="52" cy="52" r="45" fill="none" stroke="#F0F1F2" stroke-width="9"/>
+            <circle id="ringDia" cx="52" cy="52" r="45" fill="none" stroke="#22C55E" stroke-width="9"
+              stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="283"
+              style="transition:stroke-dashoffset .8s ease, stroke .4s"/></svg>
+          <div class="rg-n" id="scoreNum">–</div>
+        </div>
+        <div class="rg-l">Hoy</div>
       </div>
-      <div class="score-side">
-        <div class="bubble" id="scoreMsg"><b>Cargando…</b></div>
-        <div class="mascota" id="mascota">🥑</div>
+      <div class="rg rg-sm">
+        <div class="rg-c">
+          <svg viewBox="0 0 78 78"><circle cx="39" cy="39" r="33" fill="none" stroke="#F0F1F2" stroke-width="7"/>
+            <circle id="ringSem" cx="39" cy="39" r="33" fill="none" stroke="#16A34A" stroke-width="7"
+              stroke-linecap="round" stroke-dasharray="207" stroke-dashoffset="207"
+              style="transition:stroke-dashoffset .8s ease, stroke .4s"/></svg>
+          <div class="rg-n" id="scoreSem">–</div>
+        </div>
+        <div class="rg-l">7 días</div>
       </div>
+      <div class="mascota" id="mascota">🥑</div>
     </div>
+    <div class="bubble2" id="scoreMsg"><b>Cargando…</b></div>
+    <div class="fact" id="fact"></div>
+    <div class="semmsg" id="semMsg"></div>
   </div>
 
   <div class="card">
@@ -995,7 +1018,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v0.8.0';
+var APP_VERSION = 'v1.0.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1045,9 +1068,6 @@ var NAV = [
   { id:'s-gastos',  label:'Gastos',  ico:'nav_gastos',  emoji:'💼' },
   { id:'s-soon',    label:'Perfil',  ico:'nav_perfil',  emoji:'👤' }
 ];
-
-/* --- Reparto del scoring (suma 100) --- */
-var SCORE_W = { macros:75, grupos:15, limpio:10 };
 
 /* --- Categorías del catálogo. `orden` = orden en la pantalla Comidas --- */
 var CATS = {
@@ -1197,58 +1217,353 @@ function api(action, params){
 }
 
 /* ============================================================
-   SCORING  (0-100, absoluto)
+   SCORING — dos indicadores independientes
    ------------------------------------------------------------
-   75 pts — macros del día vs objetivo (ponderado por MACROS[].peso)
-            Cada macro: 100% si ratio ∈ [0.9, 1.1]; decae lineal
-            hasta 0 en ratio ≤0.5 o ≥1.5.
-            Proteína y fibra: pasarse NO penaliza.
-   15 pts — grupos positivos presentes hoy (verduras, fruta,
-            legumbres, proteina, pescado) → 3 pts cada uno.
-   10 pts — día limpio: se descuenta la penalización de cada grupo
-            de límite presente hoy (ultraprocesado −5, carnes rojas −3,
-            permitido −3). Nunca baja de 0.
-   Sin comidas registradas → score null (muestra "–").
+   No juzgan lo comido. Responden a dos preguntas:
+     · Diario  → ¿cómo debería comer el resto del día?
+     · Semanal → ¿cómo van mis hábitos? (ventana móvil de 7 días)
+
+   El diario ARRANCA EN 100 y se adapta a la hora: nada que
+   todavía puedas comer resta puntos. Solo lo ya consumido penaliza.
    ============================================================ */
-function scoreMacro(ratio, sinTecho){
-  if(sinTecho && ratio > 1) ratio = 1;
-  if(ratio >= 0.9 && ratio <= 1.1) return 1;
-  if(ratio < 0.9)  return Math.max(0, (ratio-0.5)/0.4);
-  return Math.max(0, (1.5-ratio)/0.4);
+
+/* Progreso esperado del día según la hora. Interpolación lineal
+   entre los momentos de cada comida. Antes del desayuno: 0 → no
+   se espera nada, así que no se descuenta nada. */
+var CURVA = [
+  { h:0,    p:0    },
+  { h:9,    p:0.15 },  // desayuno
+  { h:12,   p:0.25 },  // hamaiketako
+  { h:15.5, p:0.55 },  // comida
+  { h:18.5, p:0.70 },  // merienda
+  { h:21.5, p:1    },  // cena
+  { h:24,   p:1    }
+];
+function expectativa(horaDec){
+  if(horaDec <= 0) return 0;
+  for(var i=1;i<CURVA.length;i++){
+    if(horaDec <= CURVA[i].h){
+      var a = CURVA[i-1], b = CURVA[i];
+      if(b.h === a.h) return b.p;
+      return a.p + (b.p - a.p) * (horaDec - a.h) / (b.h - a.h);
+    }
+  }
+  return 1;
 }
-function calcScore(tot, obj, grupos){
-  var pesoTot = 0, acum = 0;
-  MACROS.forEach(function(m){
-    var o = num(obj[m.objKey]);
-    if(o <= 0) return;
-    var sinTecho = (m.key === 'proteinas_g' || m.key === 'fibra_g');
-    pesoTot += m.peso;
-    acum += m.peso * scoreMacro(num(tot[m.key])/o, sinTecho);
+function horaDecimalAhora(){
+  var d = new Date();
+  return d.getHours() + d.getMinutes()/60;
+}
+
+/* Margen de cortesía: nunca se exige el ritmo teórico exacto, porque
+   comer media hora más tarde no es un error. El colchón es grande por
+   la mañana y desaparece al final del día, cuando ya no hay margen
+   real para corregir. */
+var GRACIA = 0.30;
+function exigencia(e){
+  return Math.max(0, e - GRACIA*(1-e));
+}
+
+/* Cumplimiento de una magnitud respecto a lo exigible a esta hora.
+   Devuelve 0..1. Tolerante: solo penaliza desviaciones grandes. */
+function cumple(consumido, objetivo, e){
+  if(objetivo <= 0) return 1;
+  e = exigencia(e);
+  if(e < 0.05) return 1;                 // todavía no se exige nada
+  var rel = (consumido/objetivo) / e;    // 1 = justo en el ritmo previsto
+  if(rel >= 0.85 && rel <= 1.35) return 1;
+  if(rel < 0.85){
+    if(rel <= 0.2) return 0;
+    return rel < 0.6 ? (rel-0.2)/0.4*0.5 : 0.5 + (rel-0.6)/0.25*0.5;
+  }
+  return Math.max(0.3, 1 - (rel-1.35)/0.45*0.7);   // pasarse penaliza poco
+}
+
+/* Cuántas comidas distintas del día incluyen un grupo */
+function vecesGrupoEn(grupos, comidasDelDia){
+  var n = 0, vistos = {};
+  comidasDelDia.forEach(function(c){
+    var gid = String(c.grupo_id || c.id);
+    if(vistos[gid]) return;
+    if(gruposDe(c.grupos).indexOf(grupos) >= 0){ vistos[gid] = 1; n++; }
   });
-  var pMacros = pesoTot ? (acum/pesoTot) * SCORE_W.macros : 0;
+  return n;
+}
 
-  var pos = GRUPOS.filter(function(g){ return g.tipo==='pos'; });
-  var hits = pos.filter(function(g){ return grupos.indexOf(g.key) >= 0; }).length;
-  var pGrupos = (hits/pos.length) * SCORE_W.grupos;
+/* Reparto v1.1: la energía baja de 10 a 5 y esos puntos van a
+   proteína, fibra y calidad. La app no es un contador de calorías. */
+var W_DIA = { macros:42, fibra:17, calidad:21, penal:15, energia:5 };
+var W_MACRO = { proteinas_g:0.50, carbohidratos_g:0.25, grasas_g:0.25 };
+var BONUS_CALIDAD = { verduras:9, fruta:4, legumbres:4, pescado:4 };   // 21 pts
+var CAPRICHO_PEN  = [0, 2, 6, 14];                                     // acumulado por nº
+var GRUPOS_NEG = ['ultraprocesado','capricho','permitido'];
 
-  var castigo = GRUPOS.reduce(function(a,g){
-    return a + ((g.tipo==='lim' && grupos.indexOf(g.key) >= 0) ? (g.pen || 5) : 0);
+/**
+ * Score diario 0-100. `e` = expectativa de la hora (0..1).
+ * Para días pasados se pasa e=1 (el día ya terminó).
+ * Devuelve null si no hay nada registrado y el día ya acabó.
+ */
+/**
+ * Un extra nunca puede subir el score.
+ * En vez de guardar el score anterior (que dependería del orden en que
+ * registras y se rompería al editar), se calcula el día dos veces: con
+ * todo y quitando los ítems marcados como extra. Se queda el menor.
+ * Es equivalente, pero se recalcula siempre desde los datos.
+ */
+function scoreDiario(fecha, e){
+  var com = comidasDe(fecha);
+  if(e === undefined) e = (fecha < state.hoy) ? 1 : expectativa(horaDecimalAhora());
+
+  var conTodo = scoreBruto(com, fecha, e);
+  var limpias = com.filter(function(c){
+    return !gruposDe(c.grupos).some(function(k){ return GRUPOS_NEG.indexOf(k) >= 0; });
+  });
+  if(limpias.length === com.length) return conTodo;
+  return Math.min(conTodo, scoreBruto(limpias, fecha, e));
+}
+
+function scoreBruto(com, fecha, e){
+  if(!com.length && e >= 1) return 0;
+  if(!com.length && e < 0.05) return 100;
+
+  var tot = totalesDe(com), obj = objetivoDe(fecha), g = gruposDeDia(com);
+
+  /* 1. Macros — 42. La proteína pesa la mitad del bloque. */
+  var pMacros = W_DIA.macros * Object.keys(W_MACRO).reduce(function(a,k){
+    return a + W_MACRO[k] * cumple(num(tot[k]), num(obj[k]), e);
   }, 0);
-  var pLimpio = Math.max(0, SCORE_W.limpio - castigo);
 
-  return Math.round(pMacros + pGrupos + pLimpio);
+  /* 2. Fibra — 17 */
+  var pFibra = W_DIA.fibra * cumple(num(tot.fibra_g), num(obj.fibra_g), e);
+
+  /* 3. Calidad — 21. Se mezcla con la hora: por la mañana aún
+        no se te puede exigir haber comido verdura. */
+  var ganado = 0;
+  Object.keys(BONUS_CALIDAD).forEach(function(k){
+    if(g.indexOf(k) >= 0) ganado += BONUS_CALIDAD[k];
+  });
+  var ec = exigencia(e);
+  var pCalidad = W_DIA.calidad*(1-ec) + Math.min(W_DIA.calidad, ganado)*ec;
+
+  /* 4. Penalizaciones — 15. Aquí la hora no cuenta: ya te lo comiste. */
+  var castigo = 0;
+  if(g.indexOf('ultraprocesado') >= 0) castigo += 8;
+  castigo += CAPRICHO_PEN[Math.min(3, vecesGrupoEn('capricho', com))];
+  if(g.indexOf('permitido') >= 0) castigo += 10;
+  var pPenal = Math.max(0, W_DIA.penal - castigo);
+
+  /* 5. Energía — 5. Solo detecta desviaciones grandes. */
+  var pEnergia;
+  if(ec < 0.05 || num(obj.kcal) <= 0) pEnergia = W_DIA.energia;
+  else {
+    var des = Math.abs((num(tot.kcal)/num(obj.kcal))/ec - 1);
+    pEnergia = des <= 0.10 ? 5 : (des <= 0.20 ? 3 : Math.max(0, 2.5 - (des-0.20)*5));
+  }
+
+  return Math.max(0, Math.min(100, Math.round(pMacros + pFibra + pCalidad + pPenal + pEnergia)));
 }
 
-/* --- Mensajes de la mascota: score + contexto (entreno / libre) --- */
-function mensajeMascota(score, ctx){
+/* Compatibilidad: la tabla semanal usa el score de cada día */
+function scoreDe(fecha){
+  var com = comidasDe(fecha);
+  if(!com.length) return null;
+  return scoreDiario(fecha);
+}
+
+/* ---------- Score semanal: ventana móvil de 7 días ---------- */
+/* Pesos tal cual los definiste. Suman 110, así que al final se
+   normaliza a 100 — se respetan las proporciones entre bloques. */
+var SEM_PESOS = { macros:35, verduras:20, fruta:15, legumbres:10, pescado:10,
+                  carnes_rojas:5, ultraprocesado:5, capricho:5, permitido:5 };
+var SEM_TOTAL = 110;
+
+function tramos(v, tabla){
+  for(var i=0;i<tabla.length;i++) if(v >= tabla[i][0]) return tabla[i][1];
+  return 0;
+}
+
+/** Raciones de un grupo en un rango: cada ítem registrado cuenta 1. */
+function racionesGrupo(key, fechas){
+  var n = 0;
+  fechas.forEach(function(f){
+    comidasDe(f).forEach(function(c){
+      if(gruposDe(c.grupos).indexOf(key) >= 0) n++;
+    });
+  });
+  return n;
+}
+
+function ventana7(){
+  var f = [];
+  for(var i=6;i>=0;i--) f.push(masDias(state.hoy, -i));
+  return f;
+}
+
+function scoreSemanal(){
+  var fechas = ventana7();
+  var conDatos = fechas.filter(function(f){ return comidasDe(f).length > 0; });
+  if(!conDatos.length) return null;
+
+  /* Macros: días en los que se cumplieron razonablemente */
+  var ok = conDatos.filter(function(f){
+    var t = totalesDe(comidasDe(f)), o = objetivoDe(f);
+    if(num(o.kcal) <= 0) return false;
+    var rk = num(t.kcal)/num(o.kcal);
+    var rp = num(o.proteinas_g) > 0 ? num(t.proteinas_g)/num(o.proteinas_g) : 1;
+    return rk >= 0.8 && rk <= 1.2 && rp >= 0.8;
+  }).length;
+  var det = { macros: SEM_PESOS.macros * (ok/7) };
+
+  var r = {};
+  ['verduras','fruta','legumbres','pescado','carnes_rojas','ultraprocesado','capricho','permitido']
+    .forEach(function(k){ r[k] = racionesGrupo(k, fechas); });
+
+  det.verduras = SEM_PESOS.verduras * Math.min(1, r.verduras/14);
+  det.fruta    = SEM_PESOS.fruta    * Math.min(1, r.fruta/14);
+  det.legumbres = tramos(r.legumbres, [[3,10],[2,7],[1,3],[0,0]]);
+  det.pescado   = tramos(r.pescado,   [[3,10],[2,7],[1,3],[0,0]]);
+  det.carnes_rojas   = tramos(r.carnes_rojas,   [[3,0],[2,2],[0,5]]);
+  det.ultraprocesado = tramos(r.ultraprocesado, [[4,0],[2,2],[0,5]]);
+  det.capricho       = tramos(r.capricho,       [[6,0],[4,3],[0,5]]);
+  det.permitido      = tramos(r.permitido,      [[3,0],[2,3],[0,5]]);
+
+  var suma = Object.keys(det).reduce(function(a,k){ return a + det[k]; }, 0);
+  return { score: Math.round(suma/SEM_TOTAL*100), det:det, raciones:r, dias:conDatos.length, ok:ok };
+}
+
+/* ============================================================
+   FACTORES — qué está tirando del score hacia arriba y hacia abajo.
+   Máximo 3 fortalezas y 2 prioridades. Nunca se muestran números.
+   ============================================================ */
+function factores(fecha, e){
+  var com = comidasDe(fecha);
+  if(e === undefined) e = (fecha < state.hoy) ? 1 : expectativa(horaDecimalAhora());
+  var ec = exigencia(e);
+  var tot = totalesDe(com), obj = objetivoDe(fecha), g = gruposDeDia(com);
+  var sem = scoreSemanal();
+
+  var bien = [], mejor = [];
+  var alcanza = function(k, umbral){
+    var o = num(obj[k]);
+    if(o <= 0 || ec < 0.05) return true;
+    return (num(tot[k])/o) >= ec*umbral;
+  };
+
+  /* Fortalezas, por orden de relevancia */
+  if(com.length && alcanza('proteinas_g', 0.9)) bien.push('Proteína');
+  if(g.indexOf('verduras') >= 0)  bien.push('Verduras');
+  if(com.length && alcanza('fibra_g', 0.85)) bien.push('Fibra');
+  if(g.indexOf('fruta') >= 0)     bien.push('Fruta');
+  if(g.indexOf('legumbres') >= 0) bien.push('Legumbres');
+  if(g.indexOf('pescado') >= 0)   bien.push('Pescado');
+  if(com.length && !GRUPOS_NEG.some(function(k){ return g.indexOf(k) >= 0; })) bien.push('Sin extras');
+
+  /* Prioridades del día: solo lo que aún da tiempo a arreglar */
+  if(!alcanza('proteinas_g', 0.8)) mejor.push('Proteína');
+  if(g.indexOf('verduras') < 0 && ec > 0.2) mejor.push('Verduras');
+  if(!alcanza('fibra_g', 0.75)) mejor.push('Fibra');
+  if(g.indexOf('fruta') < 0 && ec > 0.2) mejor.push('Fruta');
+
+  /* Si el día va fino, se cuela la prioridad de la semana */
+  if(sem && mejor.length < 2){
+    if(sem.raciones.pescado < 3) mejor.push('Pescado esta semana');
+    else if(sem.raciones.legumbres < 3) mejor.push('Legumbres esta semana');
+  }
+
+  return { bien: bien.slice(0,3), mejor: mejor.slice(0,2) };
+}
+
+/* ============================================================
+   MENSAJES
+   Rotan entre plantillas, pero de forma DETERMINISTA por fecha:
+   si fuera aleatorio, el texto cambiaría en cada repintado.
+   ============================================================ */
+function rotar(lista, fecha, salto){
+  if(!lista.length) return '';
+  var p = String(fecha).split('-');
+  var semilla = (+p[0])*372 + (+p[1])*31 + (+p[2]) + (salto||0);
+  return lista[semilla % lista.length];
+}
+
+var TX_DIA = {
+  ex: ['Puedes comer con bastante libertad.', 'Hoy está prácticamente encarrilado.',
+       'No hace falta compensar nada.', 'Solo mantén el equilibrio en la siguiente comida.'],
+  mb: ['Mantén el ritmo y terminarás un gran día.', 'Una comida equilibrada será suficiente.',
+       'Todo va según lo previsto.'],
+  ok: ['mejoraría bastante el día.', 'le vendría muy bien al día.', 'sería un buen añadido.'],
+  rec:['Aún puedes acabar el día bastante bien.', 'Todavía merece la pena cuidar la próxima comida.',
+       'Queda margen de sobra para enderezarlo.'],
+  baj:['Centrémonos en hacer una buena siguiente comida.', 'No hace falta compensar, solo volver al equilibrio.',
+       'Proteína, verdura y fibra son ahora la mejor apuesta.']
+};
+var TX_SEM = {
+  ex: ['Muy buena semana. Estás construyendo un patrón sólido.', 'Semana excelente. Sigue así.'],
+  mb: ['Semana muy consistente.', 'Semana sólida, con detalles por pulir.'],
+  ok: ['La base es buena.', 'Buen fondo, faltan algunos grupos.'],
+  fl: ['Hay margen para mejorar algunos hábitos.', 'Una o dos comidas distintas marcarían la diferencia.'],
+  ba: ['Los últimos días se han desviado un poco.', 'No hace falta compensar, solo volver a la rutina.']
+};
+
+/* ---------- Mensajes: siempre con una acción, nunca un juicio ---------- */
+function mensajeDiario(score, fecha, e){
   if(score === null) return { mood:'espera', b:'¡Buenos días!', t:'Aún no has registrado nada. <span class="hl">Empieza por el desayuno.</span>' };
-  if(ctx.libre)    return { mood:'fiesta',  b:'¡Disfrútalo!', t:'Hoy toca <span class="hl">permitido</span>. Mañana volvemos.' };
-  if(score >= 85)  return { mood:'top',     b:'¡Vas genial!',  t:'Estás construyendo <span class="hl">hábitos increíbles.</span>' };
-  if(score >= 70)  return { mood:'bien',    b:'Buen día.',     t:ctx.entreno ? 'Día de entreno <span class="hl">bien cubierto.</span>' : 'Vas <span class="hl">por buen camino.</span>' };
-  if(score >= 50)  return { mood:'neutro',  b:'Se puede mejorar.', t:ctx.entreno ? 'Entrenas hoy: <span class="hl">suma proteína.</span>' : 'Aún hay <span class="hl">margen de mejora.</span>' };
-  if(score >= 25)  return { mood:'flojo',   b:'Día flojo.',    t:'Mañana lo <span class="hl">retomamos mejor.</span>' };
-  return { mood:'triste', b:'Hoy no fue el día.', t:'Sin dramas. <span class="hl">Mañana empezamos.</span>' };
+
+  var com = comidasDe(fecha), g = gruposDeDia(com), tot = totalesDe(com), obj = objetivoDe(fecha);
+  if(e === undefined) e = (fecha < state.hoy) ? 1 : expectativa(horaDecimalAhora());
+  var tarde = exigencia(e) >= 0.55;
+  var fa = factores(fecha, e).mejor;
+  var lista = fa.map(function(x){ return x.replace(' esta semana','').toLowerCase(); });
+  var pri = lista.slice(0,2).join(' y ');
+
+  if(gruposDeDia(comidasDe(fecha)).indexOf('permitido') >= 0 && score < 85)
+    return { mood:'fiesta', b:'Hoy tocaba disfrutar.',
+      t:tarde ? 'No hace falta compensar. <span class="hl">Mañana, rutina normal.</span>'
+              : 'Lo que queda de día, <span class="hl">sencillo y con verdura.</span>' };
+
+  /* 95-100 · excelente */
+  if(score >= 95) return { mood:'top', b:'Vas muy bien.', t:rotar(TX_DIA.ex, fecha) };
+
+  /* 85-94 · muy buen día */
+  if(score >= 85) return { mood:'top', b:'Muy buen día.',
+    t:tarde ? 'Día cerrado <span class="hl">en muy buen sitio.</span>' : rotar(TX_DIA.mb, fecha) };
+
+  /* 70-84 · margen de mejora */
+  if(score >= 70) return { mood:'bien', b:'Buen día.',
+    t:pri ? 'Añadir <span class="hl">' + pri + '</span> ' + rotar(TX_DIA.ok, fecha)
+          : rotar(TX_DIA.mb, fecha, 1) };
+
+  /* 55-69 · todavía recuperable */
+  if(score >= 55) return { mood:'neutro', b:rotar(TX_DIA.rec, fecha),
+    t:pri ? 'Prioriza <span class="hl">' + pri + '</span> en la próxima comida.'
+          : 'Una comida <span class="hl">equilibrada</span> y listo.' };
+
+  /* <55 · claramente mejorable, nunca culpabilizar */
+  return { mood:'flojo', b:'No pasa nada.',
+    t:pri ? 'Prioriza <span class="hl">' + pri + '</span> en la siguiente comida.'
+          : rotar(TX_DIA.baj, fecha) };
 }
+
+/** Semanal: habla de hábitos, nunca del día. Fortaleza + máx. 2 prioridades. */
+function mensajeSemanal(sem){
+  if(!sem) return { t:'Registra unos días y aquí verás tus hábitos.' };
+  var r = sem.raciones, s = sem.score, hoy = state.hoy;
+
+  var cab = s >= 90 ? rotar(TX_SEM.ex, hoy)
+          : s >= 80 ? rotar(TX_SEM.mb, hoy)
+          : s >= 70 ? rotar(TX_SEM.ok, hoy)
+          : s >= 60 ? rotar(TX_SEM.fl, hoy)
+          :           rotar(TX_SEM.ba, hoy);
+
+  var falta = [];
+  if(r.pescado < 3)   falta.push('pescado');
+  if(r.legumbres < 3) falta.push('legumbres');
+  if(r.verduras < 10) falta.push('verdura');
+  if(r.fruta < 10)    falta.push('fruta');
+
+  if(!falta.length) return { t:cab };
+  return { t:cab + ' Sería buena idea sumar ' + falta.slice(0,2).join(' o ') + '.' };
+}
+
 var MASCOTA_EMOJI = { espera:'🥑', top:'🥑', bien:'🥑', neutro:'🥑', flojo:'🥑', triste:'🥑', fiesta:'🥑' };
 
 /* ============================================================
@@ -1272,13 +1587,6 @@ function gruposDeDia(comidas){
   });
   return out;
 }
-/* Score de cualquier día. null = sin nada registrado. */
-function scoreDe(fecha){
-  var com = comidasDe(fecha);
-  if(!com.length) return null;
-  return calcScore(totalesDe(com), objetivoDe(fecha), gruposDeDia(com));
-}
-
 function esEntreno(fecha){
   if(!state.data) return false;
   var r = state.data.dias.filter(function(d){ return fkey(d.fecha) === fecha; })[0];
@@ -1315,21 +1623,37 @@ function renderEntreno(){
   $('#teIco').innerHTML = icono('ui_entreno', '🏋️', 14);
 }
 
+function pintarAnillo(sel, r, v){
+  var el = $(sel); if(!el) return;
+  var C = 2*Math.PI*r, pct = v === null ? 0 : Math.max(0, Math.min(100, v));
+  el.setAttribute('stroke-dasharray', C.toFixed(1));
+  el.setAttribute('stroke-dashoffset', (C*(1-pct/100)).toFixed(1));
+  el.setAttribute('stroke', pct >= 80 ? '#22C55E' : (pct >= 60 ? '#F5A623' : '#EF4444'));
+}
+
 function renderResumen(){
   var com = comidasDe(state.hoy), tot = totalesDe(com), obj = objetivoDe(state.hoy);
   var grupos = gruposDeDia(com);
 
-  /* --- Scoring --- */
-  var score = com.length ? calcScore(tot, obj, grupos) : null;   /* = scoreDe(state.hoy) */
-  var pct = score === null ? 0 : Math.max(0, Math.min(100, score));
-  var C = 2 * Math.PI * 57;
-  $('#ringFg').setAttribute('stroke-dasharray', C.toFixed(1));
-  $('#ringFg').setAttribute('stroke-dashoffset', (C * (1 - pct/100)).toFixed(1));
-  $('#ringFg').setAttribute('stroke', pct >= 70 ? '#22C55E' : (pct >= 45 ? '#F5A623' : '#EF4444'));
+  /* --- Scoring diario --- */
+  var score = com.length ? scoreDiario(state.hoy) : null;
+  pintarAnillo('#ringDia', 45, score);
   $('#scoreNum').textContent = score === null ? '–' : score;
 
-  var m = mensajeMascota(score, { entreno: esEntreno(state.hoy), libre: grupos.indexOf('permitido') >= 0 });
+  /* --- Scoring semanal (7 días móviles) --- */
+  var sem = scoreSemanal();
+  pintarAnillo('#ringSem', 33, sem ? sem.score : null);
+  $('#scoreSem').textContent = sem ? sem.score : '–';
+
+  var m = mensajeDiario(score, state.hoy);
   $('#scoreMsg').innerHTML = '<b>' + m.b + '</b>' + m.t;
+  $('#semMsg').innerHTML = '<span>' + esc(mensajeSemanal(sem).t) + '</span>';
+
+  /* Por qué vale ese número: máx. 3 fortalezas y 2 prioridades, sin cifras */
+  var fc = factores(state.hoy);
+  $('#fact').innerHTML =
+    fc.bien.map(function(x){ return '<span class="fact-c si"><i>✓</i>' + esc(x) + '</span>'; }).join('') +
+    fc.mejor.map(function(x){ return '<span class="fact-c no"><i>+</i>' + esc(x) + '</span>'; }).join('');
   $('#mascota').innerHTML = '<img src="img/mascota/' + m.mood + '.webp" alt="" data-fb="' + MASCOTA_EMOJI[m.mood] + '">';
 
   /* --- Macros --- */
@@ -2882,7 +3206,7 @@ document.addEventListener('click', function(ev){
   }
 
   if(ev.target.closest('#infoScore')){
-    toast('Scoring 0-100: macros del día (75), grupos (15), día limpio (10)');
+    toast('Hoy: cómo comer el resto del día. 7 días: tus hábitos.');
     return;
   }
 
