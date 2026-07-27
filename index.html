@@ -170,11 +170,11 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .wk .c-n b{color:var(--ink);font-weight:600}
 .wk .c-n b.ex{color:var(--red)}
 .wk tbody tr+tr td{border-top:1px solid #F7F8F9}
-.d{width:11px;height:11px;border-radius:50%;background:var(--dot);display:inline-block}
-.d.ok{background:var(--green)}
-.d.mid{background:var(--amber)}
-.d.bad{background:#9AA4B2}
-.d.fut{background:#F1F3F5}
+.d{width:11px;height:11px;border-radius:50%;display:inline-block;
+  border:1.2px solid #EAEDF0;background:transparent}
+.d.v{background:var(--green);border-color:var(--green)}
+.d.a{background:#F5A623;border-color:#F5A623}
+.d.r{background:var(--red);border-color:var(--red)}
 .wk-sep{border-left:1px solid var(--line)}
 .tip{margin-top:14px;background:var(--green-xl);border-radius:12px;padding:11px 13px;
   font-size:12.5px;color:#3F5C46;line-height:1.4;display:flex;gap:8px;align-items:flex-start}
@@ -407,6 +407,11 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .grp-vacio{padding:16px 14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink3);
   text-align:center;line-height:1.5}
 
+.wk-lg{display:flex;flex-wrap:wrap;gap:5px 13px;margin-top:13px;padding-top:12px;
+  border-top:1px solid var(--line)}
+.wk-lg span{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink2)}
+.wk-lg i{width:9px;height:9px;flex-shrink:0}
+
 /* pie: versión + actualizar */
 .pie{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);text-align:center}
 .pie-b{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);background:var(--card);
@@ -637,6 +642,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       </div>
     </div>
     <table class="wk" id="wk"></table>
+    <div class="wk-lg">
+      <span><i class="d v"></i>Saludable</span>
+      <span><i class="d a"></i>Carnes rojas</span>
+      <span><i class="d r"></i>A limitar</span>
+      <span><i class="d"></i>No consumido</span>
+    </div>
   </div>
 
   <div class="pie">
@@ -984,7 +995,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v0.7.0';
+var APP_VERSION = 'v0.8.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1005,14 +1016,14 @@ function icono(nombre, emoji, px){
 
 /* --- Grupos alimentarios: objetivo semanal en días --- */
 var GRUPOS = [
-  { key:'verduras',       label:'Verduras',             emoji:'🥦', ico:'grp_verduras',       obj:7, tipo:'pos', color:'#22C55E' },
-  { key:'fruta',          label:'Fruta',                emoji:'🍎', ico:'grp_fruta',          obj:7, tipo:'pos', color:'#84CC16' },
-  { key:'legumbres',      label:'Legumbres',            emoji:'🫘', ico:'grp_legumbres',      obj:4, tipo:'pos', color:'#A3A635' },
-  { key:'pescado',        label:'Pescado',              emoji:'🐟', ico:'grp_pescado',        obj:3, tipo:'pos', color:'#38BDF8' },
-  { key:'carnes_rojas',   label:'Carnes rojas',         emoji:'🥩', ico:'grp_carnes_rojas',   obj:3, tipo:'lim', pen:3, color:'#A78BFA' },
-  { key:'ultraprocesado', label:'Ultraprocesados',      emoji:'🚫', ico:'grp_ultraprocesado', obj:2, tipo:'lim', pen:5, color:'#F59E0B' },
-  { key:'capricho',       label:'Capricho',             emoji:'🍬', ico:'grp_capricho',       obj:3, tipo:'lim', pen:2, color:'#FB923C' },
-  { key:'permitido',      label:'Permitido',            emoji:'🎉', ico:'grp_permitido',      obj:1, tipo:'lim', pen:4, color:'#EF4444' }
+  { key:'verduras',       label:'Verduras',        emoji:'🥦', ico:'grp_verduras',       obj:7, tipo:'pos', sem:'v', color:'#22C55E' },
+  { key:'fruta',          label:'Fruta',           emoji:'🍎', ico:'grp_fruta',          obj:7, tipo:'pos', sem:'v', color:'#84CC16' },
+  { key:'legumbres',      label:'Legumbres',       emoji:'🫘', ico:'grp_legumbres',      obj:4, tipo:'pos', sem:'v', color:'#A3A635' },
+  { key:'pescado',        label:'Pescado',         emoji:'🐟', ico:'grp_pescado',        obj:3, tipo:'pos', sem:'v', color:'#38BDF8' },
+  { key:'carnes_rojas',   label:'Carnes rojas',    emoji:'🥩', ico:'grp_carnes_rojas',   obj:3, tipo:'lim', sem:'a', pen:3, color:'#F5A623' },
+  { key:'ultraprocesado', label:'Ultraprocesados', emoji:'🚫', ico:'grp_ultraprocesado', obj:2, tipo:'lim', sem:'r', pen:5, color:'#EF4444' },
+  { key:'capricho',       label:'Capricho',        emoji:'🍬', ico:'grp_capricho',       obj:3, tipo:'lim', sem:'r', pen:2, color:'#FB7185' },
+  { key:'permitido',      label:'Permitido',       emoji:'🎉', ico:'grp_permitido',      obj:1, tipo:'lim', sem:'r', pen:4, color:'#B91C1C' }
 ];
 
 /* Nombres antiguos → nuevos, para que los registros ya guardados se sigan leyendo */
@@ -1086,6 +1097,14 @@ function nuevoDraft(tipo){
     fuera:false, gasto:'', pagado_por:'', tag_gasto:'restaurante', participantes:[], foto:''
   };
 }
+/** Cualquier hora → HH:mm. Descarta los Date de 1899 que devolvía Sheets. */
+function horaKey(v){
+  if(!v) return '';
+  var m = String(v).trim().match(/(\d{1,2})[:.h](\d{1,2})/);
+  if(!m) return '';
+  return String(Math.min(23, +m[1])).padStart(2,'0') + ':' + String(Math.min(59, +m[2])).padStart(2,'0');
+}
+
 function horaAhora(){
   var d = new Date();
   return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
@@ -1239,7 +1258,7 @@ function comidasDe(fecha){
   if(!state.data) return [];
   return state.data.comidas
     .filter(function(c){ return fkey(c.fecha) === fecha; })
-    .sort(function(a,b){ return String(a.hora||'').localeCompare(String(b.hora||'')); });
+    .sort(function(a,b){ return horaKey(a.hora).localeCompare(horaKey(b.hora)); });
 }
 function totalesDe(comidas){
   var t = { kcal:0, proteinas_g:0, carbohidratos_g:0, grasas_g:0, fibra_g:0 };
@@ -1373,7 +1392,7 @@ function renderComidas(){
       gruposDe(i.grupos).forEach(function(k){ if(gr.indexOf(k) < 0) gr.push(k); });
     }); });
 
-    var hora = hecho ? String(g[0].hora||'').slice(0,5) : '';
+    var hora = hecho ? horaKey(g[0].hora) : '';
     var sem = hecho ? semaforo(gr) : '';
 
     return '<button class="meal ' + (hecho ? 'done ' + sem : 'todo') + '" ' +
@@ -1553,13 +1572,11 @@ function renderSemana(){
     '<th class="h-c wk-sep">Consumido</th></tr></thead>';
 
   var body = GRUPOS.map(function(g){
+    /* Solo se marca lo consumido. El color lo pone el grupo:
+       verde saludable, ámbar carnes rojas, rojo ultra/capricho/permitido. */
     var dias = porDia.map(function(d){
-      if(d.fecha > state.hoy) return '<td class="c-d"><span class="d fut"></span></td>';
-      var pres = d.grupos.indexOf(g.key) >= 0;
-      var cls;
-      if(g.tipo === 'pos') cls = pres ? 'ok' : (d.hay ? 'bad' : '');
-      else                 cls = pres ? 'mid' : (d.hay ? 'ok' : '');
-      return '<td class="c-d"><span class="d ' + cls + '"></span></td>';
+      var pres = d.fecha <= state.hoy && d.grupos.indexOf(g.key) >= 0;
+      return '<td class="c-d"><span class="d' + (pres ? ' ' + g.sem : '') + '"></span></td>';
     }).join('');
 
     var cnt = porDia.filter(function(d){ return d.grupos.indexOf(g.key) >= 0; }).length;
@@ -1961,7 +1978,7 @@ function abrirComidaExistente(gid){
     grupo_id: gid,
     fecha: fkey(cab.fecha) || state.hoy,
     tipo_comida: tipoKey(cab.tipo_comida),
-    hora: String(cab.hora||'').slice(0,5) || horaAhora(),
+    hora: horaKey(cab.hora) || horaAhora(),
     fuera: truthy(cab.fuera_de_casa),
     gasto: '', pagado_por: '', tag_gasto:'restaurante', participantes:[], foto:'',
     items: filas.map(function(c){
