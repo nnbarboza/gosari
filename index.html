@@ -234,14 +234,17 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .pg-t{font-size:27px;font-weight:700;letter-spacing:-.7px;margin:12px 0 4px}
 .pg-s{font-size:13.5px;color:var(--ink2);margin:0 0 18px}
 
-.two{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px}
+.big.wide{flex-direction:row;text-align:left;gap:13px;padding:15px 14px;margin-bottom:22px;width:100%}
+.big.wide .bi{width:44px;height:44px;flex-shrink:0}
+.big.wide .bb{flex:1;min-width:0}
 .big{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 12px;
   text-align:center;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:9px}
 .big:active{background:var(--green-xl)}
 .big .bi{width:52px;height:52px;border-radius:50%;background:var(--green-xl);display:flex;
   align-items:center;justify-content:center}
-.big .bt{font-size:14px;font-weight:600;letter-spacing:-.2px;line-height:1.25}
-.big .bd{font-size:11.5px;color:var(--ink2);line-height:1.35}
+.big .bt{font-size:14px;font-weight:600;letter-spacing:-.2px;line-height:1.25;display:block}
+.big .bd{font-size:11.5px;color:var(--ink2);line-height:1.35;display:block;margin-top:3px}
 
 .sec-t{font-size:14.5px;font-weight:600;letter-spacing:-.2px;margin:0 0 10px;display:flex;
   align-items:center;justify-content:space-between}
@@ -254,9 +257,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .chip{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:7px 13px;
   font-size:12.5px;font-weight:600;color:var(--ink2);white-space:nowrap;flex-shrink:0}
 .chip.on{background:var(--green);border-color:var(--green);color:#fff}
-.hora-in{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:6px 11px;
-  font-size:12.5px;font-weight:600;color:var(--ink);font-family:inherit;flex-shrink:0;
+.hora-row{display:flex;align-items:center;gap:10px;margin:-10px 0 20px}
+.hora-row label{font-size:12px;color:var(--ink2);font-weight:500}
+.hora-in{border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:8px 11px;
+  font-size:14px;font-weight:600;color:var(--ink);font-family:inherit;
   font-variant-numeric:tabular-nums}
+.hora-in:focus{outline:none;border-color:var(--green)}
 
 /* item de la comida */
 .item{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;
@@ -589,7 +595,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div class="hd">
     <div>
       <h1 id="saludo">¡Hola! 👋</h1>
-      <p>Sigue tu plan. Pequeñas decisiones, grandes resultados.</p>
+      <p id="frase">Sigue tu plan. Pequeñas decisiones, grandes resultados.</p>
     </div>
     <button class="te" id="btnEntreno">
       <span class="te-ico" id="teIco">🏋️</span>
@@ -611,7 +617,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
               style="transition:stroke-dashoffset .8s ease, stroke .4s"/></svg>
           <div class="rg-n" id="scoreNum">–</div>
         </div>
-        <div class="rg-l">Hoy</div>
+        <div class="rg-l" id="rgLabel">Hoy</div>
       </div>
       <div class="rg rg-sm">
         <div class="rg-c">
@@ -632,7 +638,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
   <div class="card">
     <div class="card-hd">
-      <div class="card-t">Resumen de hoy</div>
+      <div class="card-t" id="macT">Resumen de hoy</div>
       <button class="card-link" id="btnDetMacros">Ver detalle ›</button>
     </div>
     <div class="macros" id="macros"></div>
@@ -750,6 +756,10 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <p class="pg-s">Registra tu comida de forma rápida y sencilla.</p>
 
   <div class="meta" id="metaRow"></div>
+  <div class="hora-row">
+    <label for="inHora">Hora</label>
+    <input class="hora-in" id="inHora" type="time">
+  </div>
 
   <div class="two">
     <button class="big" id="btnBuscar">
@@ -766,6 +776,13 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       <span class="bd">Analizaremos los nutrientes y grupos alimentarios.</span>
     </button>
   </div>
+  <button class="big wide" id="btnDescribir">
+    <span class="bi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 6h16M4 11h16M4 16h9"/></svg></span>
+    <span class="bb"><span class="bt">Descríbela con tus palabras</span>
+    <span class="bd">Cuenta qué has comido y calculamos los nutrientes.</span></span>
+  </button>
   <input type="file" id="fileFoto" accept="image/*" capture="environment" style="display:none">
 
   <div class="sec-t">Tu comida</div>
@@ -950,7 +967,23 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   </div>
   <div class="sheet-b">
     <div id="pickRes"></div>
+    <button class="btn-o" id="btnDescPick">✏️ Describirla y que calcule la IA</button>
     <button class="btn-o" id="btnNueva">＋ Crear una comida nueva</button>
+  </div>
+</div></div>
+
+<!-- ================= SHEET: DESCRIBIR ================= -->
+<div class="sheet-bg" id="shDesc"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3>Describe tu comida</h3>
+    <button class="sheet-x" data-close="shDesc">✕</button></div></div>
+  <div class="sheet-b">
+    <div class="fld" style="margin-bottom:4px"><label>¿Qué has comido?</label>
+      <textarea id="dTexto" rows="5"
+        placeholder="Ej. Un plato hondo de lentejas con chorizo y zanahoria, dos rebanadas de pan y una manzana"></textarea></div>
+    <p class="hint">Cuanta más precisión en cantidades y forma de cocinado, mejor sale la estimación.
+      Puedes revisar y corregir todos los números antes de guardar.</p>
+    <div class="gchips" id="dEjemplos" style="margin-top:12px"></div>
+    <button class="btn-g" id="dOk">Calcular nutrientes</button>
   </div>
 </div></div>
 
@@ -1018,7 +1051,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.0.0';
+var APP_VERSION = 'v1.1.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1371,15 +1404,30 @@ function scoreDe(fecha){
 }
 
 /* ---------- Score semanal: ventana móvil de 7 días ---------- */
-/* Pesos tal cual los definiste. Suman 110, así que al final se
-   normaliza a 100 — se respetan las proporciones entre bloques. */
-var SEM_PESOS = { macros:35, verduras:20, fruta:15, legumbres:10, pescado:10,
-                  carnes_rojas:5, ultraprocesado:5, capricho:5, permitido:5 };
-var SEM_TOTAL = 110;
+/* El bloque de macros no es un grupo, así que su peso vive aquí.
+   El resto sale de la pestaña Objetivos_Grupos del Sheet. */
+var PESO_MACROS = 35;
 
-function tramos(v, tabla){
-  for(var i=0;i<tabla.length;i++) if(v >= tabla[i][0]) return tabla[i][1];
-  return 0;
+/* Respaldo por si la pestaña Objetivos_Grupos aún no está rellena */
+var OBJ_GRUPO_DEF = {
+  verduras:{objetivo:14,margen:0,peso:20}, fruta:{objetivo:14,margen:0,peso:15},
+  legumbres:{objetivo:3,margen:0,peso:10}, pescado:{objetivo:3,margen:0,peso:10},
+  carnes_rojas:{objetivo:1,margen:1,peso:5}, ultraprocesado:{objetivo:1,margen:2,peso:5},
+  capricho:{objetivo:3,margen:2,peso:5}, permitido:{objetivo:1,margen:1,peso:5}
+};
+
+/** Objetivo semanal de un grupo para el usuario activo. */
+function objGrupo(key){
+  var f = ((state.data && state.data.objetivos_grupos) || []).filter(function(r){
+    return String(r.username) === state.user && String(r.grupo).trim().toLowerCase() === key;
+  })[0];
+  var d = OBJ_GRUPO_DEF[key] || { objetivo:0, margen:0, peso:0 };
+  if(!f) return d;
+  return {
+    objetivo: num(f.objetivo) || d.objetivo,
+    margen:   (f.margen === '' || f.margen === undefined) ? d.margen : num(f.margen),
+    peso:     (f.peso === '' || f.peso === undefined) ? d.peso : num(f.peso)
+  };
 }
 
 /** Raciones de un grupo en un rango: cada ítem registrado cuenta 1. */
@@ -1412,23 +1460,32 @@ function scoreSemanal(){
     var rp = num(o.proteinas_g) > 0 ? num(t.proteinas_g)/num(o.proteinas_g) : 1;
     return rk >= 0.8 && rk <= 1.2 && rp >= 0.8;
   }).length;
-  var det = { macros: SEM_PESOS.macros * (ok/7) };
+  var det = { macros: PESO_MACROS * (ok/7) };
+  var totalPesos = PESO_MACROS;
+  var r = {}, objs = {};
 
-  var r = {};
-  ['verduras','fruta','legumbres','pescado','carnes_rojas','ultraprocesado','capricho','permitido']
-    .forEach(function(k){ r[k] = racionesGrupo(k, fechas); });
+  GRUPOS.forEach(function(g){
+    var o = objGrupo(g.key);
+    objs[g.key] = o;
+    totalPesos += o.peso;
+    var raciones = racionesGrupo(g.key, fechas);
+    r[g.key] = raciones;
 
-  det.verduras = SEM_PESOS.verduras * Math.min(1, r.verduras/14);
-  det.fruta    = SEM_PESOS.fruta    * Math.min(1, r.fruta/14);
-  det.legumbres = tramos(r.legumbres, [[3,10],[2,7],[1,3],[0,0]]);
-  det.pescado   = tramos(r.pescado,   [[3,10],[2,7],[1,3],[0,0]]);
-  det.carnes_rojas   = tramos(r.carnes_rojas,   [[3,0],[2,2],[0,5]]);
-  det.ultraprocesado = tramos(r.ultraprocesado, [[4,0],[2,2],[0,5]]);
-  det.capricho       = tramos(r.capricho,       [[6,0],[4,3],[0,5]]);
-  det.permitido      = tramos(r.permitido,      [[3,0],[2,3],[0,5]]);
+    if(o.objetivo <= 0){ det[g.key] = o.peso; return; }
+
+    if(g.tipo === 'pos'){
+      /* saludable: proporcional hasta alcanzar el objetivo */
+      det[g.key] = o.peso * Math.min(1, raciones/o.objetivo);
+    } else {
+      /* a limitar: dentro del objetivo todo, dentro del margen la mitad, fuera nada */
+      det[g.key] = raciones <= o.objetivo ? o.peso
+                 : (raciones <= o.objetivo + o.margen ? o.peso*0.5 : 0);
+    }
+  });
 
   var suma = Object.keys(det).reduce(function(a,k){ return a + det[k]; }, 0);
-  return { score: Math.round(suma/SEM_TOTAL*100), det:det, raciones:r, dias:conDatos.length, ok:ok };
+  return { score: Math.round(suma/(totalPesos||1)*100), det:det, raciones:r,
+           objetivos:objs, dias:conDatos.length, ok:ok };
 }
 
 /* ============================================================
@@ -1466,8 +1523,10 @@ function factores(fecha, e){
 
   /* Si el día va fino, se cuela la prioridad de la semana */
   if(sem && mejor.length < 2){
-    if(sem.raciones.pescado < 3) mejor.push('Pescado esta semana');
-    else if(sem.raciones.legumbres < 3) mejor.push('Legumbres esta semana');
+    var op = sem.objetivos || {};
+    var falto = function(k){ return op[k] && op[k].objetivo > 0 && sem.raciones[k] < op[k].objetivo; };
+    if(falto('pescado')) mejor.push('Pescado esta semana');
+    else if(falto('legumbres')) mejor.push('Legumbres esta semana');
   }
 
   return { bien: bien.slice(0,3), mejor: mejor.slice(0,2) };
@@ -1555,10 +1614,15 @@ function mensajeSemanal(sem){
           :           rotar(TX_SEM.ba, hoy);
 
   var falta = [];
-  if(r.pescado < 3)   falta.push('pescado');
-  if(r.legumbres < 3) falta.push('legumbres');
-  if(r.verduras < 10) falta.push('verdura');
-  if(r.fruta < 10)    falta.push('fruta');
+  var o = sem.objetivos || {};
+  var bajo = function(k, frac){
+    var ob = (o[k] && o[k].objetivo) || 0;
+    return ob > 0 && r[k] < ob*(frac||1);
+  };
+  if(bajo('pescado'))        falta.push('pescado');
+  if(bajo('legumbres'))      falta.push('legumbres');
+  if(bajo('verduras', 0.7))  falta.push('verdura');
+  if(bajo('fruta', 0.7))     falta.push('fruta');
 
   if(!falta.length) return { t:cab };
   return { t:cab + ' Sería buena idea sumar ' + falta.slice(0,2).join(' o ') + '.' };
@@ -1607,6 +1671,8 @@ function render(){
   if(!state.data) return;
   var u = (state.data.usuarios||[]).filter(function(x){ return String(x.username)===state.user; })[0];
   $('#saludo').innerHTML = '¡Hola, ' + esc(u ? u.nombre : state.user) + '! 👋';
+  $('#frase').textContent = (u && String(u.frase||'').trim())
+    || 'Sigue tu plan. Pequeñas decisiones, grandes resultados.';
   if(!state.diaVer || state.diaVer > state.hoy) state.diaVer = state.hoy;
   renderEntreno();
   renderResumen();
@@ -1617,7 +1683,7 @@ function render(){
 }
 
 function renderEntreno(){
-  var on = esEntreno(state.hoy);
+  var on = esEntreno(state.diaVer || state.hoy);
   $('#swEntreno').className = 'sw' + (on ? ' on' : '');
   $('#btnEntreno').classList.toggle('on', on);
   $('#teIco').innerHTML = icono('ui_entreno', '🏋️', 14);
@@ -1632,11 +1698,16 @@ function pintarAnillo(sel, r, v){
 }
 
 function renderResumen(){
-  var com = comidasDe(state.hoy), tot = totalesDe(com), obj = objetivoDe(state.hoy);
+  var f = state.diaVer || state.hoy;
+  var com = comidasDe(f), tot = totalesDe(com), obj = objetivoDe(f);
   var grupos = gruposDeDia(com);
+  var esHoy = (f === state.hoy);
+
+  $('#rgLabel').textContent = esHoy ? 'Hoy' : etiquetaDia(f);
+  $('#macT').textContent = esHoy ? 'Resumen de hoy' : 'Resumen · ' + etiquetaDia(f).toLowerCase();
 
   /* --- Scoring diario --- */
-  var score = com.length ? scoreDiario(state.hoy) : null;
+  var score = com.length ? scoreDiario(f) : null;
   pintarAnillo('#ringDia', 45, score);
   $('#scoreNum').textContent = score === null ? '–' : score;
 
@@ -1645,12 +1716,12 @@ function renderResumen(){
   pintarAnillo('#ringSem', 33, sem ? sem.score : null);
   $('#scoreSem').textContent = sem ? sem.score : '–';
 
-  var m = mensajeDiario(score, state.hoy);
+  var m = mensajeDiario(score, f);
   $('#scoreMsg').innerHTML = '<b>' + m.b + '</b>' + m.t;
   $('#semMsg').innerHTML = '<span>' + esc(mensajeSemanal(sem).t) + '</span>';
 
   /* Por qué vale ese número: máx. 3 fortalezas y 2 prioridades, sin cifras */
-  var fc = factores(state.hoy);
+  var fc = factores(f);
   $('#fact').innerHTML =
     fc.bien.map(function(x){ return '<span class="fact-c si"><i>✓</i>' + esc(x) + '</span>'; }).join('') +
     fc.mejor.map(function(x){ return '<span class="fact-c no"><i>+</i>' + esc(x) + '</span>'; }).join('');
@@ -1903,12 +1974,13 @@ function renderSemana(){
       return '<td class="c-d"><span class="d' + (pres ? ' ' + g.sem : '') + '"></span></td>';
     }).join('');
 
-    var cnt = porDia.filter(function(d){ return d.grupos.indexOf(g.key) >= 0; }).length;
-    var mal = g.tipo === 'lim' ? cnt > g.obj : false;
+    var cnt = racionesGrupo(g.key, fechas);
+    var objn = objGrupo(g.key).objetivo;
+    var mal = g.tipo === 'lim' && objn > 0 && cnt > objn;
 
     return '<tr>' +
       '<td><div class="c-g">' + icono(g.ico, g.emoji, 16) + esc(g.label) + '</div></td>' + dias +
-      '<td class="c-n wk-sep"><b' + (mal ? ' class="ex"' : '') + '>' + cnt + '</b> / ' + g.obj + '</td>' +
+      '<td class="c-n wk-sep"><b' + (mal ? ' class="ex"' : '') + '>' + cnt + '</b> / ' + objn + '</td>' +
     '</tr>';
   }).join('');
 
@@ -1940,12 +2012,11 @@ function renderAdd(){
 }
 
 function renderMeta(){
-  $('#metaRow').innerHTML =
-    TIPOS.map(function(t){
-      return '<button class="chip' + (draft.tipo_comida===t.key?' on':'') + '" data-tipo="' + t.key + '">' +
-        esc(t.label) + '</button>';
-    }).join('') +
-    '<input class="hora-in" id="inHora" type="time" value="' + esc(draft.hora) + '">';
+  $('#metaRow').innerHTML = TIPOS.map(function(t){
+    return '<button class="chip' + (draft.tipo_comida===t.key?' on':'') + '" data-tipo="' + t.key + '">' +
+      esc(t.label) + '</button>';
+  }).join('');
+  $('#inHora').value = draft.hora || '';
 }
 
 function itemHTML(it, i){
@@ -2227,6 +2298,47 @@ function pegarJSON(){
   }
 }
 
+/* ---------- Descripción → IA ---------- */
+function abrirDescribir(){
+  $('#dTexto').value = '';
+  $('#shPick').classList.remove('on');
+  $('#shDesc').classList.add('on');
+  setTimeout(function(){ try { $('#dTexto').focus(); } catch(e){} }, 120);
+}
+
+function analizarTexto(){
+  var txt = $('#dTexto').value.trim();
+  if(txt.length < 3){ toast('Cuenta un poco más', true); return; }
+
+  $('#shDesc').classList.remove('on');
+  $('#busyT').textContent = 'Calculando nutrientes…';
+  $('#busy').classList.add('on');
+
+  fetch(BACKEND_URL, {
+    method:'POST',
+    headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action:'analizarTexto', descripcion: txt })
+  }).then(function(r){ return r.json(); })
+    .then(function(j){
+      $('#busy').classList.remove('on');
+      if(!j || !j.ok) throw new Error((j && j.error) || 'Error desconocido');
+      abrirForm({
+        titulo:'Revisa lo que ha calculado', guardarCat:true,
+        categoria: pick.destino === 'bebida' ? 'bebida'
+                 : (pick.destino === 'otros' ? pick.filtro : 'plato'),
+        nombre:j.data.nombre, ingredientes:j.data.ingredientes,
+        kcal:j.data.kcal, proteinas_g:j.data.proteinas_g, carbohidratos_g:j.data.carbohidratos_g,
+        grasas_g:j.data.grasas_g, fibra_g:j.data.fibra_g, grupos:j.data.grupos,
+        confianza:j.data.confianza
+      });
+    })
+    .catch(function(e){
+      $('#busy').classList.remove('on');
+      $('#shDesc').classList.add('on');
+      toast('No se pudo calcular: ' + e.message, true);
+    });
+}
+
 /* ---------- Foto → IA ---------- */
 /* Reduce la foto antes de mandarla. Si el canvas falla, manda el original
    siempre que no sea gigante (el backend aguanta, pero la latencia se dispara). */
@@ -2328,6 +2440,7 @@ function abrirComidaExistente(gid){
   renderAdd();
   $('#inPago').value = draft.pagado_por || state.user || '';
   $('#inGasto').value = draft.gasto;
+  $('#inHora').value = draft.hora || '';
   goScreen('s-add');
 }
 
@@ -2511,7 +2624,8 @@ function abrirStatsGrupos(){
     var d = fechas.filter(function(f){
       return gruposDeDia(comidasDe(f)).indexOf(g.key) >= 0;
     }).length;
-    return { label:g.label, valor:d, color:g.color, key:g.key, obj:g.obj, tipo:g.tipo, ico:g.ico, emoji:g.emoji };
+    return { label:g.label, valor:d, color:g.color, key:g.key, obj:objGrupo(g.key).objetivo,
+             tipo:g.tipo, ico:g.ico, emoji:g.emoji };
   });
   var totalDias = datos.reduce(function(a,d){ return a + d.valor; }, 0);
 
@@ -2902,7 +3016,7 @@ function pintarPicker(usuarios){
 
 /* El backend puede ser de una versión anterior y no devolver todas las tablas.
    Normalizamos aquí para que ninguna pantalla reciba undefined. */
-var TABLAS = ['usuarios','objetivos','catalogo','comidas','dias','medidas','gastos','tags'];
+var TABLAS = ['usuarios','objetivos','objetivos_grupos','catalogo','comidas','dias','medidas','gastos','tags'];
 function normalizar(d){
   d = d || {};
   TABLAS.forEach(function(k){ if(!Array.isArray(d[k])) d[k] = []; });
@@ -2971,14 +3085,15 @@ document.addEventListener('click', function(ev){
 
   if(ev.target.closest('#btnEntreno')){
     if(!state.user) return;
-    var nuevo = !esEntreno(state.hoy);
+    var fEnt = state.diaVer || state.hoy;
+    var nuevo = !esEntreno(fEnt);
     $('#swEntreno').className = 'sw' + (nuevo ? ' on' : '');
     /* optimista: actualizo local y luego sincronizo */
-    var fila = state.data.dias.filter(function(d){ return fkey(d.fecha) === state.hoy; })[0];
+    var fila = state.data.dias.filter(function(d){ return fkey(d.fecha) === fEnt; })[0];
     if(fila) fila.dia_entreno = nuevo;
-    else state.data.dias.push({ username:state.user, fecha:state.hoy, dia_entreno:nuevo, nota:'' });
+    else state.data.dias.push({ username:state.user, fecha:fEnt, dia_entreno:nuevo, nota:'' });
     renderResumen();
-    api('setDiaEntreno', { username:state.user, fecha:state.hoy, dia_entreno:nuevo })
+    api('setDiaEntreno', { username:state.user, fecha:fEnt, dia_entreno:nuevo })
       .then(function(){ toast(nuevo ? 'Día de entreno activado 🏋️' : 'Día normal'); })
       .catch(function(e){ toast('No se guardó: ' + e.message, true); });
     return;
@@ -2997,7 +3112,9 @@ document.addEventListener('click', function(ev){
 
   if(ev.target.closest('#btnBuscar')){ abrirPicker('plato'); return; }
   if((t = ev.target.closest('[data-pick]'))){ abrirPicker(t.dataset.pick); return; }
-  if(ev.target.closest('#btnFoto')){ $('#fileFoto').value=''; $('#fileFoto').click(); return; }
+  if(ev.target.closest('#btnFoto')){ pick.destino='plato'; $('#fileFoto').value=''; $('#fileFoto').click(); return; }
+  if(ev.target.closest('#btnDescribir')){ pick.destino='plato'; abrirDescribir(); return; }
+  if(ev.target.closest('#dOk')){ analizarTexto(); return; }
 
   if((t = ev.target.closest('[data-cat]'))){ pick.filtro = t.dataset.cat;
     $$('[data-cat]').forEach(function(b){ b.classList.toggle('on', b === t); });
@@ -3015,6 +3132,7 @@ document.addEventListener('click', function(ev){
     renderAdd(); return;
   }
 
+  if(ev.target.closest('#btnDescPick')){ abrirDescribir(); return; }
   if(ev.target.closest('#btnNueva')){ abrirForm({}); return; }
 
   if((t = ev.target.closest('[data-edit]'))){
@@ -3186,7 +3304,7 @@ document.addEventListener('click', function(ev){
     if(t.disabled) return;
     state.diaVer = masDias(state.diaVer || state.hoy, +t.dataset.dia);
     if(state.diaVer > state.hoy) state.diaVer = state.hoy;
-    renderComidas(); return;
+    renderComidas(); renderResumen(); renderEntreno(); return;
   }
   if((t = ev.target.closest('[data-sem]'))){
     if(t.disabled) return;
