@@ -140,7 +140,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:17px}
 .meal.done .meal-dot{border-color:#CFEBD8;background:var(--green-xl)}
 .meal-dot .ico{width:19px;height:19px}
-.meal-body{flex:1;min-width:0}
+.meal-body{flex:1;min-width:0;display:flex;flex-direction:column}
 .meal-t{font-size:14.5px;font-weight:600;letter-spacing:-.2px}
 .meal.todo .meal-t{color:var(--ink2)}
 .meal-d{font-size:12.5px;color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -284,13 +284,20 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .item-del{width:32px;height:32px;border:1px solid var(--line2);border-radius:9px;display:flex;
   align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 
+.add-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+.add-b{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:var(--shadow)}
+.add-b:active{transform:scale(.97)}
+.add-b .ai{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:16px;flex-shrink:0}
+.add-b .an{font-size:11.5px;font-weight:600;letter-spacing:-.1px;line-height:1.2;text-align:center}
 .add-rows{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
 .add-row{display:flex;align-items:center;gap:12px;padding:14px 14px}
 .add-row+.add-row{border-top:1px solid var(--line)}
 .add-row .ai{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
   justify-content:center;font-size:16px;flex-shrink:0}
-.add-row .ab{flex:1;min-width:0}
+.add-row .ab{flex:1;min-width:0;display:flex;flex-direction:column}
 .add-row .an{font-size:14px;font-weight:600;letter-spacing:-.2px}
 .add-row .ad{font-size:12px;color:var(--ink2);margin-top:1px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
@@ -401,7 +408,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .grp-h .gi{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;
   justify-content:center;font-size:18px;flex-shrink:0}
 .grp-h .gi .ico{width:20px;height:20px}
-.grp-h .gb{flex:1;min-width:0}
+.grp-h .gb{flex:1;min-width:0;display:flex;flex-direction:column}
 .grp-h .gn{font-size:15.5px;font-weight:600;letter-spacing:-.25px;display:flex;align-items:center;gap:8px}
 .grp-h .gc{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;min-width:22px;text-align:center}
 .grp-h .gd{font-size:12px;color:var(--ink2);margin-top:2px}
@@ -412,7 +419,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .fd-i{width:56px;height:56px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;
   justify-content:center;font-size:24px;overflow:hidden;background:#F5F6F7}
 .fd-i img{width:100%;height:100%;object-fit:cover}
-.fd-b{flex:1;min-width:0}
+.fd-b{flex:1;min-width:0;display:flex;flex-direction:column}
 .fd-n{font-size:14px;font-weight:600;letter-spacing:-.2px;line-height:1.3;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .fd-m{font-size:11.5px;color:var(--ink2);margin-top:3px;line-height:1.35}
@@ -488,7 +495,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .leg-i{display:flex;align-items:center;gap:9px;padding:7px 0;width:100%;text-align:left}
 .leg-d{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
   font-size:14px;flex-shrink:0}
-.leg-b{flex:1;min-width:0}
+.leg-b{flex:1;min-width:0;display:flex;flex-direction:column}
 .leg-n{font-size:12.5px;font-weight:600;letter-spacing:-.15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .leg-v{font-size:11.5px;color:var(--ink2);margin-top:1px}
 .leg-p{font-size:12px;font-weight:700;flex-shrink:0}
@@ -497,7 +504,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .rep+.rep{border-top:1px solid var(--line)}
 .rep-a{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
-.rep-b{flex:1;min-width:0}
+.rep-b{flex:1;min-width:0;display:flex;flex-direction:column}
 .rep-n{font-size:14px;font-weight:600;letter-spacing:-.2px}
 .rep-d{font-size:11.5px;color:var(--ink2);margin-top:2px}
 .rep-s{font-size:13.5px;font-weight:700;white-space:nowrap;flex-shrink:0}
@@ -509,7 +516,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .gl+.gl{border-top:1px solid var(--line)}
 .gl-i{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
   font-size:16px;flex-shrink:0}
-.gl-b{flex:1;min-width:0}
+.gl-b{flex:1;min-width:0;display:flex;flex-direction:column}
 .gl-n{font-size:14px;font-weight:600;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .gl-d{font-size:11.5px;color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .gl-v{font-size:14px;font-weight:600;white-space:nowrap;flex-shrink:0}
@@ -539,10 +546,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .res+.res{border-top:1px solid var(--line)}
 .res-i{width:38px;height:38px;border-radius:10px;background:var(--green-xl);display:flex;
   align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.res-b{flex:1;min-width:0}
-.res-n{font-size:14px;font-weight:600;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.res-d{font-size:11.5px;color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.res-k{font-size:13px;font-weight:600;color:var(--ink2);flex-shrink:0}
+.res-n{flex:1;min-width:0;font-size:14px;font-weight:600;letter-spacing:-.2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res-k{font-size:13px;font-weight:600;color:var(--ink2);flex-shrink:0;white-space:nowrap}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
@@ -790,18 +796,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
   <div class="sec-t" style="margin-top:20px">Acompañamientos y extras</div>
   <div id="itemsExtra"></div>
-  <div class="add-rows">
-    <button class="add-row" data-pick="bebida">
-      <span class="ai" style="background:#EAF4FD" id="icoBebida">💧</span>
-      <span class="ab"><span class="an">Bebida</span></span>
-      <span class="aa">＋ Añadir</span>
-    </button>
-    <button class="add-row" data-pick="otros">
-      <span class="ai" style="background:#FEF6E7" id="icoOtros">🌾</span>
-      <span class="ab"><span class="an">Otros</span></span>
-      <span class="aa">＋ Añadir</span>
-    </button>
-  </div>
+  <div class="add-grid" id="addGrid"></div>
 
   <div class="fuera" id="fuera">
     <button class="fuera-h" id="btnFuera" style="width:100%">
@@ -1051,7 +1046,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.1.0';
+var APP_VERSION = 'v1.2.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1106,16 +1101,18 @@ var NAV = [
 var CATS = {
   plato:       { label:'Comida principal', plural:'Comidas',          desc:'Platos principales y recetas completas',
                  emoji:'🍽️', ico:'cat_plato',  bg:'#EFF9F1', tint:'#2F6B41', chip:'#DCFCE7', orden:1 },
+  fruta:       { label:'Fruta',            plural:'Fruta',            desc:'Piezas de fruta y macedonias',
+                 emoji:'🍎', ico:'cat_fruta',  bg:'#F1FAEB', tint:'#4D7C0F', chip:'#DCF5C8', orden:2 },
   postre:      { label:'Postre',           plural:'Postres',          desc:'Opciones dulces y saludables',
-                 emoji:'🍰', ico:'cat_postre', bg:'#FDF0F4', tint:'#C2405F', chip:'#FCE1E9', orden:2 },
+                 emoji:'🍰', ico:'cat_postre', bg:'#FDF0F4', tint:'#C2405F', chip:'#FCE1E9', orden:3 },
   snack:       { label:'Snack',            plural:'Snacks',           desc:'Para picar entre horas',
-                 emoji:'🥜', ico:'cat_snack',  bg:'#FEF6E7', tint:'#B07A12', chip:'#FDECC8', orden:3 },
+                 emoji:'🥜', ico:'cat_snack',  bg:'#FEF6E7', tint:'#B07A12', chip:'#FDECC8', orden:4 },
   acompanante: { label:'Acompañamiento',   plural:'Acompañamientos',  desc:'Guarniciones y acompañamientos',
-                 emoji:'🍚', ico:'cat_acomp', bg:'#EAF4FD', tint:'#2A6FA8', chip:'#D7EAFA', orden:4 },
+                 emoji:'🍚', ico:'cat_acomp', bg:'#EAF4FD', tint:'#2A6FA8', chip:'#D7EAFA', orden:5 },
   bebida:      { label:'Bebida',           plural:'Bebidas',          desc:'Agua, refrescos, café e infusiones',
-                 emoji:'💧', ico:'cat_bebida', bg:'#E9F6F8', tint:'#1F7A88', chip:'#D2EEF2', orden:5 },
+                 emoji:'💧', ico:'cat_bebida', bg:'#E9F6F8', tint:'#1F7A88', chip:'#D2EEF2', orden:6 },
   comprada:    { label:'Comprada',         plural:'Compradas',        desc:'Productos envasados y comidas listas',
-                 emoji:'🛍️', ico:'cat_comprada', bg:'#F4EFFB', tint:'#6D4BA8', chip:'#E7DCFA', orden:6 }
+                 emoji:'🛍️', ico:'cat_comprada', bg:'#F4EFFB', tint:'#6D4BA8', chip:'#E7DCFA', orden:7 }
 };
 var CATS_ORDEN = Object.keys(CATS).sort(function(a,b){ return CATS[a].orden - CATS[b].orden; });
 
@@ -1674,6 +1671,7 @@ function render(){
   $('#frase').textContent = (u && String(u.frase||'').trim())
     || 'Sigue tu plan. Pequeñas decisiones, grandes resultados.';
   if(!state.diaVer || state.diaVer > state.hoy) state.diaVer = state.hoy;
+  renderAddGrid();
   renderEntreno();
   renderResumen();
   renderComidas();
@@ -2004,6 +2002,7 @@ function abrirAdd(tipo){
 
 function renderAdd(){
   renderMeta();
+  renderAddGrid();
   renderItems();
   renderFuera();
   renderRings();
@@ -2039,6 +2038,17 @@ function itemHTML(it, i){
       '</div>' +
     '</div>' +
   '</div>';
+}
+
+/* Un botón por categoría, en vez de un cajón de sastre llamado "Otros" */
+var EXTRA_CATS = ['bebida','fruta','acompanante','postre','snack','comprada'];
+function renderAddGrid(){
+  $('#addGrid').innerHTML = EXTRA_CATS.map(function(k){
+    var c = CATS[k];
+    return '<button class="add-b" data-pick="' + k + '">' +
+      '<span class="ai" style="background:' + c.bg + '">' + icono(c.ico, c.emoji, 17) + '</span>' +
+      '<span class="an">' + esc(c.label) + '</span></button>';
+  }).join('');
 }
 
 function renderItems(){
@@ -2131,27 +2141,22 @@ var pick = { destino:'plato', filtro:'plato', q:'' };
 
 function abrirPicker(destino){
   pick.destino = destino;
-  pick.filtro  = destino === 'otros' ? 'acompanante' : destino;
+  pick.filtro  = destino;
   pick.q = '';
   $('#pickQ').value = '';
-  $('#pickT').textContent = destino === 'bebida' ? 'Añadir bebida'
-    : (destino === 'otros' ? 'Añadir extra' : 'Selecciona una comida');
-  $('#pickCats').innerHTML = (destino === 'otros'
-      ? [['acompanante','Acompañamientos'],['postre','Postres'],['snack','Snacks'],['comprada','Compradas']]
-      : []
-    ).map(function(c){
-      return '<button class="chip' + (pick.filtro===c[0]?' on':'') + '" data-cat="' + c[0] + '">' + c[1] + '</button>';
-    }).join('');
+  $('#pickT').textContent = destino === 'plato'
+    ? 'Selecciona una comida'
+    : 'Añadir ' + (CATS[destino] ? CATS[destino].label.toLowerCase() : destino);
+  $('#pickCats').innerHTML = '';
   renderPickRes();
   $('#shPick').classList.add('on');
 }
 
 function renderPickRes(){
   var q = pick.q.trim().toLowerCase();
-  var cats = pick.destino === 'otros' ? [pick.filtro] : [pick.destino];
   var lista = (state.data ? state.data.catalogo : []).filter(function(c){
     var cat = String(c.categoria||'plato').trim().toLowerCase();
-    if(cats.indexOf(cat) < 0) return false;
+    if(cat !== pick.filtro) return false;
     if(!q) return true;
     return (String(c.nombre)+' '+String(c.ingredientes||'')).toLowerCase().indexOf(q) >= 0;
   }).sort(function(a,b){ return num(b.veces_usado) - num(a.veces_usado); }).slice(0, 40);
@@ -2165,9 +2170,8 @@ function renderPickRes(){
   $('#pickRes').innerHTML = lista.map(function(c){
     var cd = CATS[String(c.categoria||'plato').trim().toLowerCase()] || CATS.plato;
     return '<button class="res" data-cid="' + esc(c.id) + '">' +
-      '<span class="res-i" style="background:' + cd.bg + '">' + cd.emoji + '</span>' +
-      '<span class="res-b"><span class="res-n">' + esc(c.nombre) + '</span>' +
-        (c.ingredientes ? '<span class="res-d">' + esc(c.ingredientes) + '</span>' : '') + '</span>' +
+      '<span class="res-i" style="background:' + cd.bg + '">' + icono(cd.ico, cd.emoji, 17) + '</span>' +
+      '<span class="res-n">' + esc(c.nombre) + '</span>' +
       '<span class="res-k">' + fmt(c.kcal) + ' kcal</span>' +
     '</button>';
   }).join('');
@@ -2190,8 +2194,7 @@ function abrirForm(opts){
   $('#fCat').innerHTML = CATS_ORDEN.map(function(k){
     return '<option value="' + k + '">' + esc(CATS[k].label) + '</option>';
   }).join('');
-  $('#fCat').value    = opts.categoria || (pick.destino === 'bebida' ? 'bebida'
-                        : (pick.destino === 'otros' ? pick.filtro : 'plato'));
+  $('#fCat').value    = opts.categoria || pick.destino || 'plato';
   $('#fKcal').value = opts.kcal || '';
   $('#fPro').value  = opts.proteinas_g || '';
   $('#fCar').value  = opts.carbohidratos_g || '';
@@ -2324,8 +2327,7 @@ function analizarTexto(){
       if(!j || !j.ok) throw new Error((j && j.error) || 'Error desconocido');
       abrirForm({
         titulo:'Revisa lo que ha calculado', guardarCat:true,
-        categoria: pick.destino === 'bebida' ? 'bebida'
-                 : (pick.destino === 'otros' ? pick.filtro : 'plato'),
+        categoria: pick.destino || 'plato',
         nombre:j.data.nombre, ingredientes:j.data.ingredientes,
         kcal:j.data.kcal, proteinas_g:j.data.proteinas_g, carbohidratos_g:j.data.carbohidratos_g,
         grasas_g:j.data.grasas_g, fibra_g:j.data.fibra_g, grupos:j.data.grupos,
