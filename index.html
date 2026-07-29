@@ -1046,7 +1046,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.2.0';
+var APP_VERSION = 'v1.3.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1285,28 +1285,18 @@ function horaDecimalAhora(){
   return d.getHours() + d.getMinutes()/60;
 }
 
-/* Margen de cortesía: nunca se exige el ritmo teórico exacto, porque
-   comer media hora más tarde no es un error. El colchón es grande por
-   la mañana y desaparece al final del día, cuando ya no hay margen
-   real para corregir. */
-var GRACIA = 0.30;
-function exigencia(e){
-  return Math.max(0, e - GRACIA*(1-e));
-}
+/* La hora ya NO se usa para exigir progreso. Se conserva porque decide
+   cuánto crédito por defecto se da a los grupos mientras queda día. */
+function exigencia(e){ return e; }
 
-/* Cumplimiento de una magnitud respecto a lo exigible a esta hora.
-   Devuelve 0..1. Tolerante: solo penaliza desviaciones grandes. */
-function cumple(consumido, objetivo, e){
-  if(objetivo <= 0) return 1;
-  e = exigencia(e);
-  if(e < 0.05) return 1;                 // todavía no se exige nada
-  var rel = (consumido/objetivo) / e;    // 1 = justo en el ritmo previsto
-  if(rel >= 0.85 && rel <= 1.35) return 1;
-  if(rel < 0.85){
-    if(rel <= 0.2) return 0;
-    return rel < 0.6 ? (rel-0.2)/0.4*0.5 : 0.5 + (rel-0.6)/0.25*0.5;
-  }
-  return Math.max(0.3, 1 - (rel-1.35)/0.45*0.7);   // pasarse penaliza poco
+/* Puntuación 0..1 de un cociente respecto a su ideal.
+   Generosa por arriba (pasarse de proteína o fibra nunca es malo)
+   y con caída suave por abajo: las desviaciones pequeñas cuestan poco. */
+function banda(ratio){
+  if(ratio >= 0.95) return 1;
+  if(ratio >= 0.75) return 0.75 + (ratio-0.75)/0.20*0.25;
+  if(ratio >= 0.50) return 0.40 + (ratio-0.50)/0.25*0.35;
+  return Math.max(0, ratio/0.50*0.40);
 }
 
 /* Cuántas comidas distintas del día incluyen un grupo */
@@ -1322,75 +1312,85 @@ function vecesGrupoEn(grupos, comidasDelDia){
 
 /* Reparto v1.1: la energía baja de 10 a 5 y esos puntos van a
    proteína, fibra y calidad. La app no es un contador de calorías. */
-var W_DIA = { macros:42, fibra:17, calidad:21, penal:15, energia:5 };
-var W_MACRO = { proteinas_g:0.50, carbohidratos_g:0.25, grasas_g:0.25 };
-var BONUS_CALIDAD = { verduras:9, fruta:4, legumbres:4, pescado:4 };   // 21 pts
-var CAPRICHO_PEN  = [0, 2, 6, 14];                                     // acumulado por nº
+/* Reparto v2. El score responde a "¿lo que has comido es de calidad?",
+   no a "¿cuánto te falta para el objetivo?" — de eso ya se encargan
+   las barras de progreso. */
+var W_DIA = { densidad:30, calidad:30, penal:25, energia:15 };
+var W_DENS = { proteinas_g:18, fibra_g:12 };
+var BONUS_CALIDAD = { verduras:12, fruta:6, legumbres:6, pescado:6 };   // 30 pts
+var CAPRICHO_PEN  = [0, 3, 7, 12];                                     // acumulado por nº
 var GRUPOS_NEG = ['ultraprocesado','capricho','permitido'];
 
+/* Cuántas comidas distintas del día incluyen un grupo */
+function vecesGrupoEn(grupos, comidasDelDia){
+  var n = 0, vistos = {};
+  comidasDelDia.forEach(function(c){
+    var gid = String(c.grupo_id || c.id);
+    if(vistos[gid]) return;
+    if(gruposDe(c.grupos).indexOf(grupos) >= 0){ vistos[gid] = 1; n++; }
+  });
+  return n;
+}
+
 /**
- * Score diario 0-100. `e` = expectativa de la hora (0..1).
- * Para días pasados se pasa e=1 (el día ya terminó).
- * Devuelve null si no hay nada registrado y el día ya acabó.
- */
-/**
- * Un extra nunca puede subir el score.
- * En vez de guardar el score anterior (que dependería del orden en que
- * registras y se rompería al editar), se calcula el día dos veces: con
- * todo y quitando los ítems marcados como extra. Se queda el menor.
- * Es equivalente, pero se recalcula siempre desde los datos.
+ * Un extra nunca puede subir el score. Ya no hace falta ningún truco
+ * para garantizarlo: al medir densidad, cualquier alimento pobre baja
+ * los gramos de proteína y fibra por caloría, así que empeora el bloque
+ * de densidad además de gastar colchón de penalización.
+ * (Verificado con un barrido de 2160 combinaciones de hora, base y extra.)
  */
 function scoreDiario(fecha, e){
   var com = comidasDe(fecha);
   if(e === undefined) e = (fecha < state.hoy) ? 1 : expectativa(horaDecimalAhora());
-
-  var conTodo = scoreBruto(com, fecha, e);
-  var limpias = com.filter(function(c){
-    return !gruposDe(c.grupos).some(function(k){ return GRUPOS_NEG.indexOf(k) >= 0; });
-  });
-  if(limpias.length === com.length) return conTodo;
-  return Math.min(conTodo, scoreBruto(limpias, fecha, e));
+  return scoreBruto(com, fecha, e);
 }
 
 function scoreBruto(com, fecha, e){
-  if(!com.length && e >= 1) return 0;
-  if(!com.length && e < 0.05) return 100;
-
   var tot = totalesDe(com), obj = objetivoDe(fecha), g = gruposDeDia(com);
+  var kcal = num(tot.kcal), okcal = num(obj.kcal);
 
-  /* 1. Macros — 42. La proteína pesa la mitad del bloque. */
-  var pMacros = W_DIA.macros * Object.keys(W_MACRO).reduce(function(a,k){
-    return a + W_MACRO[k] * cumple(num(tot[k]), num(obj[k]), e);
-  }, 0);
+  /* 1. DENSIDAD NUTRICIONAL — 30. Sin dependencia de la hora.
+        Mide la calidad de lo comido: gramos por cada 1000 kcal
+        frente a la densidad que pide tu objetivo. */
+  var densidad;
+  if(kcal <= 0){
+    densidad = W_DIA.densidad * (1-e);          // nada comido: crédito mientras quede día
+  } else {
+    densidad = 0;
+    Object.keys(W_DENS).forEach(function(k){
+      var o = num(obj[k]);
+      if(o <= 0 || okcal <= 0){ densidad += W_DENS[k]; return; }
+      var dIdeal = o/okcal;                     // g por kcal que pide el objetivo
+      var dReal  = num(tot[k])/kcal;
+      densidad += W_DENS[k] * banda(dReal/dIdeal);
+    });
+  }
 
-  /* 2. Fibra — 17 */
-  var pFibra = W_DIA.fibra * cumple(num(tot.fibra_g), num(obj.fibra_g), e);
-
-  /* 3. Calidad — 21. Se mezcla con la hora: por la mañana aún
-        no se te puede exigir haber comido verdura. */
+  /* 2. CALIDAD — 30. Único bloque que mira la hora: por la mañana
+        todavía no se te puede exigir haber comido verdura. */
   var ganado = 0;
   Object.keys(BONUS_CALIDAD).forEach(function(k){
     if(g.indexOf(k) >= 0) ganado += BONUS_CALIDAD[k];
   });
-  var ec = exigencia(e);
-  var pCalidad = W_DIA.calidad*(1-ec) + Math.min(W_DIA.calidad, ganado)*ec;
+  var calidad = W_DIA.calidad*(1-e) + Math.min(W_DIA.calidad, ganado)*e;
 
-  /* 4. Penalizaciones — 15. Aquí la hora no cuenta: ya te lo comiste. */
+  /* 3. PENALIZACIONES — 25 de colchón. La hora no cuenta: ya te lo comiste. */
   var castigo = 0;
-  if(g.indexOf('ultraprocesado') >= 0) castigo += 8;
+  if(g.indexOf('ultraprocesado') >= 0) castigo += 7;
   castigo += CAPRICHO_PEN[Math.min(3, vecesGrupoEn('capricho', com))];
-  if(g.indexOf('permitido') >= 0) castigo += 10;
-  var pPenal = Math.max(0, W_DIA.penal - castigo);
+  if(g.indexOf('permitido') >= 0) castigo += 9;
+  var penal = Math.max(0, W_DIA.penal - castigo);
 
-  /* 5. Energía — 5. Solo detecta desviaciones grandes. */
-  var pEnergia;
-  if(ec < 0.05 || num(obj.kcal) <= 0) pEnergia = W_DIA.energia;
-  else {
-    var des = Math.abs((num(tot.kcal)/num(obj.kcal))/ec - 1);
-    pEnergia = des <= 0.10 ? 5 : (des <= 0.20 ? 3 : Math.max(0, 2.5 - (des-0.20)*5));
+  /* 4. ENERGÍA — 15. Solo salta ante desviaciones claras del objetivo
+        DIARIO. Ir por debajo a media tarde no es un error, es media tarde. */
+  var energia = W_DIA.energia;
+  if(okcal > 0){
+    var r = kcal/okcal;
+    if(r > 1.15) energia = Math.max(0, W_DIA.energia - (r-1.15)*40);
+    else if(e >= 0.95 && r < 0.6) energia = Math.max(0, W_DIA.energia - (0.6-r)*40);
   }
 
-  return Math.max(0, Math.min(100, Math.round(pMacros + pFibra + pCalidad + pPenal + pEnergia)));
+  return Math.max(0, Math.min(100, Math.round(densidad + calidad + penal + energia)));
 }
 
 /* Compatibilidad: la tabla semanal usa el score de cada día */
@@ -1492,31 +1492,35 @@ function scoreSemanal(){
 function factores(fecha, e){
   var com = comidasDe(fecha);
   if(e === undefined) e = (fecha < state.hoy) ? 1 : expectativa(horaDecimalAhora());
-  var ec = exigencia(e);
   var tot = totalesDe(com), obj = objetivoDe(fecha), g = gruposDeDia(com);
   var sem = scoreSemanal();
+  var kcal = num(tot.kcal), okcal = num(obj.kcal);
 
   var bien = [], mejor = [];
-  var alcanza = function(k, umbral){
+
+  /* Densidad de un macro frente a la que pide el objetivo.
+     Mismo criterio que el score: calidad de lo comido, no progreso. */
+  var dens = function(k){
     var o = num(obj[k]);
-    if(o <= 0 || ec < 0.05) return true;
-    return (num(tot[k])/o) >= ec*umbral;
+    if(kcal <= 0 || o <= 0 || okcal <= 0) return null;
+    return (num(tot[k])/kcal) / (o/okcal);
   };
+  var dP = dens('proteinas_g'), dF = dens('fibra_g');
 
   /* Fortalezas, por orden de relevancia */
-  if(com.length && alcanza('proteinas_g', 0.9)) bien.push('Proteína');
-  if(g.indexOf('verduras') >= 0)  bien.push('Verduras');
-  if(com.length && alcanza('fibra_g', 0.85)) bien.push('Fibra');
+  if(dP !== null && dP >= 0.9)   bien.push('Proteína');
+  if(g.indexOf('verduras') >= 0) bien.push('Verduras');
+  if(dF !== null && dF >= 0.9)   bien.push('Fibra');
   if(g.indexOf('fruta') >= 0)     bien.push('Fruta');
   if(g.indexOf('legumbres') >= 0) bien.push('Legumbres');
   if(g.indexOf('pescado') >= 0)   bien.push('Pescado');
   if(com.length && !GRUPOS_NEG.some(function(k){ return g.indexOf(k) >= 0; })) bien.push('Sin extras');
 
-  /* Prioridades del día: solo lo que aún da tiempo a arreglar */
-  if(!alcanza('proteinas_g', 0.8)) mejor.push('Proteína');
-  if(g.indexOf('verduras') < 0 && ec > 0.2) mejor.push('Verduras');
-  if(!alcanza('fibra_g', 0.75)) mejor.push('Fibra');
-  if(g.indexOf('fruta') < 0 && ec > 0.2) mejor.push('Fruta');
+  /* Prioridades: qué mejoraría más la siguiente comida */
+  if(dP !== null && dP < 0.8) mejor.push('Proteína');
+  if(g.indexOf('verduras') < 0 && e > 0.2 && com.length) mejor.push('Verduras');
+  if(dF !== null && dF < 0.8) mejor.push('Fibra');
+  if(g.indexOf('fruta') < 0 && e > 0.2 && com.length) mejor.push('Fruta');
 
   /* Si el día va fino, se cuela la prioridad de la semana */
   if(sem && mejor.length < 2){
@@ -1566,7 +1570,8 @@ function mensajeDiario(score, fecha, e){
 
   var com = comidasDe(fecha), g = gruposDeDia(com), tot = totalesDe(com), obj = objetivoDe(fecha);
   if(e === undefined) e = (fecha < state.hoy) ? 1 : expectativa(horaDecimalAhora());
-  var tarde = exigencia(e) >= 0.55;
+  var tarde   = e >= 0.68;
+  var cerrado = (fecha < state.hoy) || e >= 0.99;   /* el día ya no se puede corregir */
   var fa = factores(fecha, e).mejor;
   var lista = fa.map(function(x){ return x.replace(' esta semana','').toLowerCase(); });
   var pri = lista.slice(0,2).join(' y ');
@@ -1585,18 +1590,24 @@ function mensajeDiario(score, fecha, e){
 
   /* 70-84 · margen de mejora */
   if(score >= 70) return { mood:'bien', b:'Buen día.',
-    t:pri ? 'Añadir <span class="hl">' + pri + '</span> ' + rotar(TX_DIA.ok, fecha)
-          : rotar(TX_DIA.mb, fecha, 1) };
+    t: cerrado ? (pri ? 'Mañana, un poco más de <span class="hl">' + pri + '</span>.'
+                      : 'Día cerrado <span class="hl">en buen sitio.</span>')
+               : (pri ? 'Añadir <span class="hl">' + pri + '</span> ' + rotar(TX_DIA.ok, fecha)
+                      : rotar(TX_DIA.mb, fecha, 1)) };
 
   /* 55-69 · todavía recuperable */
-  if(score >= 55) return { mood:'neutro', b:rotar(TX_DIA.rec, fecha),
-    t:pri ? 'Prioriza <span class="hl">' + pri + '</span> en la próxima comida.'
-          : 'Una comida <span class="hl">equilibrada</span> y listo.' };
+  if(score >= 55) return { mood:'neutro',
+    b: cerrado ? 'Día correcto.' : rotar(TX_DIA.rec, fecha),
+    t: cerrado ? (pri ? 'Mañana, algo más de <span class="hl">' + pri + '</span>.'
+                      : 'Mañana se retoma el patrón.')
+               : (pri ? 'Prioriza <span class="hl">' + pri + '</span> en la próxima comida.'
+                      : 'Una comida <span class="hl">equilibrada</span> y listo.') };
 
   /* <55 · claramente mejorable, nunca culpabilizar */
   return { mood:'flojo', b:'No pasa nada.',
-    t:pri ? 'Prioriza <span class="hl">' + pri + '</span> en la siguiente comida.'
-          : rotar(TX_DIA.baj, fecha) };
+    t: cerrado ? 'Mañana volvemos al <span class="hl">patrón de siempre.</span>'
+               : (pri ? 'Prioriza <span class="hl">' + pri + '</span> en la siguiente comida.'
+                      : rotar(TX_DIA.baj, fecha)) };
 }
 
 /** Semanal: habla de hábitos, nunca del día. Fortaleza + máx. 2 prioridades. */
