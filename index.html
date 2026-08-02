@@ -36,7 +36,8 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 #splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:14px;transition:opacity .35s}
 #splash.out{opacity:0;pointer-events:none}
-.spl-logo{font-size:64px;line-height:1}
+.spl-logo{font-size:64px;line-height:1;width:64px;height:64px;display:flex;
+  align-items:center;justify-content:center}
 .spl-name{font-size:20px;font-weight:700;letter-spacing:-.3px}
 .spinner{width:22px;height:22px;border:2.5px solid var(--green-l);border-top-color:var(--green);
   border-radius:50%;animation:spin .7s linear infinite}
@@ -53,8 +54,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .hd p{margin:5px 0 0;font-size:13.5px;color:var(--ink2);line-height:1.35;max-width:230px}
 
 /* toggle día de entreno — discreto */
+.tes{display:flex;flex-direction:column;gap:6px;flex-shrink:0;margin-top:4px}
 .te{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line2);
-  border-radius:999px;padding:5px 7px 5px 9px;flex-shrink:0;margin-top:4px}
+  border-radius:999px;padding:5px 7px 5px 9px;flex-shrink:0;justify-content:space-between}
 .te.on{border-color:#BFEBCD;background:var(--green-xl)}
 .te .te-ico{width:14px;height:14px;font-size:12px;opacity:.55}
 .te.on .te-ico{opacity:1}
@@ -658,6 +660,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   line-height:1.45;margin-top:11px}
 
 /* overlay de análisis */
+.foto-prev{width:100%;border-radius:14px;overflow:hidden;background:#F5F6F7;
+  display:flex;align-items:center;justify-content:center;min-height:150px}
+.foto-prev img{width:100%;height:auto;display:block;max-height:260px;object-fit:cover}
 .busy{position:fixed;inset:0;background:rgba(255,255,255,.93);z-index:800;display:none;
   flex-direction:column;align-items:center;justify-content:center;gap:15px;text-align:center;padding:30px}
 .busy.on{display:flex}
@@ -678,7 +683,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 </head>
 <body>
 
-<div id="splash"><div class="spl-logo">🥑</div><div class="spl-name">Gosari</div><div class="spinner"></div></div>
+<div id="splash"><div class="spl-logo" id="splLogo">🥑</div><div class="spl-name">Gosari</div><div class="spinner"></div></div>
 <div id="bar"></div>
 <div id="toast"></div>
 
@@ -692,11 +697,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       <h1 id="saludo">¡Hola! 👋</h1>
       <p id="frase">Sigue tu plan. Pequeñas decisiones, grandes resultados.</p>
     </div>
-    <button class="te" id="btnEntreno">
-      <span class="te-ico" id="teIco">🏋️</span>
-      <span class="te-tx">Entreno</span>
-      <span class="sw" id="swEntreno"></span>
-    </button>
+    <div class="tes" id="tes"></div>
   </div>
 
   <div class="card">
@@ -1173,6 +1174,22 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   </div>
 </div></div>
 
+<!-- ================= SHEET: FOTO ================= -->
+<div class="sheet-bg" id="shFoto"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3>Tu foto</h3>
+    <button class="sheet-x" data-close="shFoto">✕</button></div></div>
+  <div class="sheet-b">
+    <div class="foto-prev" id="fotoPrev"></div>
+    <div class="fld" style="margin:14px 0 4px"><label>¿Algo que añadir? (opcional)</label>
+      <textarea id="fTexto" rows="3"
+        placeholder="Ej. el plato es hondo, lleva dos cucharadas de aceite, la carne es de ternera"></textarea></div>
+    <p class="hint">Lo que escribas manda sobre lo que se vea en la foto. Útil para cantidades,
+      ingredientes ocultos o forma de cocinado.</p>
+    <button class="btn-g" id="fOkFoto">Analizar comida</button>
+    <button class="btn-o" id="fOtraFoto">📷 Hacer otra foto</button>
+  </div>
+</div></div>
+
 <!-- ================= SHEET: DESCRIBIR ================= -->
 <div class="sheet-bg" id="shDesc"><div class="sheet">
   <div class="sheet-h"><div class="sheet-h1"><h3>Describe tu comida</h3>
@@ -1252,7 +1269,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.4.0';
+var APP_VERSION = 'v1.5.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1865,14 +1882,13 @@ function gruposDeDia(comidas){
   });
   return out;
 }
-function esEntreno(fecha){
-  if(!state.data) return false;
-  var r = state.data.dias.filter(function(d){ return fkey(d.fecha) === fecha; })[0];
-  return r ? truthy(r.dia_entreno) : false;
-}
+function esEntreno(fecha){ return tiposDe(fecha).indexOf('entreno') >= 0; }
 function objetivoDe(fecha){
-  var tipo = esEntreno(fecha) ? 'entreno' : 'normal';
-  var o = (state.data ? state.data.objetivos : []).filter(function(r){
+  var act = tiposDe(fecha), tipo = 'normal';
+  /* Con varios activos manda el último de Objetivos: así "regla" puede
+     sobreescribir a "entreno" con solo ordenar las filas del Sheet. */
+  tiposDia().forEach(function(k){ if(act.indexOf(k) >= 0) tipo = k; });
+  var o = ((state.data && state.data.objetivos) || []).filter(function(r){
     return String(r.username) === state.user && String(r.tipo_dia).trim().toLowerCase() === tipo;
   })[0];
   return o || { kcal:0, proteinas_g:0, carbohidratos_g:0, grasas_g:0, fibra_g:0 };
@@ -1898,11 +1914,46 @@ function render(){
   if(state.screen === 's-perfil')  renderPerfil();
 }
 
+var TIPO_DIA_UI = {
+  entreno: { label:'Entreno', ico:'ui_entreno', emoji:'🏋️' },
+  regla:   { label:'Regla',   ico:'ui_regla',   emoji:'🩸' },
+  ayuno:   { label:'Ayuno',   ico:'ui_ayuno',   emoji:'⏳' }
+};
+
+/** Tipos de día definidos para este usuario en Objetivos, sin 'normal'.
+    El orden de las filas manda: el último activo fija los objetivos. */
+function tiposDia(){
+  var vistos = [];
+  ((state.data && state.data.objetivos) || []).forEach(function(o){
+    if(String(o.username) !== state.user) return;
+    var t = String(o.tipo_dia||'').trim().toLowerCase();
+    if(t && t !== 'normal' && vistos.indexOf(t) < 0) vistos.push(t);
+  });
+  return vistos;
+}
+
+/** Tipos activos en una fecha. Lee `tipos`, con respaldo a `dia_entreno`. */
+function tiposDe(fecha){
+  var r = ((state.data && state.data.dias) || []).filter(function(d){
+    return fkey(d.fecha) === fecha;
+  })[0];
+  if(!r) return [];
+  var t = String(r.tipos||'').split(',').map(function(x){ return x.trim().toLowerCase(); }).filter(Boolean);
+  if(!t.length && truthy(r.dia_entreno)) t = ['entreno'];
+  return t;
+}
+
 function renderEntreno(){
-  var on = esEntreno(state.diaVer || state.hoy);
-  $('#swEntreno').className = 'sw' + (on ? ' on' : '');
-  $('#btnEntreno').classList.toggle('on', on);
-  $('#teIco').innerHTML = icono('ui_entreno', '🏋️', 14);
+  var f = state.diaVer || state.hoy;
+  var act = tiposDe(f);
+  $('#tes').innerHTML = tiposDia().map(function(k){
+    var ui = TIPO_DIA_UI[k] || { label:_cap(k), ico:'ui_'+k, emoji:'📌' };
+    var on = act.indexOf(k) >= 0;
+    return '<button class="te' + (on ? ' on' : '') + '" data-tipodia="' + esc(k) + '">' +
+      '<span class="te-ico">' + icono(ui.ico, ui.emoji, 14) + '</span>' +
+      '<span class="te-tx">' + esc(ui.label) + '</span>' +
+      '<span class="sw' + (on ? ' on' : '') + '"></span></button>';
+  }).join('');
 }
 
 function pintarAnillo(sel, r, v){
@@ -2050,7 +2101,7 @@ var ORDENES = [
 
 function catFiltrado(){
   var q = cat.q.trim().toLowerCase();
-  return (state.data ? state.data.catalogo : []).filter(function(c){
+  return catalogoMio().filter(function(c){
     if(q && (String(c.nombre)+' '+String(c.ingredientes||'')).toLowerCase().indexOf(q) < 0) return false;
     if(cat.grupos.length){
       var g = gruposDe(c.grupos);
@@ -2378,7 +2429,7 @@ function abrirPicker(destino){
 
 function renderPickRes(){
   var q = pick.q.trim().toLowerCase();
-  var lista = (state.data ? state.data.catalogo : []).filter(function(c){
+  var lista = catalogoMio().filter(function(c){
     var cat = String(c.categoria||'plato').trim().toLowerCase();
     if(cat !== pick.filtro) return false;
     if(!q) return true;
@@ -2599,23 +2650,43 @@ function comprimir(file, maxPx, calidad){
   });
 }
 
-function analizarFoto(file){
-  $('#busyT').textContent = 'Analizando tu comida…';
+/* Primero se enseña la foto y se deja añadir un detalle. Lo que escribe
+   el usuario pesa más que lo que la IA crea ver. */
+function prepararFoto(file){
+  $('#busyT').textContent = 'Preparando la foto…';
   $('#busy').classList.add('on');
   comprimir(file, 900, 0.72).then(function(dataUrl){
+    $('#busy').classList.remove('on');
     draft.foto = dataUrl;
+    $('#fotoPrev').innerHTML = '<img src="' + dataUrl + '" alt="">';
+    $('#fTexto').value = '';
+    $('#shFoto').classList.add('on');
+  }).catch(function(e){
+    $('#busy').classList.remove('on');
+    draft.foto = '';
+    toast('No se pudo leer la foto: ' + e.message, true);
+  });
+}
+
+function analizarFoto(){
+  var nota = $('#fTexto').value.trim();
+  $('#shFoto').classList.remove('on');
+  $('#busyT').textContent = 'Analizando tu comida…';
+  $('#busy').classList.add('on');
+  Promise.resolve(draft.foto).then(function(dataUrl){
+    if(!dataUrl) throw new Error('no hay foto');
     return fetch(BACKEND_URL, {
       method:'POST',
       headers:{ 'Content-Type':'text/plain;charset=utf-8' },  /* text/plain evita el preflight CORS */
-      body: JSON.stringify({ action:'analizarFoto', imagen: dataUrl, mime:'image/jpeg' })
+      body: JSON.stringify({ action:'analizarFoto', imagen: dataUrl, mime:'image/jpeg', comentario: nota })
     });
   }).then(function(r){ return r.json(); })
     .then(function(j){
       $('#busy').classList.remove('on');
       if(!j || !j.ok) throw new Error((j && j.error) || 'Error desconocido');
-      pick.destino = 'plato';
       abrirForm({
-        titulo:'Revisa lo que detectó', categoria:'plato', guardarCat:true,
+        titulo:'Revisa lo que detectó', guardarCat:true,
+        categoria: pick.destino || 'plato',
         nombre:j.data.nombre, ingredientes:j.data.ingredientes,
         kcal:j.data.kcal, proteinas_g:j.data.proteinas_g, carbohidratos_g:j.data.carbohidratos_g,
         grasas_g:j.data.grasas_g, fibra_g:j.data.fibra_g, grupos:j.data.grupos,
@@ -2624,7 +2695,7 @@ function analizarFoto(file){
     })
     .catch(function(e){
       $('#busy').classList.remove('on');
-      draft.foto = '';
+      $('#shFoto').classList.add('on');
       toast('No se pudo analizar: ' + e.message, true);
     });
 }
@@ -3692,6 +3763,15 @@ function normalizar(d){
   return d;
 }
 
+/** El catálogo es de cada uno: dietas distintas, bases distintas.
+    Las entradas sin `creado_por` quedan compartidas para todos. */
+function catalogoMio(){
+  return ((state.data && state.data.catalogo) || []).filter(function(c){
+    var dueno = String(c.creado_por || '').trim();
+    return !dueno || dueno === state.user;
+  });
+}
+
 function cargar(){
   return api('getBootstrap', { username: state.user }).then(function(d){
     state.data = normalizar(d);
@@ -3703,6 +3783,7 @@ function cargar(){
 
 function boot(){
   $('#ver').textContent = APP_VERSION;
+  $('#splLogo').innerHTML = icono('ui_splash', '🥑', 64);
   renderNav();
   state.hoy = hoyStr();
 
@@ -3751,18 +3832,23 @@ document.addEventListener('click', function(ev){
     return;
   }
 
-  if(ev.target.closest('#btnEntreno')){
+  if((t = ev.target.closest('[data-tipodia]'))){
     if(!state.user) return;
-    var fEnt = state.diaVer || state.hoy;
-    var nuevo = !esEntreno(fEnt);
-    $('#swEntreno').className = 'sw' + (nuevo ? ' on' : '');
+    var k = t.dataset.tipodia, fEnt = state.diaVer || state.hoy;
+    var act = tiposDe(fEnt).slice(), pos = act.indexOf(k);
+    if(pos >= 0) act.splice(pos, 1); else act.push(k);
+
     /* optimista: actualizo local y luego sincronizo */
     var fila = state.data.dias.filter(function(d){ return fkey(d.fecha) === fEnt; })[0];
-    if(fila) fila.dia_entreno = nuevo;
-    else state.data.dias.push({ username:state.user, fecha:fEnt, dia_entreno:nuevo, nota:'' });
-    renderResumen();
-    api('setDiaEntreno', { username:state.user, fecha:fEnt, dia_entreno:nuevo })
-      .then(function(){ toast(nuevo ? 'Día de entreno activado 🏋️' : 'Día normal'); })
+    if(fila){ fila.tipos = act.join(','); fila.dia_entreno = act.indexOf('entreno') >= 0; }
+    else state.data.dias.push({ username:state.user, fecha:fEnt, tipos:act.join(','),
+                                dia_entreno:act.indexOf('entreno') >= 0, nota:'' });
+    renderEntreno(); renderResumen();
+
+    var ui = TIPO_DIA_UI[k] || { label:_cap(k) };
+    api('setDiaEntreno', { username:state.user, fecha:fEnt, tipos:act.join(','),
+                           dia_entreno:act.indexOf('entreno') >= 0 })
+      .then(function(){ toast(ui.label + (pos < 0 ? ' activado' : ' desactivado')); })
       .catch(function(e){ toast('No se guardó: ' + e.message, true); });
     return;
   }
@@ -3783,6 +3869,10 @@ document.addEventListener('click', function(ev){
   if(ev.target.closest('#btnFoto')){ pick.destino='plato'; $('#fileFoto').value=''; $('#fileFoto').click(); return; }
   if(ev.target.closest('#btnDescribir')){ pick.destino='plato'; abrirDescribir(); return; }
   if(ev.target.closest('#dOk')){ analizarTexto(); return; }
+  if(ev.target.closest('#fOkFoto')){ analizarFoto(); return; }
+  if(ev.target.closest('#fOtraFoto')){
+    $('#shFoto').classList.remove('on'); $('#fileFoto').value=''; $('#fileFoto').click(); return;
+  }
 
   if((t = ev.target.closest('[data-cat]'))){ pick.filtro = t.dataset.cat;
     $$('[data-cat]').forEach(function(b){ b.classList.toggle('on', b === t); });
@@ -4066,7 +4156,7 @@ document.addEventListener('input', function(ev){
 document.addEventListener('change', function(ev){
   var el = ev.target;
   if(el.id === 'inPago' && draft){ draft.pagado_por = el.value; return; }
-  if(el.id === 'fileFoto' && el.files && el.files[0]){ analizarFoto(el.files[0]); return; }
+  if(el.id === 'fileFoto' && el.files && el.files[0]){ prepararFoto(el.files[0]); return; }
 });
 
 /* Fallback de imágenes → emoji (event delegation, nunca onerror inline) */
