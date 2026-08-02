@@ -750,7 +750,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       </div>
     </div>
     <div class="meals" id="meals"></div>
-    <button class="btn-add" id="btnAdd"><span style="font-size:17px;font-weight:400">＋</span> Añadir comida o snack</button>
+    <button class="btn-add" id="btnAdd"><span style="font-size:17px;font-weight:400">＋</span> Añadir comida extra</button>
   </div>
 
   <div class="card">
@@ -1210,6 +1210,17 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div class="sheet-h"><div class="sheet-h1"><h3 id="formT">Nueva comida</h3>
     <button class="sheet-x" data-close="shForm">✕</button></div></div>
   <div class="sheet-b">
+    <div class="two" id="formIA" style="margin-bottom:16px">
+      <button class="big" id="fIaFoto">
+        <span class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A"
+          stroke-width="2" stroke-linejoin="round"><path d="M3 8.5h3l1.5-2h9L18 8.5h3v11H3z"/>
+          <circle cx="12" cy="13.5" r="3.5"/></svg></span>
+        <span class="bt">Con una foto</span></button>
+      <button class="big" id="fIaTexto">
+        <span class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A"
+          stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 11h16M4 16h9"/></svg></span>
+        <span class="bt">Describiéndola</span></button>
+    </div>
     <div id="formWarn"></div>
 
     <div class="fld" style="margin-bottom:11px"><label>Nombre</label>
@@ -1244,7 +1255,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <p class="hint">Si lo activas, podrás reutilizarla sin volver a introducir los datos.</p>
 
     <button class="btn-g" id="fOk">Añadir a la comida</button>
-    <button class="btn-o" id="fPegar">📋 Pegar datos de un GPT</button>
   </div>
 </div></div>
 
@@ -1269,7 +1279,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.5.0';
+var APP_VERSION = 'v1.6.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1347,10 +1357,14 @@ var TIPOS = [
   { key:'snack2',   label:'Merienda',    ico:'slot_merienda',    emoji:'🍪', desde:16, hora:'17:30' },
   { key:'cena',     label:'Cena',     ico:'slot_cena',     emoji:'🌙',  desde:20, hora:'20:30', nombre:true }
 ];
+/* Las comidas extra no ocupan hueco fijo: se intercalan por su hora. */
+var TIPO_EXTRA = { key:'extra', label:'Extra', ico:'slot_extra', emoji:'🍴', hora:'' };
+
 function tipoDef(k){
   k = String(k||'').toLowerCase();
   if(k === 'snack') k = 'snack1';
   if(k === 'merienda') k = 'snack2';
+  if(k === 'extra') return TIPO_EXTRA;
   for(var i=0;i<TIPOS.length;i++) if(TIPOS[i].key === k) return TIPOS[i];
   return null;
 }
@@ -2018,7 +2032,7 @@ function gruposDelDia(fecha){
   });
   return orden.map(function(g){ return mapa[g]; });
 }
-function tipoKey(v){ var t = tipoDef(v); return t ? t.key : 'comida'; }
+function tipoKey(v){ var t = tipoDef(v); return t ? t.key : 'extra'; }
 
 /* Semáforo del check: rojo si hay permitido, ámbar si ultraprocesado
    o capricho, verde si está limpio. */
@@ -2039,6 +2053,30 @@ function etiquetaDia(f){
 var MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
 /* Los 5 huecos del día, siempre visibles: hechos con check, pendientes con + */
+function filaComida(t, g, orden){
+  var hecho = !!g;
+  var gr = [], nombres = [];
+  if(hecho) g.items.forEach(function(i){
+    gruposDe(i.grupos).forEach(function(k){ if(gr.indexOf(k) < 0) gr.push(k); });
+    if(String(i.categoria||'plato').toLowerCase() === 'plato') nombres.push(i.nombre);
+  });
+  var hora = hecho ? horaKey(g.hora) : '';
+  var conNombre = hecho && (t.nombre || t.key === 'extra') && nombres.length;
+
+  return { orden:orden, html:
+    '<button class="meal ' + (hecho ? 'done ' + semaforo(gr) : 'todo') + '" ' +
+      'data-slot="' + t.key + '" data-gid="' + esc(hecho ? g.grupo_id : '') + '">' +
+    '<span class="meal-st">' + (hecho ? '✓' : '') + '</span>' +
+    '<span class="meal-dot">' + icono(t.ico, t.emoji, 19) + '</span>' +
+    '<span class="meal-body"><span class="meal-t">' + esc(t.label) + '</span>' +
+      (conNombre ? '<span class="meal-d">' + esc(nombres.join(' · ')) + '</span>' : '') +
+    '</span>' +
+    '<span class="meal-r">' +
+      (hora ? '<span class="meal-h">' + esc(hora) + '</span>' : '') +
+      '<span class="meal-plus' + (hecho ? ' edit' : '') + '">' + (hecho ? '✏️' : '＋') + '</span>' +
+    '</span></button>' };
+}
+
 function renderComidas(){
   var f = state.diaVer || state.hoy;
   var grupos = gruposDelDia(f), el = $('#meals');
@@ -2046,36 +2084,22 @@ function renderComidas(){
   $('#mealsDia').textContent = etiquetaDia(f);
   $('#mealsNext').disabled = f >= state.hoy;
 
-  var html = TIPOS.map(function(t){
-    var g = grupos.filter(function(x){ return x.tipo === t.key; });
-    var hecho = g.length > 0;
-    var gr = [];
-    g.forEach(function(x){ x.items.forEach(function(i){
-      gruposDe(i.grupos).forEach(function(k){ if(gr.indexOf(k) < 0) gr.push(k); });
-    }); });
+  var filas = [];
 
-    var hora = hecho ? horaKey(g[0].hora) : '';
-    var sem = hecho ? semaforo(gr) : '';
-    var nombres = [];
-    if(t.nombre) g.forEach(function(x){ x.items.forEach(function(i){
-      if(String(i.categoria||'plato').toLowerCase() === 'plato') nombres.push(i.nombre);
-    }); });
+  /* Los 5 huecos fijos, siempre. Si no están registrados se ordenan
+     por su hora teórica, para que el extra caiga en su sitio. */
+  TIPOS.forEach(function(t){
+    var g = grupos.filter(function(x){ return x.tipo === t.key; })[0];
+    filas.push(filaComida(t, g, horaKey(g && g.hora) || t.hora));
+  });
 
-    return '<button class="meal ' + (hecho ? 'done ' + sem : 'todo') + '" ' +
-        'data-slot="' + t.key + '" data-gid="' + esc(hecho ? g[0].grupo_id : '') + '">' +
-      '<span class="meal-st">' + (hecho ? '✓' : '') + '</span>' +
-      '<span class="meal-dot">' + icono(t.ico, t.emoji, 19) + '</span>' +
-      '<span class="meal-body"><span class="meal-t">' + esc(t.label) + '</span>' +
-        (hecho && t.nombre ? '<span class="meal-d">' + esc(nombres.join(' · ')) + '</span>' : '') +
-      '</span>' +
-      '<span class="meal-r">' +
-        (hora ? '<span class="meal-h">' + esc(hora) + '</span>' : '') +
-        '<span class="meal-plus' + (hecho ? ' edit' : '') + '">' + (hecho ? '✏️' : '＋') + '</span>' +
-      '</span>' +
-    '</button>';
-  }).join('');
+  /* Comidas extra: cada una es su propia fila, colocada por su hora. */
+  grupos.filter(function(x){ return x.tipo === 'extra'; }).forEach(function(g){
+    filas.push(filaComida(TIPO_EXTRA, g, horaKey(g.hora) || '23:59'));
+  });
 
-  el.innerHTML = html;
+  filas.sort(function(a,b){ return String(a.orden).localeCompare(String(b.orden)); });
+  el.innerHTML = filas.map(function(x){ return x.html; }).join('');
 
   /* línea vertical que une los puntos de estado */
   var all = el.querySelectorAll('.meal');
@@ -2286,7 +2310,7 @@ function renderAdd(){
 }
 
 function renderMeta(){
-  $('#metaRow').innerHTML = TIPOS.map(function(t){
+  $('#metaRow').innerHTML = TIPOS.concat([TIPO_EXTRA]).map(function(t){
     return '<button class="chip' + (draft.tipo_comida===t.key?' on':'') + '" data-tipo="' + t.key + '">' +
       esc(t.label) + '</button>';
   }).join('');
@@ -2487,6 +2511,8 @@ function abrirForm(opts){
   $('#fGuardarCat').style.display = ocultar ? 'none' : 'flex';
   $('#fGuardarCat').nextElementSibling.style.display = ocultar ? 'none' : 'block';
   if(form.modo === 'catalogo') $('#fOk').textContent = opts.catalogo_id ? 'Guardar cambios' : 'Crear comida';
+  /* Los atajos de IA solo al crear desde cero, no al editar algo existente */
+  $('#formIA').style.display = (!opts.nombre && form.editIdx < 0 && !opts.catalogo_id) ? 'grid' : 'none';
 
   renderFormChips();
   $('#shForm').classList.add('on');
@@ -2553,33 +2579,26 @@ function confirmarForm(){
   }
 }
 
-/* ---------- Pegar JSON de un GPT ---------- */
-function pegarJSON(){
-  var txt = prompt('Pega aquí la respuesta del GPT:');
-  if(!txt) return;
-  var s = String(txt).replace(/^[\s\S]*?```(?:json)?/i,'').replace(/```[\s\S]*$/,'').trim();
-  if(s.indexOf('{') < 0) s = txt;
-  s = s.slice(s.indexOf('{'), s.lastIndexOf('}') + 1);
-  var o;
-  try { o = JSON.parse(s); } catch(e){ toast('No pude leer ese JSON', true); return; }
-  if($('#fNombre').value === '' || confirm('¿Reemplazar lo que hay en el formulario?')){
-    form.grupos = gruposDe(Array.isArray(o.grupos) ? o.grupos.join(',') : o.grupos);
-    $('#fNombre').value = o.nombre || '';
-    $('#fIngr').value   = o.ingredientes || '';
-    $('#fKcal').value = num(o.kcal) || '';
-    $('#fPro').value  = num(o.proteinas_g) || '';
-    $('#fCar').value  = num(o.carbohidratos_g) || '';
-    $('#fGra').value  = num(o.grasas_g) || '';
-    $('#fFib').value  = num(o.fibra_g) || '';
-    renderFormChips();
-    toast('Datos cargados ✓');
-  }
+/* Desde dónde se lanzó la IA: al volver hay que reabrir el formulario
+   en el mismo modo (borrador o catálogo) y con la misma categoría. */
+var iaCtx = { modo:'draft', categoria:'plato', catalogo_id:'' };
+function recordarCtx(){
+  iaCtx = { modo: form.modo || 'draft',
+            categoria: $('#fCat').value || pick.destino || 'plato',
+            catalogo_id: form.catalogo_id || '' };
+}
+function ctxForm(extra){
+  var o = { modo:iaCtx.modo, categoria:iaCtx.categoria, guardarCat:true };
+  if(iaCtx.modo === 'catalogo' && iaCtx.catalogo_id) o.catalogo_id = iaCtx.catalogo_id;
+  Object.keys(extra).forEach(function(k){ o[k] = extra[k]; });
+  return o;
 }
 
 /* ---------- Descripción → IA ---------- */
 function abrirDescribir(){
   $('#dTexto').value = '';
   $('#shPick').classList.remove('on');
+  $('#shForm').classList.remove('on');
   $('#shDesc').classList.add('on');
   setTimeout(function(){ try { $('#dTexto').focus(); } catch(e){} }, 120);
 }
@@ -2600,14 +2619,13 @@ function analizarTexto(){
     .then(function(j){
       $('#busy').classList.remove('on');
       if(!j || !j.ok) throw new Error((j && j.error) || 'Error desconocido');
-      abrirForm({
-        titulo:'Revisa lo que ha calculado', guardarCat:true,
-        categoria: pick.destino || 'plato',
+      abrirForm(ctxForm({
+        titulo:'Revisa lo que ha calculado',
         nombre:j.data.nombre, ingredientes:j.data.ingredientes,
         kcal:j.data.kcal, proteinas_g:j.data.proteinas_g, carbohidratos_g:j.data.carbohidratos_g,
         grasas_g:j.data.grasas_g, fibra_g:j.data.fibra_g, grupos:j.data.grupos,
         confianza:j.data.confianza
-      });
+      }));
     })
     .catch(function(e){
       $('#busy').classList.remove('on');
@@ -2684,14 +2702,13 @@ function analizarFoto(){
     .then(function(j){
       $('#busy').classList.remove('on');
       if(!j || !j.ok) throw new Error((j && j.error) || 'Error desconocido');
-      abrirForm({
-        titulo:'Revisa lo que detectó', guardarCat:true,
-        categoria: pick.destino || 'plato',
+      abrirForm(ctxForm({
+        titulo:'Revisa lo que detectó',
         nombre:j.data.nombre, ingredientes:j.data.ingredientes,
         kcal:j.data.kcal, proteinas_g:j.data.proteinas_g, carbohidratos_g:j.data.carbohidratos_g,
         grasas_g:j.data.grasas_g, fibra_g:j.data.fibra_g, grupos:j.data.grupos,
         confianza:j.data.confianza
-      });
+      }));
     })
     .catch(function(e){
       $('#busy').classList.remove('on');
@@ -3853,7 +3870,11 @@ document.addEventListener('click', function(ev){
     return;
   }
 
-  if(ev.target.closest('#fab') || ev.target.closest('#btnAdd')){
+  if(ev.target.closest('#btnAdd')){
+    if(!state.user){ toast('Elige usuario primero', true); return; }
+    abrirAdd('extra'); return;
+  }
+  if(ev.target.closest('#fab')){
     if(!state.user){ toast('Elige usuario primero', true); return; }
     abrirAdd(); return;
   }
@@ -3866,8 +3887,14 @@ document.addEventListener('click', function(ev){
 
   if(ev.target.closest('#btnBuscar')){ abrirPicker('plato'); return; }
   if((t = ev.target.closest('[data-pick]'))){ abrirPicker(t.dataset.pick); return; }
-  if(ev.target.closest('#btnFoto')){ pick.destino='plato'; $('#fileFoto').value=''; $('#fileFoto').click(); return; }
-  if(ev.target.closest('#btnDescribir')){ pick.destino='plato'; abrirDescribir(); return; }
+  if(ev.target.closest('#btnFoto')){
+    pick.destino='plato'; iaCtx={modo:'draft',categoria:'plato',catalogo_id:''};
+    $('#fileFoto').value=''; $('#fileFoto').click(); return;
+  }
+  if(ev.target.closest('#btnDescribir')){
+    pick.destino='plato'; iaCtx={modo:'draft',categoria:'plato',catalogo_id:''};
+    abrirDescribir(); return;
+  }
   if(ev.target.closest('#dOk')){ analizarTexto(); return; }
   if(ev.target.closest('#fOkFoto')){ analizarFoto(); return; }
   if(ev.target.closest('#fOtraFoto')){
@@ -3890,7 +3917,10 @@ document.addEventListener('click', function(ev){
     renderAdd(); return;
   }
 
-  if(ev.target.closest('#btnDescPick')){ abrirDescribir(); return; }
+  if(ev.target.closest('#btnDescPick')){
+    iaCtx={modo:'draft',categoria:pick.destino||'plato',catalogo_id:''};
+    abrirDescribir(); return;
+  }
   if(ev.target.closest('#btnNueva')){ abrirForm({}); return; }
 
   if((t = ev.target.closest('[data-edit]'))){
@@ -3914,7 +3944,12 @@ document.addEventListener('click', function(ev){
   }
   if(ev.target.closest('#fGuardarCat')){ form.guardarCat = !form.guardarCat; renderFormChips(); return; }
   if(ev.target.closest('#fOk')){ confirmarForm(); return; }
-  if(ev.target.closest('#fPegar')){ pegarJSON(); return; }
+  if(ev.target.closest('#fIaFoto')){
+    recordarCtx();
+    $('#shForm').classList.remove('on');
+    $('#fileFoto').value=''; $('#fileFoto').click(); return;
+  }
+  if(ev.target.closest('#fIaTexto')){ recordarCtx(); abrirDescribir(); return; }
 
   if(ev.target.closest('#btnFuera')){
     draft.fuera = !draft.fuera;
