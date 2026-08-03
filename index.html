@@ -114,13 +114,15 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
 /* ---------- MACROS ---------- */
 .macros{display:flex;gap:0}
-.macro{flex:1;min-width:0;padding:0 7px;position:relative}
+.macro{flex:1;min-width:0;padding:0 6px;position:relative}
 .macro+.macro::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:1px;background:var(--line)}
-.macro-l{display:flex;align-items:center;gap:3px;font-size:10.5px;color:var(--ink2);margin-bottom:7px;
+.macro-i{display:flex;justify-content:center;margin-bottom:9px}
+.macro-i .ico{width:26px;height:26px;font-size:22px}
+.macro-l{font-size:10px;color:var(--ink2);margin-bottom:6px;line-height:1.15;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .macro-v{font-size:17px;font-weight:700;letter-spacing:-.5px;line-height:1}
 .macro-v span{font-size:10.5px;font-weight:500;color:var(--ink2);margin-left:1px}
-.macro-g{font-size:10.5px;color:var(--ink3);margin:3px 0 8px}
+.macro-g{font-size:10px;color:var(--ink3);margin:3px 0 8px;white-space:nowrap}
 .bar{height:4px;border-radius:99px;background:var(--line2);overflow:hidden}
 .bar>i{display:block;height:100%;border-radius:99px;background:var(--green);transition:width .5s ease}
 .bar>i.over{background:var(--amber)}
@@ -1279,7 +1281,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.6.0';
+var APP_VERSION = 'v1.7.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1782,81 +1784,111 @@ function rotar(lista, fecha, salto){
   return lista[semilla % lista.length];
 }
 
+/* El tono: cercano y con guasa, como un colega que sabe de comida.
+   Se mete con la situación, nunca con la persona ni con su cuerpo.
+   {n} se sustituye por el nombre del usuario. */
 var TX_DIA = {
-  ex: ['Puedes comer con bastante libertad.', 'Hoy está prácticamente encarrilado.',
-       'No hace falta compensar nada.', 'Solo mantén el equilibrio en la siguiente comida.'],
-  mb: ['Mantén el ritmo y terminarás un gran día.', 'Una comida equilibrada será suficiente.',
-       'Todo va según lo previsto.'],
-  ok: ['mejoraría bastante el día.', 'le vendría muy bien al día.', 'sería un buen añadido.'],
-  rec:['Aún puedes acabar el día bastante bien.', 'Todavía merece la pena cuidar la próxima comida.',
-       'Queda margen de sobra para enderezarlo.'],
-  baj:['Centrémonos en hacer una buena siguiente comida.', 'No hace falta compensar, solo volver al equilibrio.',
-       'Proteína, verdura y fibra son ahora la mejor apuesta.']
+  ex: ['Poco que añadir, {n}.', 'Hoy no necesitas consejos, {n}.',
+       'Puedes comer lo que te apetezca, que vas sobrado.',
+       'Sigue así y te vas a poner insoportable, {n}.'],
+  mb: ['Vas fino, {n}.', 'Esto pinta muy bien.', 'Buen ritmo, {n}.', 'Buena mano hoy.'],
+  remate: ['y lo clavas.', 'y día perfecto.', 'y no te falta nada.', 'y lo cierras redondo.'],
+  ok: ['y esto sube bastante.', 'y lo dejas fino.', 'y el día cambia de color.',
+       'y te lo apuntas como buen día.'],
+
+  rec:['Nada perdido, {n}.', 'Esto se arregla fácil.', 'Queda día de sobra.',
+       'Todavía tienes margen, {n}.'],
+  baj:['Céntrate en la siguiente y ya está.', 'Sin dramas: la próxima comida y arreglado.',
+       'Proteína, verdura y a otra cosa.'],
+  cerrado_bien: ['Día cerrado y bien cerrado, {n}.', 'Así da gusto.', 'Un díazo, {n}.'],
+  cerrado_top:  ['Ni una pega.', 'Perfecto de arriba abajo.', 'Mañana, más de lo mismo.'],
+  cerrado_ok:   ['Día correcto, {n}.', 'Ni fu ni fa, pero válido.', 'Día normal y ya está.'],
+  cerrado_flojo:['Hoy tocaba lo que tocaba, {n}.', 'Días así también cuentan.',
+                 'Mañana es otro día y no pasa nada.']
 };
 var TX_SEM = {
-  ex: ['Muy buena semana. Estás construyendo un patrón sólido.', 'Semana excelente. Sigue así.'],
-  mb: ['Semana muy consistente.', 'Semana sólida, con detalles por pulir.'],
-  ok: ['La base es buena.', 'Buen fondo, faltan algunos grupos.'],
-  fl: ['Hay margen para mejorar algunos hábitos.', 'Una o dos comidas distintas marcarían la diferencia.'],
-  ba: ['Los últimos días se han desviado un poco.', 'No hace falta compensar, solo volver a la rutina.']
+  ex: ['Semanaza, {n}.', 'Esta semana estás imparable.', 'Patrón sólido como una roca.'],
+  mb: ['Semana muy consistente, {n}.', 'Semana sólida, con detalles por pulir.',
+       'Vas construyendo algo serio.'],
+  ok: ['La base está, {n}.', 'Semana correcta, sin florituras.', 'Buen fondo, faltan remates.'],
+  fl: ['Semana mejorable, {n}.', 'Un par de comidas distintas y esto cambia.',
+       'Hay margen y lo sabes.'],
+  ba: ['Semana movidita, {n}.', 'Los últimos días se han ido un poco.',
+       'Sin compensar nada: vuelta a la rutina y ya.']
 };
+
+function nombreUsuario(){
+  var u = usuarioActual();
+  return String((u && u.nombre) || state.user || '').trim();
+}
+/** Sustituye {n} por el nombre. Si no hay nombre, deja la frase natural. */
+function conNombre(txt){
+  var n = nombreUsuario();
+  if(!n) return String(txt).replace(/,?\s*\{n\}/g, '').replace(/^\s*/, '')
+    .replace(/^./, function(c){ return c.toUpperCase(); });
+  return String(txt).replace(/\{n\}/g, n);
+}
 
 /* ---------- Mensajes: siempre con una acción, nunca un juicio ---------- */
 function mensajeDiario(score, fecha, e){
-  if(score === null) return { mood:'espera', b:'¡Buenos días!', t:'Aún no has registrado nada. <span class="hl">Empieza por el desayuno.</span>' };
+  if(score === null) return { mood:'espera', b:conNombre('Buenas, {n}.'),
+    t:'El día está en blanco. <span class="hl">Empieza por el desayuno.</span>' };
 
-  var com = comidasDe(fecha), g = gruposDeDia(com), tot = totalesDe(com), obj = objetivoDe(fecha);
   if(e === undefined) e = (fecha < state.hoy) ? 1 : expectativa(horaDecimalAhora());
   var tarde   = e >= 0.68;
-  var cerrado = (fecha < state.hoy) || e >= 0.99;   /* el día ya no se puede corregir */
+  var cerrado = (fecha < state.hoy) || e >= 0.99;
   var fa = factores(fecha, e).mejor;
-  var lista = fa.map(function(x){ return x.replace(' esta semana','').toLowerCase(); });
-  var pri = lista.slice(0,2).join(' y ');
+  var pri = fa.map(function(x){ return x.replace(' esta semana','').toLowerCase(); })
+              .slice(0,2).join(' y ');
+  var R = function(lista, salto){ return conNombre(rotar(lista, fecha, salto)); };
 
   if(gruposDeDia(comidasDe(fecha)).indexOf('permitido') >= 0 && score < 85)
-    return { mood:'fiesta', b:'Hoy tocaba disfrutar.',
-      t:tarde ? 'No hace falta compensar. <span class="hl">Mañana, rutina normal.</span>'
+    return { mood:'fiesta', b:conNombre('Hoy tocaba, {n}.'),
+      t:tarde ? 'Y no se compensa. <span class="hl">Mañana, rutina normal.</span>'
               : 'Lo que queda de día, <span class="hl">sencillo y con verdura.</span>' };
 
   /* 95-100 · excelente */
-  if(score >= 95) return { mood:'top', b:'Vas muy bien.', t:rotar(TX_DIA.ex, fecha) };
+  if(score >= 95) return { mood:'top', b:cerrado ? R(TX_DIA.cerrado_bien) : 'Impecable.',
+    t:cerrado ? R(TX_DIA.cerrado_top) : R(TX_DIA.ex) };
 
   /* 85-94 · muy buen día */
-  if(score >= 85) return { mood:'top', b:'Muy buen día.',
-    t:tarde ? 'Día cerrado <span class="hl">en muy buen sitio.</span>' : rotar(TX_DIA.mb, fecha) };
+  if(score >= 85) return { mood:'top', b:cerrado ? R(TX_DIA.cerrado_bien, 1) : R(TX_DIA.mb),
+    t:cerrado ? 'Día cerrado <span class="hl">en muy buen sitio.</span>'
+              : (pri ? 'Cae <span class="hl">' + pri + '</span> ' + rotar(TX_DIA.remate, fecha)
+                     : 'Mantén el ritmo <span class="hl">hasta la cena.</span>') };
 
-  /* 70-84 · margen de mejora */
-  if(score >= 70) return { mood:'bien', b:'Buen día.',
-    t: cerrado ? (pri ? 'Mañana, un poco más de <span class="hl">' + pri + '</span>.'
-                      : 'Día cerrado <span class="hl">en buen sitio.</span>')
-               : (pri ? 'Añadir <span class="hl">' + pri + '</span> ' + rotar(TX_DIA.ok, fecha)
-                      : rotar(TX_DIA.mb, fecha, 1)) };
+  /* 70-84 · buen día con margen */
+  if(score >= 70) return { mood:'bien', b:cerrado ? R(TX_DIA.cerrado_ok) : 'Buen día.',
+    t:cerrado ? (pri ? 'Mañana, algo más de <span class="hl">' + pri + '</span>.'
+                     : 'Correcto y sin sobresaltos.')
+              : (pri ? 'Mete <span class="hl">' + pri + '</span> ' + rotar(TX_DIA.ok, fecha)
+                     : R(TX_DIA.mb, 1)) };
 
-  /* 55-69 · todavía recuperable */
-  if(score >= 55) return { mood:'neutro',
-    b: cerrado ? 'Día correcto.' : rotar(TX_DIA.rec, fecha),
-    t: cerrado ? (pri ? 'Mañana, algo más de <span class="hl">' + pri + '</span>.'
-                      : 'Mañana se retoma el patrón.')
-               : (pri ? 'Prioriza <span class="hl">' + pri + '</span> en la próxima comida.'
-                      : 'Una comida <span class="hl">equilibrada</span> y listo.') };
+  /* 55-69 · recuperable */
+  if(score >= 55) return { mood:'neutro', b:cerrado ? R(TX_DIA.cerrado_ok, 1) : R(TX_DIA.rec),
+    t:cerrado ? (pri ? 'Mañana apunta a <span class="hl">' + pri + '</span>.'
+                     : 'Mañana se retoma el patrón.')
+              : (pri ? 'Tira de <span class="hl">' + pri + '</span> en la próxima.'
+                     : 'Una comida <span class="hl">decente</span> y listo.') };
 
-  /* <55 · claramente mejorable, nunca culpabilizar */
-  return { mood:'flojo', b:'No pasa nada.',
-    t: cerrado ? 'Mañana volvemos al <span class="hl">patrón de siempre.</span>'
-               : (pri ? 'Prioriza <span class="hl">' + pri + '</span> en la siguiente comida.'
-                      : rotar(TX_DIA.baj, fecha)) };
+  /* <55 · claramente mejorable, sin culpabilizar */
+  return { mood:'flojo', b:cerrado ? R(TX_DIA.cerrado_flojo) : 'No pasa nada.',
+    t:cerrado ? 'Mañana volvemos al <span class="hl">patrón de siempre.</span>'
+              : (pri ? 'Salva el día con <span class="hl">' + pri + '</span>.'
+                     : R(TX_DIA.baj)) };
 }
 
 /** Semanal: habla de hábitos, nunca del día. Fortaleza + máx. 2 prioridades. */
 function mensajeSemanal(sem){
-  if(!sem) return { t:'Registra unos días y aquí verás tus hábitos.' };
+  if(!sem) return { t:conNombre('Registra unos días, {n}, y aquí saldrán tus hábitos.') };
   var r = sem.raciones, s = sem.score, hoy = state.hoy;
 
-  var cab = s >= 90 ? rotar(TX_SEM.ex, hoy)
+  var cab = conNombre(
+            s >= 90 ? rotar(TX_SEM.ex, hoy)
           : s >= 80 ? rotar(TX_SEM.mb, hoy)
           : s >= 70 ? rotar(TX_SEM.ok, hoy)
           : s >= 60 ? rotar(TX_SEM.fl, hoy)
-          :           rotar(TX_SEM.ba, hoy);
+          :           rotar(TX_SEM.ba, hoy));
 
   var falta = [];
   var o = sem.objetivos || {};
@@ -1869,8 +1901,9 @@ function mensajeSemanal(sem){
   if(bajo('verduras', 0.7))  falta.push('verdura');
   if(bajo('fruta', 0.7))     falta.push('fruta');
 
-  if(!falta.length) return { t:cab };
-  return { t:cab + ' Sería buena idea sumar ' + falta.slice(0,2).join(' o ') + '.' };
+  if(!falta.length) return { t:cab + ' Nada que corregir.' };
+  var cierres = [' Te falta ', ' Échale un ojo a ', ' Lo que se echa en falta: '];
+  return { t:cab + rotar(cierres, hoy) + falta.slice(0,2).join(' y ') + '.' };
 }
 
 var MASCOTA_EMOJI = { espera:'🥑', top:'🥑', bien:'🥑', neutro:'🥑', flojo:'🥑', triste:'🥑', fiesta:'🥑' };
@@ -2014,9 +2047,10 @@ function renderResumen(){
     var r = o > 0 ? v/o : 0;
     var cls = r > 1.15 ? ' way-over' : (r > 1.02 ? ' over' : '');
     return '<div class="macro">' +
-      '<div class="macro-l">' + icono(mc.ico, mc.emoji, 13) + ' ' + mc.label + '</div>' +
+      '<div class="macro-i">' + icono(mc.ico, mc.emoji, 26) + '</div>' +
+      '<div class="macro-l">' + esc(mc.label) + '</div>' +
       '<div class="macro-v">' + fmt(v) + (mc.unidad ? '<span>' + mc.unidad + '</span>' : '') + '</div>' +
-      '<div class="macro-g">/ ' + fmt(o) + ' ' + (mc.unidad || 'kcal') + '</div>' +
+      '<div class="macro-g">/ ' + fmt(o) + ' ' + (mc.unidad || 'kc') + '</div>' +
       '<div class="bar"><i class="' + cls.trim() + '" style="width:' + Math.min(100, r*100).toFixed(0) + '%"></i></div>' +
     '</div>';
   }).join('');
@@ -2421,14 +2455,14 @@ function renderConsejo(){
   if(g.indexOf('legumbres') >= 0) bien.push('legumbres');
   if(g.indexOf('fruta') >= 0) bien.push('fruta');
 
-  if(g.indexOf('verduras') < 0) falta = 'Puedes añadir más verduras a lo largo del día.';
-  else if(num(t.fibra_g) < num(obj.fibra_g)*0.15) falta = 'Vas justo de fibra. Suma fruta o legumbres luego.';
-  else if(g.indexOf('ultraprocesado') >= 0) falta = 'Lleva ultraprocesados. Compénsalo en la próxima comida.';
-  else falta = 'Buen equilibrio. Sigue así el resto del día.';
+  if(g.indexOf('verduras') < 0) falta = 'Le vendría bien algo verde en algún momento del día.';
+  else if(num(t.fibra_g) < num(obj.fibra_g)*0.15) falta = 'Vas justo de fibra: fruta o legumbres luego.';
+  else if(g.indexOf('ultraprocesado') >= 0) falta = 'Lleva ultraprocesados, así que la próxima más sencilla.';
+  else falta = 'Equilibrio correcto. Sigue por ahí.';
 
   var head = bien.length
-    ? '¡Gran elección! Esta comida aporta ' + bien.slice(0,2).join(' y ') + '.'
-    : 'Registrado. Revisa que los datos cuadren.';
+    ? 'Buena elección: esto aporta ' + bien.slice(0,2).join(' y ') + '.'
+    : conNombre('Anotado, {n}. Revisa que los números cuadren.');
 
   $('#consejoTx').innerHTML = esc(head) + '<em>' + esc(falta) + '</em>';
   $('#consejoM').innerHTML = '<img src="img/mascota/bien.webp" alt="" data-fb="🥑">';
@@ -3602,7 +3636,8 @@ function renderInsights(){
   var mediaDow = porDow.map(function(v,i){ return nDow[i] ? v/nDow[i] : -1; });
   var best = mediaDow.indexOf(Math.max.apply(null, mediaDow));
   if(mediaDow[best] > 0 && nDow[best] >= 2)
-    out.push({ e:'🥦', bg:'#F1FAF3', t:'Los ' + DIAS_SEM[best].toLowerCase() + ' comes más verdura.' });
+    out.push({ e:'🥦', bg:'#F1FAF3', t:'Los ' + DIAS_SEM[best].toLowerCase() +
+      ' te da por la verdura. Nadie sabe por qué.' });
 
   /* 2. Días desde el último pescado */
   var ultimo = null;
@@ -3614,9 +3649,10 @@ function renderInsights(){
   });
   if(ultimo){
     var d = diasEntre(ultimo, state.hoy);
-    if(d >= 4) out.push({ e:'🐟', bg:'#EAF4FD', t:'Hace ' + d + ' días que no registras pescado.' });
+    if(d >= 4) out.push({ e:'🐟', bg:'#EAF4FD',
+      t:'El pescado lleva ' + d + ' días sin aparecer por aquí.' });
   } else if(com.length) {
-    out.push({ e:'🐟', bg:'#EAF4FD', t:'Todavía no has registrado pescado.' });
+    out.push({ e:'🐟', bg:'#EAF4FD', t:'El pescado sigue sin aparecer en tu historial.' });
   }
 
   /* 3. Hueco del día con mejor score medio */
@@ -3640,7 +3676,8 @@ function renderInsights(){
     if(p.n >= 3 && p.s/p.n > mejorV){ mejorV = p.s/p.n; mejorSlot = t; }
   });
   if(mejorSlot && mejorV > 0)
-    out.push({ e:'🥑', bg:'#F6F3FB', t:'La ' + mejorSlot.label.toLowerCase() + ' es tu comida más saludable.' });
+    out.push({ e:'🥑', bg:'#F6F3FB', t:'Donde mejor te portas es en ' +
+      (mejorSlot.key === 'desayuno' ? 'el desayuno' : 'la ' + mejorSlot.label.toLowerCase()) + '.' });
 
   /* 4. Ultraprocesados este mes vs el anterior */
   var hp = state.hoy.split('-');
@@ -3656,18 +3693,21 @@ function renderInsights(){
   var a = cuenta(pre), b = cuenta(preAnt);
   if(b >= 3){
     var pct = Math.round((a-b)/b*100);
-    if(pct <= -10) out.push({ e:'📉', bg:'#EEF4FB', t:'Has reducido los ultraprocesados un ' + Math.abs(pct) + '% este mes.' });
-    else if(pct >= 25) out.push({ e:'📈', bg:'#FDF1F1', t:'Este mes llevas un ' + pct + '% más de ultraprocesados.' });
+    if(pct <= -10) out.push({ e:'📉', bg:'#EEF4FB',
+      t:'Un ' + Math.abs(pct) + '% menos de ultraprocesados este mes. Bien ahí.' });
+    else if(pct >= 25) out.push({ e:'📈', bg:'#FDF1F1',
+      t:'Los ultraprocesados han subido un ' + pct + '% este mes. Sin drama, pero ojo.' });
   }
 
   /* 5. Racha, si es buena */
   var r = racha();
-  if(r >= 7) out.push({ e:'🔥', bg:'#FFF6E8', t:'Llevas ' + r + ' días seguidos registrando.' });
+  if(r >= 7) out.push({ e:'🔥', bg:'#FFF6E8',
+    t:conNombre('{n}, ' + r + ' días seguidos registrando. Constancia de la buena.') });
 
   $('#pfIns').innerHTML = out.length ? out.slice(0,4).map(function(i){
     return '<div class="ins-c" style="background:' + i.bg + '"><i>' + i.e + '</i>' + esc(i.t) + '</div>';
   }).join('') : '<div class="grp-vacio" style="border:none;grid-column:1/-1">' +
-    'Con unos días más de registro aquí aparecerán patrones de tu alimentación.</div>';
+    esc(conNombre('Dale unos días más, {n}, y aquí saldrán patrones que ni te imaginas.')) + '</div>';
 }
 
 function diasEntre(a, b){
