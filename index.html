@@ -137,13 +137,11 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .meal.done .meal-st{background:var(--green);border-color:var(--green)}
 .meal.done.ambar .meal-st{background:var(--amber);border-color:var(--amber)}
 .meal.done.rojo .meal-st{background:var(--red);border-color:var(--red)}
-.meal.done.ambar .meal-dot{border-color:#F6DFAE;background:#FEF8EC}
-.meal.done.rojo .meal-dot{border-color:#F5C9C9;background:#FDF1F1}
 .meal-line{position:absolute;left:7px;width:2px;background:var(--line);z-index:0}
-.meal-dot{position:relative;flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--card);
-  border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:17px}
-.meal.done .meal-dot{border-color:#CFEBD8;background:var(--green-xl)}
-.meal-dot .ico{width:19px;height:19px}
+.meal-dot{position:relative;flex-shrink:0;width:34px;height:34px;display:flex;
+  align-items:center;justify-content:center}
+.meal-dot .ico{width:30px;height:30px;font-size:26px}
+.meal.todo .meal-dot{opacity:.45}
 .meal-body{flex:1;min-width:0;display:flex;flex-direction:column}
 .meal-t{font-size:14.5px;font-weight:600;letter-spacing:-.2px}
 .meal.todo .meal-t{color:var(--ink2)}
@@ -166,6 +164,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ---------- SEMANA ---------- */
 .wk{width:100%;border-collapse:collapse}
 .wk th{font-size:10.5px;font-weight:500;color:var(--ink3);padding:0 0 9px;text-align:center}
+.wk th.h-g{width:1%}
 .wk th .h-d{display:block;margin-bottom:4px}
 .wk th .h-d.hoy{color:var(--ink);font-weight:700}
 .wk th .h-s{display:flex;align-items:center;justify-content:center;width:21px;height:21px;
@@ -176,12 +175,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .wk th .h-s.bad{border-color:var(--red);color:#A03030}
 .wk th .h-s.nada{border-style:dashed;border-color:#E4E7EC}
 .wk th.h-g{text-align:left;padding-left:2px}
-.wk th.h-c,.wk th.h-f{font-size:10px;white-space:nowrap;padding-left:5px}
+.wk th.h-c{padding-left:7px}
 .wk td{padding:5px 0;vertical-align:middle}
-.wk .c-g{display:flex;align-items:center;gap:7px;font-size:12.5px;padding-right:6px;white-space:nowrap}
-.wk .c-g i{font-style:normal;font-size:15px;line-height:1}
-.wk .c-d{text-align:center;width:24px}
-.wk .c-n{font-size:11.5px;color:var(--ink2);text-align:center;white-space:nowrap;padding-left:6px;
+.wk .c-g{display:flex;align-items:center;gap:8px;font-size:12.5px;padding-right:4px;white-space:nowrap}
+.wk .c-g .ico{font-size:19px}
+.wk .c-d{text-align:center;width:26px}
+.wk .c-n{font-size:11px;color:var(--ink2);text-align:right;white-space:nowrap;padding-left:7px;
   font-variant-numeric:tabular-nums}
 .wk .c-n b{color:var(--ink);font-weight:600}
 .wk .c-n b.ex{color:var(--red)}
@@ -376,7 +375,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .pie-w{position:relative;width:140px;height:140px;flex-shrink:0}
 .pie-w svg{transform:rotate(-90deg);display:block}
 .pie-c{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
-.pie-c b{font-size:13px;font-weight:700;white-space:pre-line;line-height:1.2}
+.pie-c b{font-size:19px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
 .pie-lg{flex:1;min-width:0}
 .pie-li{display:flex;align-items:center;gap:7px;padding:3.5px 0;font-size:11.5px}
 .pie-li i{width:9px;height:9px;border-radius:3px;flex-shrink:0}
@@ -1281,7 +1280,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.7.0';
+var APP_VERSION = 'v1.8.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -2008,8 +2007,12 @@ function pintarAnillo(sel, r, v){
   var C = 2*Math.PI*r, pct = v === null ? 0 : Math.max(0, Math.min(100, v));
   el.setAttribute('stroke-dasharray', C.toFixed(1));
   el.setAttribute('stroke-dashoffset', (C*(1-pct/100)).toFixed(1));
-  el.setAttribute('stroke', pct >= 80 ? '#22C55E' : (pct >= 60 ? '#F5A623' : '#EF4444'));
+  el.setAttribute('stroke', colorScore(pct));
 }
+
+/* Un único criterio de color para el score, en todas las pantallas. */
+function colorScore(v){ return v >= 80 ? '#22C55E' : (v >= 60 ? '#F5A623' : '#EF4444'); }
+function claseScore(v){ return v >= 80 ? 'ok' : (v >= 60 ? 'mid' : 'bad'); }
 
 function renderResumen(){
   var f = state.diaVer || state.hoy;
@@ -2101,7 +2104,7 @@ function filaComida(t, g, orden){
     '<button class="meal ' + (hecho ? 'done ' + semaforo(gr) : 'todo') + '" ' +
       'data-slot="' + t.key + '" data-gid="' + esc(hecho ? g.grupo_id : '') + '">' +
     '<span class="meal-st">' + (hecho ? '✓' : '') + '</span>' +
-    '<span class="meal-dot">' + icono(t.ico, t.emoji, 19) + '</span>' +
+    '<span class="meal-dot">' + icono(t.ico, t.emoji, 30) + '</span>' +
     '<span class="meal-body"><span class="meal-t">' + esc(t.label) + '</span>' +
       (conNombre ? '<span class="meal-d">' + esc(nombres.join(' · ')) + '</span>' : '') +
     '</span>' +
@@ -2290,12 +2293,12 @@ function renderSemana(){
     DIAS_L.map(function(d, i){
       var f = fechas[i];
       var sc = f > state.hoy ? null : scoreDe(f);
-      var cls = sc === null ? 'nada' : (sc >= 70 ? 'ok' : (sc >= 45 ? 'mid' : 'bad'));
+      var cls = sc === null ? 'nada' : claseScore(sc);
       var hoyCls = f === state.hoy ? ' hoy' : '';
       return '<th><span class="h-d' + hoyCls + '">' + d + '</span>' +
         '<span class="h-s ' + cls + '">' + (sc === null ? '' : sc) + '</span></th>';
     }).join('') +
-    '<th class="h-c wk-sep">Consumido</th></tr></thead>';
+    '<th class="h-c wk-sep"></th></tr></thead>';
 
   var body = GRUPOS.map(function(g){
     /* Solo se marca lo consumido. El color lo pone el grupo:
@@ -2310,7 +2313,7 @@ function renderSemana(){
     var mal = g.tipo === 'lim' && objn > 0 && cnt > objn;
 
     return '<tr>' +
-      '<td><div class="c-g">' + icono(g.ico, g.emoji, 16) + esc(g.label) + '</div></td>' + dias +
+      '<td><div class="c-g">' + icono(g.ico, g.emoji, 21) + esc(g.label) + '</div></td>' + dias +
       '<td class="c-n wk-sep"><b' + (mal ? ' class="ex"' : '') + '>' + cnt + '</b> / ' + objn + '</td>' +
     '</tr>';
   }).join('');
@@ -2964,63 +2967,81 @@ function abrirDetalleMacros(){
 }
 
 /* ---------- Modal: estadísticas de grupos ---------- */
+var sgGrupo = 'verduras';
+
+/** ¿Este grupo está cumpliendo su objetivo semanal? */
+function cumpleGrupo(g, raciones){
+  var o = objGrupo(g.key).objetivo;
+  if(o <= 0) return true;
+  return g.tipo === 'pos' ? raciones >= o : raciones <= o;
+}
+
 function abrirStatsGrupos(){
+  sgGrupo = sgGrupo || 'verduras';
+  renderStatsGrupos();
+  $('#shStats').classList.add('on');
+}
+
+function renderStatsGrupos(){
   var fechas = semanaFechas();
 
-  /* pastel: días en que aparece cada grupo esta semana */
+  /* Donut: días de la semana en que aparece cada grupo */
   var datos = GRUPOS.map(function(g){
-    var d = fechas.filter(function(f){
-      return gruposDeDia(comidasDe(f)).indexOf(g.key) >= 0;
+    var dias = fechas.filter(function(f){
+      return f <= state.hoy && gruposDeDia(comidasDe(f)).indexOf(g.key) >= 0;
     }).length;
-    return { label:g.label, valor:d, color:g.color, key:g.key, obj:objGrupo(g.key).objetivo,
-             tipo:g.tipo, ico:g.ico, emoji:g.emoji };
+    var rac = racionesGrupo(g.key, fechas);
+    return { label:g.label, valor:dias, color:g.color, key:g.key, tipo:g.tipo,
+             ico:g.ico, emoji:g.emoji, raciones:rac, obj:objGrupo(g.key).objetivo,
+             ok:cumpleGrupo(g, rac) };
   });
-  var totalDias = datos.reduce(function(a,d){ return a + d.valor; }, 0);
+  var cumplen = datos.filter(function(d){ return d.ok; }).length;
 
-  /* columnas apiladas: últimos 6 meses */
-  var hoyP = state.hoy.split('-');
-  var meses = [];
+  /* Barras: días por mes del grupo elegido, últimos 6 meses */
+  var gSel = GRUPOS.filter(function(g){ return g.key === sgGrupo; })[0] || GRUPOS[0];
+  var hoyP = state.hoy.split('-'), meses = [];
   for(var i=5;i>=0;i--){
     var m = +hoyP[1]-1-i, a = +hoyP[0];
     while(m < 0){ m += 12; a--; }
     meses.push({ anio:a, mes:m });
   }
-  var series = GRUPOS.map(function(g){ return { key:g.key, label:g.label, color:g.color }; });
   var cols = meses.map(function(mm){
     var pre = mm.anio + '-' + String(mm.mes+1).padStart(2,'0');
     var dias = {};
     (state.data.comidas||[]).forEach(function(c){
       var f = fkey(c.fecha);
       if(f.indexOf(pre) !== 0) return;
-      gruposDe(c.grupos).forEach(function(k){
-        if(!dias[k]) dias[k] = {};
-        dias[k][f] = 1;
-      });
+      if(gruposDe(c.grupos).indexOf(gSel.key) >= 0) dias[f] = 1;
     });
-    var val = {};
-    GRUPOS.forEach(function(g){ val[g.key] = dias[g.key] ? Object.keys(dias[g.key]).length : 0; });
-    return { label:MESES_C[mm.mes], valores:val };
+    return { label:MESES_C[mm.mes], valores:{ d:Object.keys(dias).length } };
   });
+  var totalMeses = cols.reduce(function(a,c){ return a + c.valores.d; }, 0);
+  var mejor = cols.reduce(function(a,c){ return Math.max(a, c.valores.d); }, 0);
 
   $('#sgBody').innerHTML =
-    '<div class="ch-t">Grupos de ' + etiquetaSemana(fechas).toLowerCase() + '</div>' +
+    '<div class="ch-t">' + esc(etiquetaSemana(fechas)) + '</div>' +
     '<div class="pie-row">' +
-      pastel(datos, totalDias ? totalDias + '\\ndías' : '—') +
+      pastel(datos, cumplen + '/' + GRUPOS.length) +
       '<div class="pie-lg">' + datos.map(function(d){
-        var mal = d.tipo === 'lim' && d.valor > d.obj;
         return '<div class="pie-li"><i style="background:' + d.color + '"></i>' +
           '<span class="pl-n">' + esc(d.label) + '</span>' +
-          '<span class="pl-v' + (mal ? ' ex' : '') + '">' + d.valor + '/' + d.obj + '</span></div>';
+          '<span class="pl-v' + (d.ok ? '' : ' ex') + '">' + d.raciones + '/' + d.obj + '</span></div>';
       }).join('') + '</div>' +
     '</div>' +
-    '<div class="ch-n">Cuenta días, no raciones: un grupo suma 1 aunque lo comas tres veces ese día.</div>' +
-    '<div class="ch-t" style="margin-top:20px">Últimos 6 meses</div>' +
-    barrasApiladas(cols, series, { alto:180 }) +
-    leyenda(series, null) +
-    '<div class="ch-n">Días del mes en los que aparece cada grupo. Las barras altas ' +
-    'son meses con más variedad registrada.</div>';
+    '<div class="ch-n"><b>' + cumplen + ' de ' + GRUPOS.length + '</b> grupos dentro de su objetivo. ' +
+      'El anillo reparte los días de la semana en los que aparece cada grupo; ' +
+      'los números de al lado son raciones sobre tu objetivo semanal.</div>' +
 
-  $('#shStats').classList.add('on');
+    '<div class="ch-t" style="margin-top:22px">Últimos 6 meses</div>' +
+    '<div class="gchips" id="sgSel" style="margin-bottom:12px">' +
+      GRUPOS.map(function(g){
+        return '<button class="gchip' + (g.key===sgGrupo?' on':'') + '" data-sg="' + g.key + '">' +
+          icono(g.ico, g.emoji, 15) + ' ' + esc(g.label) + '</button>';
+      }).join('') + '</div>' +
+    barrasApiladas(cols, [{ key:'d', label:gSel.label, color:gSel.color }], { alto:170 }) +
+    '<div class="ch-n">Días de cada mes con <b>' + esc(gSel.label.toLowerCase()) + '</b>. ' +
+      (totalMeses ? 'Mejor mes: ' + mejor + ' días.' : 'Todavía no hay registros de este grupo.') +
+    '</div>';
 }
 
 /* ============================================================
@@ -4182,6 +4203,7 @@ document.addEventListener('click', function(ev){
     renderSemana(); return;
   }
   if(ev.target.closest('#btnStats')){ abrirStatsGrupos(); return; }
+  if((t = ev.target.closest('[data-sg]'))){ sgGrupo = t.dataset.sg; renderStatsGrupos(); return; }
   if(ev.target.closest('#btnDetMacros')){ abrirDetalleMacros(); return; }
 
   /* ---------- SLOTS DE COMIDAS DE HOY ---------- */
