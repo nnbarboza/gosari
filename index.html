@@ -406,9 +406,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .grp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:13px;
   overflow:hidden;box-shadow:var(--shadow)}
 .grp-h{display:flex;align-items:center;gap:12px;padding:14px;width:100%;text-align:left}
-.grp-h .gi{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;
-  justify-content:center;font-size:18px;flex-shrink:0}
-.grp-h .gi .ico{width:20px;height:20px}
+.grp-h .gi{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0}
+.grp-h .gi .ico{width:28px;height:28px;font-size:24px}
 .grp-h .gb{flex:1;min-width:0;display:flex;flex-direction:column}
 .grp-h .gn{font-size:15.5px;font-weight:600;letter-spacing:-.25px;display:flex;align-items:center;gap:8px}
 .grp-h .gc{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;min-width:22px;text-align:center}
@@ -417,15 +417,17 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
 .fd{display:flex;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid var(--line);width:100%;
   text-align:left}
-.fd-i{width:56px;height:56px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;
-  justify-content:center;font-size:24px;overflow:hidden;background:#F5F6F7}
-.fd-i img{width:100%;height:100%;object-fit:cover}
+.fd-g{display:flex;gap:5px;margin-top:6px}
+.fd-g .ico{width:15px;height:15px;font-size:14px}
 .fd-b{flex:1;min-width:0;display:flex;flex-direction:column}
 .fd-n{font-size:14px;font-weight:600;letter-spacing:-.2px;line-height:1.3;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .fd-m{font-size:11.5px;color:var(--ink2);margin-top:3px;line-height:1.35}
 .fd-x{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
   color:var(--ink3);font-size:17px;flex-shrink:0;letter-spacing:1px}
+.acc-i{width:52px;height:52px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;font-size:26px;overflow:hidden;background:#F5F6F7}
+.acc-i img{width:100%;height:100%;object-fit:cover}
 .grp-more{width:100%;padding:13px;border-top:1px solid var(--line);font-size:13.5px;font-weight:600;
   display:flex;align-items:center;justify-content:center;gap:6px}
 .grp-more .cv{font-size:11px;transition:transform .2s;display:inline-block}
@@ -819,8 +821,8 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div class="sheet-h"><div class="sheet-h1"><h3 id="accT">Comida</h3>
     <button class="sheet-x" data-close="shAcc">✕</button></div></div>
   <div class="sheet-b">
-    <div class="fd" style="border:none;padding:0 0 14px">
-      <div class="fd-i" id="accImg"></div>
+    <div class="fd" style="border:none;padding:0 0 14px;gap:12px">
+      <span class="acc-i" id="accImg"></span>
       <div class="fd-b"><div class="fd-n" id="accN"></div><div class="fd-m" id="accM"></div></div>
     </div>
     <button class="btn-g" id="accUsar">＋ Añadir a la comida de hoy</button>
@@ -859,7 +861,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         stroke-width="2" stroke-linejoin="round"><path d="M3 8.5h3l1.5-2h9L18 8.5h3v11H3z"/>
         <circle cx="12" cy="13.5" r="3.5"/></svg></span>
       <span class="bt">Sube una foto de tu comida</span>
-      <span class="bd">Analizaremos los nutrientes y grupos alimentarios.</span>
+      <span class="bd">Hazla ahora o elige una de tu galería.</span>
     </button>
   </div>
   <button class="big wide" id="btnDescribir">
@@ -869,7 +871,8 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <span class="bb"><span class="bt">Descríbela con tus palabras</span>
     <span class="bd">Cuenta qué has comido y calculamos los nutrientes.</span></span>
   </button>
-  <input type="file" id="fileFoto" accept="image/*" capture="environment" style="display:none">
+  <!-- sin `capture`: el sistema ofrece cámara y fototeca -->
+  <input type="file" id="fileFoto" accept="image/*" style="display:none">
 
   <div class="sec-t">Tu comida</div>
   <div id="itemsPlato"></div>
@@ -1276,7 +1279,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.9.0';
+var APP_VERSION = 'v1.10.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -2182,20 +2185,20 @@ function catFiltrado(){
 }
 
 function fichaHTML(c){
-  var cd = CATS[String(c.categoria||'plato').toLowerCase()] || CATS.plato;
-  var img = c.imagen
-    ? '<img src="img/comidas/' + esc(c.imagen) + '" alt="" data-fb="' + cd.emoji + '">'
-    : cd.emoji;
   var macros = [
     fmt(c.kcal) + ' kcal',
     fmt(c.proteinas_g) + ' g proteína',
     fmt(c.carbohidratos_g) + ' g carbohidratos',
     fmt(c.grasas_g) + ' g grasas'
   ].join(' • ');
+  var gr = gruposDe(c.grupos).map(function(k){
+    var gd = GRUPOS.filter(function(x){ return x.key === k; })[0];
+    return gd ? icono(gd.ico, gd.emoji, 15) : '';
+  }).join('');
   return '<div class="fd">' +
-    '<span class="fd-i">' + img + '</span>' +
     '<span class="fd-b"><span class="fd-n">' + esc(c.nombre) + '</span>' +
-      '<span class="fd-m">' + macros + '</span></span>' +
+      '<span class="fd-m">' + macros + '</span>' +
+      (gr ? '<span class="fd-g">' + gr + '</span>' : '') + '</span>' +
     '<button class="fd-x" data-acc="' + esc(c.id) + '">···</button>' +
   '</div>';
 }
@@ -2225,7 +2228,7 @@ function renderCatalogo(){
 
     return '<div class="grp">' +
       '<button class="grp-h" data-cabecera="' + k + '" style="background:' + cd.bg + '">' +
-        '<span class="gi" style="background:#fff">' + icono(cd.ico, cd.emoji, 20) + '</span>' +
+        '<span class="gi" style="background:#fff">' + icono(cd.ico, cd.emoji, 28) + '</span>' +
         '<span class="gb"><span class="gn">' + esc(cd.plural) +
           '<span class="gc" style="background:' + cd.chip + ';color:' + cd.tint + '">' + items.length + '</span>' +
           '</span><span class="gd">' + esc(cd.desc) + '</span></span>' +
@@ -2407,7 +2410,7 @@ function renderFuera(){
   $('#swFuera').className = 'sw' + (draft.fuera ? ' on' : '');
   var sel = $('#inPago');
   if(!sel.options.length){
-    sel.innerHTML = (state.data ? state.data.usuarios : []).map(function(u){
+    sel.innerHTML = usuariosGastos().map(function(u){
       return '<option value="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</option>';
     }).join('');
     sel.value = draft.pagado_por || state.user || '';
@@ -2417,7 +2420,7 @@ function renderFuera(){
     return '<button class="gchip' + (draft.tag_gasto===String(t.id).toLowerCase()?' on':'') +
       '" data-dt="' + esc(t.id) + '">' + esc(t.icono) + ' ' + esc(t.nombre) + '</button>';
   }).join('');
-  $('#inParts').innerHTML = (state.data ? state.data.usuarios : []).map(function(u){
+  $('#inParts').innerHTML = usuariosGastos().map(function(u){
     return '<button class="gchip' + (draft.participantes.indexOf(u.username)>=0?' on':'') +
       '" data-dp="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</button>';
   }).join('');
@@ -3160,7 +3163,7 @@ function renderGsUsers(r){
   var todos = gastosEn(r, false).filter(function(g){
     return !gs.tags.length || gs.tags.indexOf(String(g.tag||'otro').toLowerCase()) >= 0;
   });
-  var us = (state.data.usuarios||[]);
+  var us = usuariosGastos();
   var html = '<button class="uchip' + (gs.user===''?' on':'') + '" data-gu="">' +
     '<span class="ua" style="background:var(--ink3)">∑</span>Todos ' +
     '<span class="uv">' + eur(suma(todos)) + '</span></button>';
@@ -3217,7 +3220,7 @@ function renderGsReparto(r){
   var lista = gastosEn(r, false).filter(function(g){
     return !gs.tags.length || gs.tags.indexOf(String(g.tag||'otro').toLowerCase()) >= 0;
   });
-  var us = (state.data.usuarios||[]);
+  var us = usuariosGastos();
   var pago = {}, toca = {};
   us.forEach(function(u){ pago[u.username] = 0; toca[u.username] = 0; });
 
@@ -3294,7 +3297,7 @@ function abrirGasto(id){
   $('#gImporte').value = g ? String(num(g.importe)).replace('.', ',') : '';
   $('#gFecha').value = g ? fkey(g.fecha) : state.hoy;
   $('#gDesc').value = g ? (g.descripcion||'') : '';
-  $('#gPago').innerHTML = (state.data.usuarios||[]).map(function(u){
+  $('#gPago').innerHTML = usuariosGastos().map(function(u){
     return '<option value="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</option>';
   }).join('');
   $('#gPago').value = g ? (g.pagado_por || state.user) : state.user;
@@ -3314,7 +3317,7 @@ function renderGastoChips(){
     return '<button class="gchip' + (gEdit.tag===String(t.id).toLowerCase()?' on':'') +
       '" data-gt="' + esc(t.id) + '">' + esc(t.icono) + ' ' + esc(t.nombre) + '</button>';
   }).join('');
-  $('#gParts').innerHTML = (state.data.usuarios||[]).map(function(u){
+  $('#gParts').innerHTML = usuariosGastos().map(function(u){
     return '<button class="gchip' + (gEdit.parts.indexOf(u.username)>=0?' on':'') +
       '" data-gp="' + esc(u.username) + '">' + esc(u.nombre||u.username) + '</button>';
   }).join('');
@@ -3440,6 +3443,14 @@ function avatarHTML(u, px){
     (u.avatar ? '<img src="img/avatars/' + esc(u.avatar) + '" alt="" data-fb="' + esc(ini) +
                 '" style="width:100%;height:100%;object-fit:cover">' : esc(ini)) +
     '</span>';
+}
+
+/** Usuarios que participan en los gastos. `en_gastos` FALSE los excluye. */
+function usuariosGastos(){
+  return ((state.data && state.data.usuarios) || []).filter(function(u){
+    var v = u.en_gastos;
+    return v === '' || v === undefined || v === null || truthy(v);
+  });
 }
 
 function usuarioActual(){
@@ -3685,6 +3696,11 @@ var DIAS_SEM = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábados','Dom
 function renderInsights(){
   var out = [];
   var com = (state.data.comidas||[]);
+  var hp = state.hoy.split('-');
+  var pre = hp[0] + '-' + hp[1];
+  var mAnt = +hp[1]-1, aAnt = +hp[0];
+  if(mAnt < 1){ mAnt = 12; aAnt--; }
+  var preAnt = aAnt + '-' + String(mAnt).padStart(2,'0');
 
   /* 1. Día de la semana con más verdura */
   var porDow = [0,0,0,0,0,0,0], nDow = [0,0,0,0,0,0,0];
@@ -3743,17 +3759,7 @@ function renderInsights(){
       (mejorSlot.key === 'desayuno' ? 'el desayuno' : 'la ' + mejorSlot.label.toLowerCase()) + '.' });
 
   /* 4. Ultraprocesados este mes vs el anterior */
-  var hp = state.hoy.split('-');
-  var pre = hp[0] + '-' + hp[1];
-  var mAnt = +hp[1]-1, aAnt = +hp[0];
-  if(mAnt < 1){ mAnt = 12; aAnt--; }
-  var preAnt = aAnt + '-' + String(mAnt).padStart(2,'0');
-  var cuenta = function(p){
-    return com.filter(function(c){
-      return fkey(c.fecha).indexOf(p) === 0 && gruposDe(c.grupos).indexOf('ultraprocesado') >= 0;
-    }).length;
-  };
-  var a = cuenta(pre), b = cuenta(preAnt);
+  var a = cuentaGrupoMes('ultraprocesado', pre), b = cuentaGrupoMes('ultraprocesado', preAnt);
   if(b >= 3){
     var pct = Math.round((a-b)/b*100);
     if(pct <= -10) out.push({ e:'📉', bg:'#EEF4FB',
@@ -3803,10 +3809,98 @@ function renderInsights(){
   if(nf >= 3) out.push({ e:'🍽️', bg:'#F6F3FB',
     t:'Llevas ' + nf + ' comidas fuera este mes. Ni bien ni mal, es un dato.' });
 
-  $('#pfIns').innerHTML = out.length ? out.slice(0,6).map(function(i){
+  /* 9. Días seguidos sin ultraprocesados */
+  var ru = 0, fu = state.hoy;
+  if(!comidasDe(fu).length) fu = masDias(fu, -1);
+  while(comidasDe(fu).length && gruposDeDia(comidasDe(fu)).indexOf('ultraprocesado') < 0){
+    ru++; fu = masDias(fu, -1); if(ru > 200) break;
+  }
+  if(ru >= 4) out.push({ e:'✨', bg:'#F1FAF3', t:ru + ' días seguidos sin ultraprocesados. Eso es tener mano.' });
+
+  /* 10. Media de calorías de los últimos 7 días */
+  var f7 = ventana7(), conD = f7.filter(function(f){ return comidasDe(f).length; });
+  if(conD.length >= 4){
+    var mediaK = conD.reduce(function(a,f){ return a + num(totalesDe(comidasDe(f)).kcal); }, 0) / conD.length;
+    var ok = num(objetivoDe(state.hoy).kcal);
+    if(ok > 0){
+      var dif = Math.round((mediaK - ok) / ok * 100);
+      if(Math.abs(dif) >= 8) out.push({ e:'🔥', bg:'#FEF6E8',
+        t:'Media de ' + fmt(mediaK) + ' kcal al día, un ' + Math.abs(dif) + '% ' +
+          (dif > 0 ? 'por encima' : 'por debajo') + ' de tu objetivo.' });
+      else out.push({ e:'🎯', bg:'#F1FAF3',
+        t:'Media de ' + fmt(mediaK) + ' kcal al día. Clavado a tu objetivo.' });
+    }
+  }
+
+  /* 11. Grupo que más ha mejorado respecto al mes pasado */
+  var mejorGrupo = null, mejorDelta = 0;
+  GRUPOS.filter(function(g){ return g.tipo === 'pos'; }).forEach(function(g){
+    var a = cuentaGrupoMes(g.key, pre), b2 = cuentaGrupoMes(g.key, preAnt);
+    if(b2 >= 2 && a - b2 > mejorDelta){ mejorDelta = a - b2; mejorGrupo = g; }
+  });
+  if(mejorGrupo && mejorDelta >= 3)
+    out.push({ e:'📈', bg:'#F1F5FE', t:'Este mes llevas ' + mejorDelta + ' raciones más de ' +
+      mejorGrupo.label.toLowerCase() + ' que el anterior.' });
+
+  /* 12. Fibra: la que más se queda corta */
+  if(conD.length >= 4){
+    var mediaF = conD.reduce(function(a,f){ return a + num(totalesDe(comidasDe(f)).fibra_g); }, 0) / conD.length;
+    var of = num(objetivoDe(state.hoy).fibra_g);
+    if(of > 0 && mediaF < of*0.7)
+      out.push({ e:'🌿', bg:'#F1FAF3', t:'Te quedas en ' + fmt(mediaF) + ' g de fibra al día. ' +
+        'Legumbres y fruta lo arreglan rápido.' });
+    else if(of > 0 && mediaF >= of)
+      out.push({ e:'🌿', bg:'#F1FAF3', t:'Vas sobrado de fibra: ' + fmt(mediaF) + ' g de media. Poca gente puede decirlo.' });
+  }
+
+  /* 13. Comida estrella del mes */
+  var vecesMes = {};
+  com.forEach(function(c){
+    if(fkey(c.fecha).indexOf(pre) !== 0) return;
+    var k = String(c.nombre||'').trim();
+    if(k) vecesMes[k] = (vecesMes[k]||0) + 1;
+  });
+  var estrella = Object.keys(vecesMes).sort(function(a,b){ return vecesMes[b]-vecesMes[a]; })[0];
+  if(estrella && vecesMes[estrella] >= 5)
+    out.push({ e:'⭐', bg:'#FEF9EC', t:'"' + estrella + '" ' + vecesMes[estrella] +
+      ' veces este mes. Tampoco hace falta cambiar lo que funciona.' });
+
+  /* 14. Proporción de comidas fuera sobre el total del mes */
+  var totalMes = {}, fueraMes = {};
+  com.forEach(function(c){
+    if(fkey(c.fecha).indexOf(pre) !== 0) return;
+    totalMes[String(c.grupo_id||c.id)] = 1;
+  });
+  (state.data.gastos||[]).forEach(function(gx){
+    if(fkey(gx.fecha).indexOf(pre) === 0 && gx.comida_grupo_id) fueraMes[gx.comida_grupo_id] = 1;
+  });
+  var nT = Object.keys(totalMes).length, nF = Object.keys(fueraMes).length;
+  if(nT >= 15 && nF >= 1){
+    var pf = Math.round(nF/nT*100);
+    out.push({ e:'🏠', bg:'#F6F3FB', t:'El ' + (100-pf) + '% de tus comidas de este mes han sido en casa.' });
+  }
+
+  $('#pfIns').innerHTML = out.length ? barajar(out, state.hoy).slice(0,6).map(function(i){
     return '<div class="ins-c" style="background:' + i.bg + '"><i>' + i.e + '</i>' + esc(i.t) + '</div>';
   }).join('') : '<div class="grp-vacio" style="border:none;grid-column:1/-1">' +
     esc(conNombre('Dale unos días más, {n}, y aquí saldrán patrones que ni te imaginas.')) + '</div>';
+}
+
+/** Raciones de un grupo en un mes (prefijo YYYY-MM). */
+function cuentaGrupoMes(key, pre){
+  return ((state.data && state.data.comidas) || []).filter(function(c){
+    return fkey(c.fecha).indexOf(pre) === 0 && gruposDe(c.grupos).indexOf(key) >= 0;
+  }).length;
+}
+
+/** Baraja estable por fecha: cada día ves un surtido distinto, pero
+    dentro del mismo día no cambia al repintar. */
+function barajar(lista, semillaTx){
+  var p = String(semillaTx).split('-');
+  var semilla = (+p[0])*372 + (+p[1])*31 + (+p[2]);
+  return lista.map(function(x, i){
+    return { x:x, k:((semilla + i*97) * 1103515245 + 12345) % 100000 };
+  }).sort(function(a,b){ return a.k - b.k; }).map(function(o){ return o.x; });
 }
 
 function diasEntre(a, b){
