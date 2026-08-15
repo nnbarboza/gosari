@@ -844,6 +844,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <p class="pg-s">Registra tu comida de forma rápida y sencilla.</p>
 
   <div class="meta" id="metaRow"></div>
+  <div class="meta" id="lugarRow" style="display:none"></div>
   <div class="hora-row">
     <label for="inHora">Hora</label>
     <input class="hora-in" id="inHora" type="time">
@@ -1044,6 +1045,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <div class="card-hd"><div class="card-t">Hábitos <span style="font-weight:500;text-transform:none;
       letter-spacing:0;color:var(--ink3)">(7 días)</span></div>
       <button class="card-link" id="pfVerHab">Ver detalle ›</button></div>
+    <div id="pfLugares"></div>
     <div class="hab" id="pfHab"></div>
   </div>
 
@@ -1279,7 +1281,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.10.0';
+var APP_VERSION = 'v1.11.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1380,7 +1382,8 @@ function nuevoDraft(tipo){
     for(var i=0;i<TIPOS.length;i++) if(h >= TIPOS[i].desde) tipo = TIPOS[i].key;
   }
   return {
-    grupo_id:'', fecha:(state.diaVer || state.hoy), tipo_comida:tipo, hora:horaAhora(), items:[],
+    grupo_id:'', fecha:(state.diaVer || state.hoy), tipo_comida:tipo, hora:horaAhora(),
+    lugar:'', items:[],
     fuera:false, gasto:'', pagado_por:'', tag_gasto:'restaurante', participantes:[], foto:''
   };
 }
@@ -1949,6 +1952,7 @@ function render(){
   $('#frase').textContent = (u && String(u.frase||'').trim())
     || 'Sigue tu plan. Pequeñas decisiones, grandes resultados.';
   if(!state.diaVer || state.diaVer > state.hoy) state.diaVer = state.hoy;
+  renderNav();
   renderAddGrid();
   renderEntreno();
   renderResumen();
@@ -2360,6 +2364,16 @@ function renderMeta(){
       esc(t.label) + '</button>';
   }).join('');
   $('#inHora').value = draft.hora || '';
+
+  /* Dónde se hizo la comida. Solo si el usuario tiene lugares definidos. */
+  var lug = lugaresDe();
+  $('#lugarRow').style.display = lug.length ? 'flex' : 'none';
+  if(lug.length){
+    $('#lugarRow').innerHTML = lug.map(function(l){
+      return '<button class="chip' + (draft.lugar===String(l.id)?' on':'') +
+        '" data-lugar="' + esc(l.id) + '">' + esc(l.icono || '📍') + ' ' + esc(l.nombre) + '</button>';
+    }).join('');
+  }
 }
 
 function itemHTML(it, i){
@@ -2772,6 +2786,7 @@ function abrirComidaExistente(gid){
   draft = {
     grupo_id: gid,
     fecha: fkey(cab.fecha) || state.hoy,
+    lugar: String(cab.lugar || ''),
     tipo_comida: tipoKey(cab.tipo_comida),
     hora: horaKey(cab.hora) || horaAhora(),
     fuera: truthy(cab.fuera_de_casa),
@@ -2813,7 +2828,7 @@ function guardarComida(){
 
   api('saveComidaGrupo', { payload: {
     grupo_id: draft.grupo_id, username: state.user, fecha: (draft.fecha || state.hoy),
-    hora: draft.hora, tipo_comida: draft.tipo_comida,
+    hora: draft.hora, tipo_comida: draft.tipo_comida, lugar: draft.lugar || '',
     fuera_de_casa: draft.fuera, gasto: draft.fuera ? num(draft.gasto) : 0,
     pagado_por: draft.fuera ? (draft.pagado_por || state.user) : '',
     tag_gasto: draft.tag_gasto,
@@ -2977,6 +2992,35 @@ function abrirDetalleMacros(){
 /* ---------- Modal: estadísticas de grupos ---------- */
 var sgGrupo = 'verduras';
 
+/* Filtro de lugar compartido por las estadísticas. No toca el score
+   diario: ahí siempre cuenta todo lo que has comido. */
+var statLugar = '';
+function comidasFiltradas(fecha){
+  var c = comidasDe(fecha);
+  if(!statLugar) return c;
+  return c.filter(function(x){ return String(x.lugar||'') === statLugar; });
+}
+function racionesGrupoF(key, fechas){
+  var n = 0;
+  fechas.forEach(function(f){
+    comidasFiltradas(f).forEach(function(c){
+      if(gruposDe(c.grupos).indexOf(key) >= 0) n++;
+    });
+  });
+  return n;
+}
+/** Chips de lugar. Devuelve '' si el usuario no tiene lugares. */
+function chipsLugar(){
+  var lug = lugaresDe();
+  if(!lug.length) return '';
+  return '<div class="cats" style="margin-bottom:14px">' +
+    '<button class="chip' + (statLugar===''?' on':'') + '" data-sl="">Todos</button>' +
+    lug.map(function(l){
+      return '<button class="chip' + (statLugar===String(l.id)?' on':'') + '" data-sl="' + esc(l.id) + '">' +
+        esc(l.icono || '📍') + ' ' + esc(l.nombre) + '</button>';
+    }).join('') + '</div>';
+}
+
 /** ¿Este grupo está cumpliendo su objetivo semanal? */
 function cumpleGrupo(g, raciones){
   var o = objGrupo(g.key).objetivo;
@@ -2996,9 +3040,9 @@ function renderStatsGrupos(){
   /* Donut: días de la semana en que aparece cada grupo */
   var datos = GRUPOS.map(function(g){
     var dias = fechas.filter(function(f){
-      return f <= state.hoy && gruposDeDia(comidasDe(f)).indexOf(g.key) >= 0;
+      return f <= state.hoy && gruposDeDia(comidasFiltradas(f)).indexOf(g.key) >= 0;
     }).length;
-    var rac = racionesGrupo(g.key, fechas);
+    var rac = racionesGrupoF(g.key, fechas);
     return { label:g.label, valor:dias, color:g.color, key:g.key, tipo:g.tipo,
              ico:g.ico, emoji:g.emoji, raciones:rac, obj:objGrupo(g.key).objetivo,
              ok:cumpleGrupo(g, rac) };
@@ -3019,6 +3063,7 @@ function renderStatsGrupos(){
     (state.data.comidas||[]).forEach(function(c){
       var f = fkey(c.fecha);
       if(f.indexOf(pre) !== 0) return;
+      if(statLugar && String(c.lugar||'') !== statLugar) return;
       if(gruposDe(c.grupos).indexOf(gSel.key) >= 0) dias[f] = 1;
     });
     return { label:MESES_C[mm.mes], valores:{ d:Object.keys(dias).length } };
@@ -3027,7 +3072,9 @@ function renderStatsGrupos(){
   var mejor = cols.reduce(function(a,c){ return Math.max(a, c.valores.d); }, 0);
 
   $('#sgBody').innerHTML =
-    '<div class="ch-t">' + esc(etiquetaSemana(fechas)) + '</div>' +
+    chipsLugar() +
+    '<div class="ch-t">' + esc(etiquetaSemana(fechas)) +
+      (statLugar ? ' · ' + esc(lugarDef(statLugar).nombre) : '') + '</div>' +
     '<div class="pie-row">' +
       pastel(datos, cumplen + '/' + GRUPOS.length) +
       '<div class="pie-lg">' + datos.map(function(d){
@@ -3445,6 +3492,27 @@ function avatarHTML(u, px){
     '</span>';
 }
 
+/** Lugares donde come este usuario. Vacío = la app no enseña el selector. */
+function lugaresDe(){
+  return ((state.data && state.data.lugares) || []).filter(function(l){
+    return String(l.username) === state.user;
+  });
+}
+function lugarDef(id){
+  var l = lugaresDe().filter(function(x){ return String(x.id) === String(id); })[0];
+  return l || { id:id, nombre:_cap(String(id||'').replace(/_/g,' ')), icono:'📍' };
+}
+
+/** ¿Este usuario participa en los gastos? */
+function enGastos(username){
+  var u = ((state.data && state.data.usuarios) || []).filter(function(x){
+    return String(x.username) === username;
+  })[0];
+  if(!u) return true;
+  var v = u.en_gastos;
+  return v === '' || v === undefined || v === null || truthy(v);
+}
+
 /** Usuarios que participan en los gastos. `en_gastos` FALSE los excluye. */
 function usuariosGastos(){
   return ((state.data && state.data.usuarios) || []).filter(function(u){
@@ -3606,8 +3674,9 @@ function renderPerfil(){
 
   /* --- Hábitos de los últimos 7 días --- */
   var fechas7 = ventana7();
+  $('#pfLugares').innerHTML = chipsLugar();
   $('#pfHab').innerHTML = GRUPOS.map(function(g){
-    var cnt = racionesGrupo(g.key, fechas7), o = objGrupo(g.key);
+    var cnt = racionesGrupoF(g.key, fechas7), o = objGrupo(g.key);
     var mal = g.tipo === 'lim' && o.objetivo > 0 && cnt > o.objetivo;
     var pct = o.objetivo > 0 ? Math.min(100, cnt/o.objetivo*100) : 0;
     var col = g.tipo === 'lim' ? (mal ? 'var(--red)' : '#F5A623') : 'var(--green)';
@@ -3622,6 +3691,7 @@ function renderPerfil(){
   /* --- Plato más repetido de cada grupo --- */
   var porG = {};
   (state.data.comidas||[]).forEach(function(c){
+    if(statLugar && String(c.lugar||'') !== statLugar) return;
     gruposDe(c.grupos).forEach(function(k){
       if(!porG[k]) porG[k] = {};
       var n = String(c.nombre||'').trim();
@@ -3651,6 +3721,7 @@ function renderTop(){
   (state.data.comidas||[]).forEach(function(c){
     var k = String(c.nombre||'').trim();
     if(!k) return;
+    if(statLugar && String(c.lugar||'') !== statLugar) return;
     var cat = String(c.categoria||'plato').toLowerCase();
     hay[cat] = 1;
     if(topCat && cat !== topCat) return;
@@ -3808,6 +3879,29 @@ function renderInsights(){
   var nf = Object.keys(fuera).length;
   if(nf >= 3) out.push({ e:'🍽️', bg:'#F6F3FB',
     t:'Llevas ' + nf + ' comidas fuera este mes. Ni bien ni mal, es un dato.' });
+
+  /* 8b. Dónde come mejor, si hay lugares definidos */
+  var lug = lugaresDe();
+  if(lug.length >= 2){
+    var porL = {};
+    com.forEach(function(c){
+      var l = String(c.lugar||'');
+      if(!l) return;
+      if(!porL[l]) porL[l] = { b:0, m:0, n:0 };
+      var gg = gruposDe(c.grupos);
+      porL[l].b += gg.filter(function(k){ return GRUPOS_NEG.indexOf(k) < 0; }).length;
+      porL[l].m += gg.filter(function(k){ return GRUPOS_NEG.indexOf(k) >= 0; }).length;
+      porL[l].n++;
+    });
+    var mejorL = null, mv = -99;
+    Object.keys(porL).forEach(function(l){
+      if(porL[l].n < 4) return;
+      var v = (porL[l].b - porL[l].m) / porL[l].n;
+      if(v > mv){ mv = v; mejorL = l; }
+    });
+    if(mejorL && mv > 0)
+      out.push({ e:'📍', bg:'#F1F5FE', t:'Donde mejor come es en ' + lugarDef(mejorL).nombre + '.' });
+  }
 
   /* 9. Días seguidos sin ultraprocesados */
   var ru = 0, fu = state.hoy;
@@ -3967,10 +4061,17 @@ function guardarMedida(){
    NAVEGACIÓN
    ============================================================ */
 function renderNav(){
+  /* Los perfiles fuera de gastos (el infantil) tienen ese hueco reservado
+     para su propia sección. */
+  var items = NAV.map(function(n){
+    if(n.id === 's-gastos' && state.user && !enGastos(state.user))
+      return { id:'s-soon', label:'Lugares', ico:'nav_lugares', emoji:'📍' };
+    return n;
+  });
   $('#nav').innerHTML =
-    NAV.slice(0,2).map(navBtn).join('') +
+    items.slice(0,2).map(navBtn).join('') +
     '<button class="nav-fab" id="fab">＋</button>' +
-    NAV.slice(2).map(navBtn).join('');
+    items.slice(2).map(navBtn).join('');
 }
 function navBtn(n){
   return '<button class="nav-i" data-nav="' + n.id + '" data-t="' + esc(n.label) + '">' +
@@ -4003,7 +4104,8 @@ function pintarPicker(usuarios){
 
 /* El backend puede ser de una versión anterior y no devolver todas las tablas.
    Normalizamos aquí para que ninguna pantalla reciba undefined. */
-var TABLAS = ['usuarios','objetivos','objetivos_grupos','catalogo','comidas','dias','medidas','gastos','tags'];
+var TABLAS = ['usuarios','objetivos','objetivos_grupos','lugares','catalogo','comidas',
+              'dias','medidas','gastos','tags'];
 function normalizar(d){
   d = d || {};
   TABLAS.forEach(function(k){ if(!Array.isArray(d[k])) d[k] = []; });
@@ -4115,6 +4217,10 @@ document.addEventListener('click', function(ev){
   if(ev.target.classList && ev.target.classList.contains('sheet-bg')){ ev.target.classList.remove('on'); return; }
 
   if((t = ev.target.closest('[data-tipo]'))){ draft.tipo_comida = t.dataset.tipo; renderMeta(); return; }
+  if((t = ev.target.closest('[data-lugar]'))){
+    draft.lugar = (draft.lugar === t.dataset.lugar) ? '' : t.dataset.lugar;
+    renderMeta(); return;
+  }
 
   if(ev.target.closest('#btnBuscar')){ abrirPicker('plato'); return; }
   if((t = ev.target.closest('[data-pick]'))){ abrirPicker(t.dataset.pick); return; }
@@ -4374,6 +4480,12 @@ document.addEventListener('click', function(ev){
   }
   if(ev.target.closest('#btnStats')){ abrirStatsGrupos(); return; }
   if((t = ev.target.closest('[data-sg]'))){ sgGrupo = t.dataset.sg; renderStatsGrupos(); return; }
+  if((t = ev.target.closest('[data-sl]'))){
+    statLugar = t.dataset.sl;
+    if($('#shStats').classList.contains('on')) renderStatsGrupos();
+    if(state.screen === 's-perfil') renderPerfil();
+    return;
+  }
   if(ev.target.closest('#btnDetMacros')){ abrirDetalleMacros(); return; }
 
   /* ---------- SLOTS DE COMIDAS DE HOY ---------- */
