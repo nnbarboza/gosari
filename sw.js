@@ -1,8 +1,8 @@
-/* Gosari — Service Worker v1.11.0
+/* Gosari — Service Worker v1.12.0
    HTML: network-first (para que los deploys se vean sin trucos)
    Imágenes: stale-while-revalidate
    Nunca cachea llamadas al backend. */
-const CACHE = 'gosari-v1.11.0';
+const CACHE = 'gosari-v1.12.0';
 
 self.addEventListener('install', e => { self.skipWaiting(); });
 

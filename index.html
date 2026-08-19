@@ -1281,7 +1281,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.11.0';
+var APP_VERSION = 'v1.12.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1465,25 +1465,126 @@ function loading(on){ $('#bar').style.width = on ? '70%' : '100%';
 /* ============================================================
    API
    ============================================================ */
-function api(action, params){
+/* ============================================================
+   API
+   ------------------------------------------------------------
+   Apps Script devuelve HTML en vez de JSON de forma intermitente:
+   reintentos internos de Google, límite de ejecuciones, dos
+   escrituras simultáneas o un despliegue recién publicado. Si se
+   llama a r.json() a pelo, Safari lanza "The string did not match
+   the expected pattern" y no hay forma de saber qué pasó.
+
+   Por eso: se lee como texto, se parsea con red, se reintenta lo
+   que es transitorio y los errores dicen algo útil.
+   ============================================================ */
+
+/* Las escrituras van por POST: no tienen límite de URL y evitan que
+   un payload largo (una comida con varios platos) rompa la petición. */
+var ESCRITURAS = ['saveComida','deleteComida','saveComidaGrupo','deleteGrupo',
+                  'saveCatalogo','deleteCatalogo','setDiaEntreno',
+                  'saveMedida','deleteMedida','saveGasto','deleteGasto',
+                  'analizarFoto','analizarTexto'];
+
+var API_TIMEOUT = 30000;
+var API_REINTENTOS = 2;
+
+function _fetchConTimeout(url, opciones, ms){
+  if(typeof AbortController === 'undefined') return fetch(url, opciones);
+  var ac = new AbortController();
+  var t = setTimeout(function(){ ac.abort(); }, ms);
+  opciones = opciones || {};
+  opciones.signal = ac.signal;
+  return fetch(url, opciones).then(function(r){ clearTimeout(t); return r; },
+                                   function(e){ clearTimeout(t); throw e; });
+}
+
+/** Marca los errores que tiene sentido reintentar. */
+function _transitorio(e){ return !!(e && e._reintentable); }
+function _errTransitorio(msg){ var e = new Error(msg); e._reintentable = true; return e; }
+
+function _parsear(txt, status){
+  var t = String(txt || '').trim();
+  if(!t) throw _errTransitorio('el servidor no devolvió nada');
+
+  /* Lo típico cuando algo va mal: una página HTML de Google */
+  if(t.charAt(0) === '<'){
+    if(/autoriza|authoriz|sign in|iniciar sesión/i.test(t))
+      throw new Error('el backend pide autorización. Vuelve a desplegar el Apps Script');
+    if(/too many|quota|límite|limit/i.test(t))
+      throw _errTransitorio('Google está limitando las peticiones');
+    throw _errTransitorio('el servidor devolvió una página en vez de datos' +
+      (status ? ' (HTTP ' + status + ')' : ''));
+  }
+  try {
+    return JSON.parse(t);
+  } catch(err){
+    throw _errTransitorio('respuesta ilegible del servidor');
+  }
+}
+
+function api(action, params, opts){
   params = params || {};
-  var qs = ['action='+encodeURIComponent(action)];
-  Object.keys(params).forEach(function(k){
-    var v = params[k];
-    if(v === undefined || v === null) return;
-    if(typeof v === 'object') v = JSON.stringify(v);
-    qs.push(k+'='+encodeURIComponent(v));
-  });
-  var url = BACKEND_URL + '?' + qs.join('&');
-  loading(true);
-  return fetch(url, { method:'GET', redirect:'follow' })
-    .then(function(r){ return r.json(); })
-    .then(function(j){
-      loading(false);
+  opts = opts || {};
+  var esEscritura = ESCRITURAS.indexOf(action) >= 0;
+  var intento = 0;
+
+  function lanzar(){
+    var pet;
+    if(esEscritura){
+      var body = { action:action };
+      Object.keys(params).forEach(function(k){
+        if(params[k] !== undefined && params[k] !== null) body[k] = params[k];
+      });
+      pet = _fetchConTimeout(BACKEND_URL, {
+        method:'POST',
+        /* text/plain evita el preflight CORS desde GitHub Pages */
+        headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+        body: JSON.stringify(body),
+        redirect:'follow'
+      }, API_TIMEOUT);
+    } else {
+      var qs = ['action=' + encodeURIComponent(action)];
+      Object.keys(params).forEach(function(k){
+        var v = params[k];
+        if(v === undefined || v === null) return;
+        if(typeof v === 'object') v = JSON.stringify(v);
+        qs.push(k + '=' + encodeURIComponent(v));
+      });
+      qs.push('_t=' + Date.now());   /* que nada intermedio sirva una copia vieja */
+      pet = _fetchConTimeout(BACKEND_URL + '?' + qs.join('&'),
+        { method:'GET', redirect:'follow' }, API_TIMEOUT);
+    }
+
+    return pet.then(function(r){
+      var st = r.status;
+      return r.text().then(function(txt){
+        if(st >= 500) throw _errTransitorio('el servidor falló (HTTP ' + st + ')');
+        return _parsear(txt, st);
+      });
+    }, function(e){
+      /* Sin red, timeout o petición abortada: siempre reintentable */
+      throw _errTransitorio(e && e.name === 'AbortError'
+        ? 'el servidor tardó demasiado' : 'sin conexión con el servidor');
+    }).then(function(j){
       if(!j || !j.ok) throw new Error((j && j.error) || 'Error desconocido');
       return j.data;
-    })
-    .catch(function(e){ loading(false); throw e; });
+    });
+  }
+
+  function reintentar(){
+    return lanzar().catch(function(e){
+      var max = opts.reintentos === undefined ? API_REINTENTOS : opts.reintentos;
+      if(intento >= max || !_transitorio(e)) throw e;
+      intento++;
+      /* espera creciente: 600 ms, 1,8 s */
+      return new Promise(function(res){ setTimeout(res, 600 * Math.pow(3, intento-1)); })
+        .then(reintentar);
+    });
+  }
+
+  loading(true);
+  return reintentar().then(function(d){ loading(false); return d; },
+                           function(e){ loading(false); throw e; });
 }
 
 /* ============================================================
@@ -2670,20 +2771,17 @@ function analizarTexto(){
   $('#busyT').textContent = 'Calculando nutrientes…';
   $('#busy').classList.add('on');
 
-  fetch(BACKEND_URL, {
-    method:'POST',
-    headers:{ 'Content-Type':'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action:'analizarTexto', descripcion: txt })
-  }).then(function(r){ return r.json(); })
-    .then(function(j){
+  /* Sin reintentos: cada llamada a la IA cuesta, y si falla es mejor
+     que lo decida el usuario. */
+  api('analizarTexto', { descripcion: txt }, { reintentos:0 })
+    .then(function(dat){
       $('#busy').classList.remove('on');
-      if(!j || !j.ok) throw new Error((j && j.error) || 'Error desconocido');
       abrirForm(ctxForm({
         titulo:'Revisa lo que ha calculado',
-        nombre:j.data.nombre, ingredientes:j.data.ingredientes,
-        kcal:j.data.kcal, proteinas_g:j.data.proteinas_g, carbohidratos_g:j.data.carbohidratos_g,
-        grasas_g:j.data.grasas_g, fibra_g:j.data.fibra_g, grupos:j.data.grupos,
-        confianza:j.data.confianza
+        nombre:dat.nombre, ingredientes:dat.ingredientes,
+        kcal:dat.kcal, proteinas_g:dat.proteinas_g, carbohidratos_g:dat.carbohidratos_g,
+        grasas_g:dat.grasas_g, fibra_g:dat.fibra_g, grupos:dat.grupos,
+        confianza:dat.confianza
       }));
     })
     .catch(function(e){
@@ -2752,21 +2850,16 @@ function analizarFoto(){
   $('#busy').classList.add('on');
   Promise.resolve(draft.foto).then(function(dataUrl){
     if(!dataUrl) throw new Error('no hay foto');
-    return fetch(BACKEND_URL, {
-      method:'POST',
-      headers:{ 'Content-Type':'text/plain;charset=utf-8' },  /* text/plain evita el preflight CORS */
-      body: JSON.stringify({ action:'analizarFoto', imagen: dataUrl, mime:'image/jpeg', comentario: nota })
-    });
-  }).then(function(r){ return r.json(); })
-    .then(function(j){
+    return api('analizarFoto',
+      { imagen: dataUrl, mime:'image/jpeg', comentario: nota }, { reintentos:0 });
+  }).then(function(dat){
       $('#busy').classList.remove('on');
-      if(!j || !j.ok) throw new Error((j && j.error) || 'Error desconocido');
       abrirForm(ctxForm({
         titulo:'Revisa lo que detectó',
-        nombre:j.data.nombre, ingredientes:j.data.ingredientes,
-        kcal:j.data.kcal, proteinas_g:j.data.proteinas_g, carbohidratos_g:j.data.carbohidratos_g,
-        grasas_g:j.data.grasas_g, fibra_g:j.data.fibra_g, grupos:j.data.grupos,
-        confianza:j.data.confianza
+        nombre:dat.nombre, ingredientes:dat.ingredientes,
+        kcal:dat.kcal, proteinas_g:dat.proteinas_g, carbohidratos_g:dat.carbohidratos_g,
+        grasas_g:dat.grasas_g, fibra_g:dat.fibra_g, grupos:dat.grupos,
+        confianza:dat.confianza
       }));
     })
     .catch(function(e){
