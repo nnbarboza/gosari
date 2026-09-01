@@ -612,6 +612,59 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .ins-c{border-radius:13px;padding:11px 12px;font-size:12px;line-height:1.4}
 .ins-c i{font-style:normal;display:block;font-size:15px;margin-bottom:5px}
 
+/* ---------- CHEF ---------- */
+.chef-h{display:flex;align-items:center;gap:13px;margin:14px 0 18px}
+.chef-m{width:58px;height:58px;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;font-size:40px}
+.chef-m img{width:100%;height:100%;object-fit:contain}
+.chef-h h2{margin:0;font-size:27px;font-weight:700;letter-spacing:-.7px}
+.chef-h p{margin:3px 0 0;font-size:13px;color:var(--ink2);line-height:1.35}
+
+.ctx{background:var(--green-xl);border-radius:14px;padding:12px 14px;margin-bottom:16px}
+.ctx-t{font-size:11px;font-weight:700;letter-spacing:.5px;color:#2F6B41;text-transform:uppercase;
+  margin-bottom:8px}
+.ctx-l{display:flex;flex-wrap:wrap;gap:6px}
+.ctx-c{display:inline-flex;align-items:center;gap:5px;background:#fff;border-radius:999px;
+  padding:5px 10px;font-size:11.5px;font-weight:600;color:#2F6B41}
+.ctx-c.no{color:#8A6212}
+.ctx-n{font-size:12px;color:#3F5C46;line-height:1.4;margin-top:9px}
+
+.pl-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+.pl-h{padding:16px 15px 14px;border-bottom:1px solid var(--line)}
+.pl-n{font-size:19px;font-weight:700;letter-spacing:-.5px;line-height:1.2}
+.pl-p{font-size:12.5px;color:var(--ink2);margin-top:3px}
+.pl-w{background:var(--green-xl);border-radius:11px;padding:10px 12px;font-size:12.5px;
+  color:#2F6B41;line-height:1.4;margin-top:11px;display:flex;gap:7px;align-items:flex-start}
+.pl-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.pl-tag{display:inline-flex;align-items:center;gap:5px;background:#F3F4F6;border-radius:999px;
+  padding:4px 10px;font-size:11.5px;font-weight:600;color:var(--ink2)}
+.pl-mac{display:flex;padding:12px 8px;border-bottom:1px solid var(--line);background:#FCFCFD}
+.pl-mac div{flex:1;min-width:0;text-align:center;position:relative}
+.pl-mac div+div::before{content:'';position:absolute;left:0;top:3px;bottom:3px;width:1px;background:var(--line)}
+.pl-mac b{display:block;font-size:15px;font-weight:700;letter-spacing:-.4px}
+.pl-mac span{display:block;font-size:9.5px;color:var(--ink2);margin-top:2px}
+.pl-s{padding:14px 15px}
+.pl-s+.pl-s{border-top:1px solid var(--line)}
+.pl-st{font-size:11.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:10px}
+.ing{display:flex;align-items:baseline;gap:8px;padding:5px 0;font-size:13.5px}
+.ing+.ing{border-top:1px solid #F7F8F9}
+.ing-q{flex:1;min-width:0}
+.ing-c{font-weight:600;color:var(--ink2);font-size:12.5px;white-space:nowrap;flex-shrink:0}
+.paso{display:flex;gap:11px;padding:7px 0;font-size:13.5px;line-height:1.45}
+.paso-n{width:21px;height:21px;border-radius:50%;background:var(--green-xl);color:var(--green-d);
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  margin-top:1px}
+.pl-tip{background:#FEF9EC;border-radius:11px;padding:11px 12px;font-size:12.5px;color:#7A5B1E;
+  line-height:1.45;display:flex;gap:8px;align-items:flex-start}
+.pl-acc{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:14px 15px;border-top:1px solid var(--line)}
+.pl-acc .btn-o,.pl-acc .btn-g{margin:0}
+.pl-acc .full{grid-column:1/-1}
+
+.chef-vacio{text-align:center;padding:34px 20px;color:var(--ink2);font-size:13.5px;line-height:1.55}
+.chef-vacio .e{font-size:44px;display:block;margin-bottom:14px}
+
 /* ---------- SHEET (modal inferior) ---------- */
 .sheet-bg{position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:400;display:none;
   align-items:flex-end;justify-content:center}
@@ -701,6 +754,11 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div class="card">
     <div class="card-hd">
       <div class="card-t">Tu scoring <span class="info-i" id="infoScore">i</span></div>
+      <div class="navd">
+        <button class="navd-a" data-dia="-1">‹</button>
+        <span class="navd-t" id="mealsDia">Hoy</span>
+        <button class="navd-a" data-dia="1" id="mealsNext">›</button>
+      </div>
     </div>
     <div class="rings2">
       <div class="rg rg-big">
@@ -739,14 +797,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   </div>
 
   <div class="card">
-    <div class="card-hd">
-      <div class="card-t">Comidas</div>
-      <div class="navd">
-        <button class="navd-a" data-dia="-1">‹</button>
-        <span class="navd-t" id="mealsDia">Hoy</span>
-        <button class="navd-a" data-dia="1" id="mealsNext">›</button>
-      </div>
-    </div>
+    <div class="card-hd"><div class="card-t" id="mealsT">Comidas</div></div>
     <div class="meals" id="meals"></div>
     <button class="btn-add" id="btnAdd"><span style="font-size:17px;font-weight:400">＋</span> Añadir comida extra</button>
   </div>
@@ -979,6 +1030,46 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
     Añadir gasto
   </button>
+
+</div></section>
+
+<!-- ================= CHEF ================= -->
+<section class="screen" id="s-chef"><div class="wrap">
+
+  <div class="chef-h">
+    <div class="chef-m" id="chefMas">👨‍🍳</div>
+    <div>
+      <h2>Chef</h2>
+      <p id="chefSub">Te propongo qué cocinar según cómo llevas el día.</p>
+    </div>
+  </div>
+
+  <div class="seg" id="chefModo">
+    <button data-cmodo="dia" class="on">¿Qué como?</button>
+    <button data-cmodo="nevera">Tengo en la nevera</button>
+  </div>
+
+  <div id="chefNevera" style="display:none">
+    <div class="fld" style="margin-bottom:4px"><label>¿Qué tienes por casa?</label>
+      <textarea id="chefTexto" rows="3"
+        placeholder="Ej. pechuga de pollo, calabacín, un bote de garbanzos, arroz, tomates"></textarea></div>
+    <p class="hint">No hace falta que pongas aceite, sal ni especias: se dan por hechos.</p>
+  </div>
+
+  <div class="ctx" id="chefCtx"></div>
+
+  <div class="seg" id="chefFuente" style="margin-bottom:14px">
+    <button data-cfuente="catalogo" class="on">De mi catálogo</button>
+    <button data-cfuente="ia">Nueva idea</button>
+  </div>
+
+  <button class="btn-save" id="chefGo" style="margin-top:0">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M5 8h14l-1 11H6z"/><path d="M9 12v4M15 12v4"/></svg>
+    <span id="chefGoTx">Proponme un plato</span>
+  </button>
+
+  <div id="chefRes"></div>
 
 </div></section>
 
@@ -1281,7 +1372,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.12.0';
+var APP_VERSION = 'v1.13.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1328,6 +1419,7 @@ var MACROS = [
 var NAV = [
   { id:'s-home',    label:'Inicio',  ico:'nav_inicio',  emoji:'🏠' },
   { id:'s-comidas', label:'Comidas', ico:'nav_comidas', emoji:'🍽️' },
+  { id:'s-chef',    label:'Chef',    ico:'nav_chef',    emoji:'👨‍🍳' },
   { id:'s-gastos',  label:'Gastos',  ico:'nav_gastos',  emoji:'💼' },
   { id:'s-perfil',  label:'Perfil',  ico:'nav_perfil',  emoji:'👤' }
 ];
@@ -1478,12 +1570,13 @@ function loading(on){ $('#bar').style.width = on ? '70%' : '100%';
    que es transitorio y los errores dicen algo útil.
    ============================================================ */
 
-/* Las escrituras van por POST: no tienen límite de URL y evitan que
-   un payload largo (una comida con varios platos) rompa la petición. */
-var ESCRITURAS = ['saveComida','deleteComida','saveComidaGrupo','deleteGrupo',
-                  'saveCatalogo','deleteCatalogo','setDiaEntreno',
-                  'saveMedida','deleteMedida','saveGasto','deleteGasto',
-                  'analizarFoto','analizarTexto'];
+/* Todo lo que manda datos va por POST: sin límite de URL, así un payload
+   largo (una comida con varios platos, una foto, el contexto del Chef)
+   nunca rompe la petición. Solo las lecturas van por GET. */
+var POR_POST = ['saveComida','deleteComida','saveComidaGrupo','deleteGrupo',
+                'saveCatalogo','deleteCatalogo','setDiaEntreno',
+                'saveMedida','deleteMedida','saveGasto','deleteGasto',
+                'analizarFoto','analizarTexto','sugerirPlato'];
 
 var API_TIMEOUT = 30000;
 var API_REINTENTOS = 2;
@@ -1525,7 +1618,7 @@ function _parsear(txt, status){
 function api(action, params, opts){
   params = params || {};
   opts = opts || {};
-  var esEscritura = ESCRITURAS.indexOf(action) >= 0;
+  var esEscritura = POR_POST.indexOf(action) >= 0;
   var intento = 0;
 
   function lanzar(){
@@ -2062,6 +2155,7 @@ function render(){
   if(state.screen === 's-comidas') renderCatalogo();
   if(state.screen === 's-gastos')  renderGastos();
   if(state.screen === 's-perfil')  renderPerfil();
+  if(state.screen === 's-chef')    renderChef();
 }
 
 var TIPO_DIA_UI = {
@@ -2233,6 +2327,7 @@ function renderComidas(){
 
   $('#mealsDia').textContent = etiquetaDia(f);
   $('#mealsNext').disabled = f >= state.hoy;
+  $('#mealsT').textContent = (f === state.hoy) ? 'Comidas de hoy' : 'Comidas · ' + etiquetaDia(f).toLowerCase();
 
   var filas = [];
 
@@ -3490,6 +3585,306 @@ function guardarGasto(){
 }
 
 /* ============================================================
+   CHEF — qué cocinar
+   ============================================================ */
+var chef = { modo:'dia', fuente:'catalogo', plato:null, vistos:[], idx:0 };
+
+function equipamientoDe(){
+  return ((state.data && state.data.equipamiento) || []).filter(function(e){
+    return String(e.username) === state.user;
+  });
+}
+
+/** Qué le falta hoy y qué anda flojo en la semana. */
+function situacion(){
+  var f = state.hoy;
+  var com = comidasDe(f), tot = totalesDe(com), obj = objetivoDe(f);
+  var g = gruposDeDia(com);
+  var sem = scoreSemanal();
+
+  /* El siguiente hueco sin registrar, por orden del día */
+  var grupos = gruposDelDia(f), hueco = null;
+  for(var i=0;i<TIPOS.length;i++){
+    if(!grupos.filter(function(x){ return x.tipo === TIPOS[i].key; }).length){ hueco = TIPOS[i]; break; }
+  }
+
+  var restan = {};
+  ['kcal','proteinas_g','carbohidratos_g','grasas_g','fibra_g'].forEach(function(k){
+    restan[k] = Math.max(0, num(obj[k]) - num(tot[k]));
+  });
+
+  /* Grupos saludables que aún no han salido hoy */
+  var faltanHoy = GRUPOS.filter(function(x){
+    return x.tipo === 'pos' && g.indexOf(x.key) < 0;
+  });
+
+  /* Y los que van flojos en la semana, por orden de urgencia */
+  var faltanSem = [];
+  if(sem){
+    faltanSem = GRUPOS.filter(function(x){ return x.tipo === 'pos'; }).map(function(x){
+      var o = (sem.objetivos[x.key] || {}).objetivo || 0;
+      return { g:x, falta: o > 0 ? o - (sem.raciones[x.key] || 0) : 0 };
+    }).filter(function(x){ return x.falta > 0; })
+      .sort(function(a,b){ return b.falta - a.falta; });
+  }
+
+  var excesos = GRUPOS.filter(function(x){ return x.tipo === 'lim' && g.indexOf(x.key) >= 0; });
+
+  return { hueco:hueco, restan:restan, hoy:g, faltanHoy:faltanHoy,
+           faltanSem:faltanSem, excesos:excesos, sem:sem, hayComidas:com.length > 0 };
+}
+
+/** El texto que se le manda a la IA. Sin cifras crípticas: frases. */
+function contextoTexto(sit){
+  var l = [];
+  l.push('Comida a preparar: ' + (sit.hueco ? sit.hueco.label.toLowerCase() : 'la siguiente comida') + '.');
+  if(num(sit.restan.kcal) > 0)
+    l.push('Le quedan unas ' + fmt(sit.restan.kcal) + ' kcal, ' + fmt(sit.restan.proteinas_g) +
+           ' g de proteína y ' + fmt(sit.restan.fibra_g) + ' g de fibra para cerrar el día.');
+  if(sit.faltanHoy.length)
+    l.push('Hoy todavía no ha comido: ' + sit.faltanHoy.map(function(x){ return x.label.toLowerCase(); }).join(', ') + '.');
+  if(sit.faltanSem.length)
+    l.push('Esta semana va flojo de: ' + sit.faltanSem.slice(0,3).map(function(x){
+      return x.g.label.toLowerCase(); }).join(', ') + '.');
+  if(sit.excesos.length)
+    l.push('Hoy ya ha tomado ' + sit.excesos.map(function(x){ return x.label.toLowerCase(); }).join(' y ') +
+           ', así que conviene algo sencillo.');
+  return l.join('\n');
+}
+
+function renderChefCtx(){
+  var sit = situacion();
+  var chips = [];
+
+  if(sit.hueco) chips.push({ t:sit.hueco.label, ok:true });
+  if(num(sit.restan.kcal) > 0) chips.push({ t:fmt(sit.restan.kcal) + ' kcal por cubrir', ok:true });
+  if(num(sit.restan.proteinas_g) > 0) chips.push({ t:fmt(sit.restan.proteinas_g) + ' g proteína', ok:true });
+  sit.faltanSem.slice(0,2).forEach(function(x){ chips.push({ t:'Falta ' + x.g.label.toLowerCase(), ok:false }); });
+
+  $('#chefCtx').innerHTML =
+    '<div class="ctx-t">Con lo que llevas</div>' +
+    '<div class="ctx-l">' + (chips.length
+      ? chips.map(function(c){ return '<span class="ctx-c' + (c.ok?'':' no') + '">' + esc(c.t) + '</span>'; }).join('')
+      : '<span class="ctx-c">Día en blanco</span>') + '</div>' +
+    (sit.hayComidas ? '' : '<div class="ctx-n">Aún no has registrado nada hoy, así que voy a lo seguro.</div>');
+}
+
+function renderChef(){
+  if(!state.data) return;
+  $('#chefMas').innerHTML = icono('mas_chef', '👨‍🍳', 58);
+  $('#chefNevera').style.display = chef.modo === 'nevera' ? 'block' : 'none';
+  $('#chefCtx').style.display    = chef.modo === 'nevera' ? 'none' : 'block';
+  if(chef.modo !== 'nevera') renderChefCtx();
+  $('#chefGoTx').textContent = chef.fuente === 'catalogo'
+    ? 'Buscar en mi catálogo' : 'Proponme algo nuevo';
+  $$('#chefModo [data-cmodo]').forEach(function(b){ b.classList.toggle('on', b.dataset.cmodo === chef.modo); });
+  $$('#chefFuente [data-cfuente]').forEach(function(b){ b.classList.toggle('on', b.dataset.cfuente === chef.fuente); });
+
+  /* En modo nevera el catálogo no aporta: se fuerza la IA */
+  $('#chefFuente').style.display = chef.modo === 'nevera' ? 'none' : 'flex';
+
+  if(chef.plato) renderPlato(chef.plato);
+  else $('#chefRes').innerHTML = '<div class="chef-vacio"><span class="e">🍳</span>' +
+    (chef.modo === 'nevera'
+      ? 'Dime qué tienes por casa y te monto algo con ello.'
+      : 'Miro lo que llevas hoy y esta semana, y te digo qué cocinar.') + '</div>';
+}
+
+/* ---------- Buscar en el catálogo ---------- */
+/** Puntúa cada plato del catálogo contra lo que falta. */
+function rankearCatalogo(sit){
+  var faltan = {};
+  sit.faltanHoy.forEach(function(x){ faltan[x.key] = 3; });
+  sit.faltanSem.slice(0,4).forEach(function(x){ faltan[x.g.key] = (faltan[x.g.key]||0) + x.falta; });
+
+  return catalogoMio().filter(function(c){
+    return String(c.categoria||'plato').toLowerCase() === 'plato';
+  }).map(function(c){
+    var g = gruposDe(c.grupos), p = 0;
+    g.forEach(function(k){ p += (faltan[k] || 0) * 4; });
+    /* Penaliza lo que ya sobra hoy */
+    GRUPOS.filter(function(x){ return x.tipo === 'lim'; }).forEach(function(x){
+      if(g.indexOf(x.key) >= 0) p -= (x.pen || 4) * 2;
+    });
+    /* Que las kcal encajen con lo que queda */
+    var r = num(sit.restan.kcal);
+    if(r > 0){
+      var d = Math.abs(num(c.kcal) - r*0.85) / Math.max(r, 1);
+      p += Math.max(0, 8 - d*10);
+    }
+    /* Un empujón a la proteína si va corto */
+    if(num(sit.restan.proteinas_g) > 25 && num(c.proteinas_g) >= 25) p += 5;
+    return { c:c, p:p };
+  }).sort(function(a,b){ return b.p - a.p; });
+}
+
+function proponerCatalogo(){
+  var sit = situacion();
+  var rank = rankearCatalogo(sit);
+  if(!rank.length){
+    toast('No tienes platos en tu catálogo todavía', true);
+    return;
+  }
+  if(chef.idx >= rank.length) chef.idx = 0;
+  var c = rank[chef.idx].c;
+  chef.idx++;
+
+  var g = gruposDe(c.grupos);
+  var coincide = g.filter(function(k){
+    return sit.faltanHoy.some(function(x){ return x.key === k; }) ||
+           sit.faltanSem.some(function(x){ return x.g.key === k; });
+  }).map(function(k){
+    var gd = GRUPOS.filter(function(x){ return x.key === k; })[0];
+    return gd ? gd.label.toLowerCase() : k;
+  });
+
+  chef.plato = {
+    origen:'catalogo', catalogo_id:c.id,
+    nombre:c.nombre, porcion:c.porcion || '',
+    por_que: coincide.length
+      ? 'Te aporta ' + coincide.slice(0,2).join(' y ') + ', que es lo que te falta.'
+      : 'Encaja con lo que te queda para cerrar el día.',
+    ingredientes: String(c.ingredientes||'').split(',').map(function(x){
+      return { que:x.trim(), cantidad:'' }; }).filter(function(x){ return x.que; }),
+    pasos: [], equipamiento: [], consejo: '', tiempo_min: 0, dificultad: '',
+    kcal:num(c.kcal), proteinas_g:num(c.proteinas_g), carbohidratos_g:num(c.carbohidratos_g),
+    grasas_g:num(c.grasas_g), fibra_g:num(c.fibra_g), grupos:String(c.grupos||'')
+  };
+  renderPlato(chef.plato);
+}
+
+/* ---------- Pedir una idea nueva a la IA ---------- */
+function proponerIA(){
+  var sit = situacion();
+  var nevera = $('#chefTexto').value.trim();
+  if(chef.modo === 'nevera' && nevera.length < 3){
+    toast('Dime qué tienes por casa', true); return;
+  }
+  var u = usuarioActual();
+  $('#busyT').textContent = 'Pensando qué te viene bien…';
+  $('#busy').classList.add('on');
+
+  api('sugerirPlato', {
+    contexto: contextoTexto(sit),
+    nevera: chef.modo === 'nevera' ? nevera : '',
+    equipamiento: equipamientoDe().map(function(e){ return e.nombre; }).join(', '),
+    restricciones: String(u.restricciones || ''),
+    evitar: chef.vistos.slice(-5).join(', ')
+  }, { reintentos:0 })
+    .then(function(dat){
+      $('#busy').classList.remove('on');
+      dat.origen = 'ia';
+      chef.plato = dat;
+      chef.vistos.push(dat.nombre);
+      renderPlato(dat);
+    })
+    .catch(function(e){
+      $('#busy').classList.remove('on');
+      toast('No se pudo proponer: ' + e.message, true);
+    });
+}
+
+/* ---------- Pintar la propuesta ---------- */
+function renderPlato(pl){
+  var gr = gruposDe(pl.grupos).map(function(k){
+    var gd = GRUPOS.filter(function(x){ return x.key === k; })[0];
+    return gd ? '<span class="pl-tag">' + icono(gd.ico, gd.emoji, 14) + ' ' + esc(gd.label) + '</span>' : '';
+  }).join('');
+
+  var meta = [];
+  if(num(pl.tiempo_min) > 0) meta.push('<span class="pl-tag">⏱ ' + fmt(pl.tiempo_min) + ' min</span>');
+  if(pl.dificultad) meta.push('<span class="pl-tag">' + esc(_cap(pl.dificultad)) + '</span>');
+  if(pl.origen === 'catalogo') meta.push('<span class="pl-tag">📗 De tu catálogo</span>');
+
+  var mac = [['kcal','kcal'],['proteinas_g','prot'],['carbohidratos_g','carb'],
+             ['grasas_g','gras'],['fibra_g','fibra']].map(function(m){
+    return '<div><b>' + fmt(pl[m[0]]) + '</b><span>' + m[1] + '</span></div>';
+  }).join('');
+
+  var ing = (pl.ingredientes||[]).length
+    ? '<div class="pl-s"><div class="pl-st">Ingredientes</div>' +
+      pl.ingredientes.map(function(i){
+        return '<div class="ing"><span class="ing-q">' + esc(i.que) + '</span>' +
+          (i.cantidad ? '<span class="ing-c">' + esc(i.cantidad) + '</span>' : '') + '</div>';
+      }).join('') + '</div>'
+    : '';
+
+  var pasos = (pl.pasos||[]).length
+    ? '<div class="pl-s"><div class="pl-st">Cómo se hace</div>' +
+      pl.pasos.map(function(t, i){
+        return '<div class="paso"><span class="paso-n">' + (i+1) + '</span><span>' + esc(t) + '</span></div>';
+      }).join('') +
+      (pl.consejo ? '<div class="pl-tip" style="margin-top:11px"><span>💡</span><span>' +
+        esc(pl.consejo) + '</span></div>' : '') + '</div>'
+    : '';
+
+  $('#chefRes').innerHTML =
+    '<div class="pl-card">' +
+      '<div class="pl-h">' +
+        '<div class="pl-n">' + esc(pl.nombre) + '</div>' +
+        (pl.porcion ? '<div class="pl-p">' + esc(pl.porcion) + '</div>' : '') +
+        (pl.por_que ? '<div class="pl-w"><span>✨</span><span>' + esc(pl.por_que) + '</span></div>' : '') +
+        (meta.length || gr ? '<div class="pl-meta">' + meta.join('') + gr + '</div>' : '') +
+      '</div>' +
+      '<div class="pl-mac">' + mac + '</div>' +
+      ing + pasos +
+      '<div class="pl-acc">' +
+        '<button class="btn-g full" id="plRegistrar">Registrarlo como comida</button>' +
+        (pl.origen === 'ia'
+          ? '<button class="btn-o" id="plGuardar">📗 A mi catálogo</button>'
+          : '<button class="btn-o" id="plVideo">▶︎ Buscar vídeo</button>') +
+        '<button class="btn-o" id="plOtra">🔄 Otra idea</button>' +
+        (pl.origen === 'ia' ? '<button class="btn-o full" id="plVideo">▶︎ Buscar vídeo de la receta</button>' : '') +
+      '</div>' +
+    '</div>';
+}
+
+/** Búsqueda en YouTube. Nunca un enlace directo: los inventaría. */
+function buscarVideo(nombre){
+  var q = encodeURIComponent('receta ' + nombre);
+  window.open('https://www.youtube.com/results?search_query=' + q, '_blank');
+}
+
+function guardarPlatoCatalogo(){
+  var pl = chef.plato;
+  if(!pl) return;
+  var ingr = (pl.ingredientes||[]).map(function(i){
+    return i.cantidad ? i.que + ' (' + i.cantidad + ')' : i.que; }).join(', ');
+
+  api('saveCatalogo', { payload: {
+    nombre:pl.nombre, categoria:'plato', ingredientes:ingr, porcion:pl.porcion || '',
+    kcal:num(pl.kcal), proteinas_g:num(pl.proteinas_g), carbohidratos_g:num(pl.carbohidratos_g),
+    grasas_g:num(pl.grasas_g), fibra_g:num(pl.fibra_g), grupos:pl.grupos || '',
+    creado_por:state.user
+  }}).then(function(c){
+    if(state.data) state.data.catalogo.push(c);
+    chef.plato.origen = 'catalogo';
+    chef.plato.catalogo_id = c.id;
+    renderPlato(chef.plato);
+    toast('Guardado en tu catálogo 📗');
+  }).catch(function(e){ toast('No se guardó: ' + e.message, true); });
+}
+
+/** Lo lleva al registro, ya relleno y en el hueco que toca. */
+function registrarPlato(){
+  var pl = chef.plato;
+  if(!pl) return;
+  var sit = situacion();
+  var ingr = (pl.ingredientes||[]).map(function(i){
+    return i.cantidad ? i.que + ' (' + i.cantidad + ')' : i.que; }).join(', ');
+
+  abrirAdd(sit.hueco ? sit.hueco.key : 'comida');
+  draft.items.push({
+    nombre:pl.nombre, ingredientes:ingr, categoria:'plato',
+    kcal:num(pl.kcal), proteinas_g:num(pl.proteinas_g), carbohidratos_g:num(pl.carbohidratos_g),
+    grasas_g:num(pl.grasas_g), fibra_g:num(pl.fibra_g), grupos:pl.grupos || '',
+    catalogo_id: pl.catalogo_id || ''
+  });
+  renderAdd();
+  toast('Revísalo y guarda cuando lo hayas comido');
+}
+
+/* ============================================================
    PERFIL / PROGRESO
    ============================================================ */
 
@@ -4161,10 +4556,7 @@ function renderNav(){
       return { id:'s-soon', label:'Lugares', ico:'nav_lugares', emoji:'📍' };
     return n;
   });
-  $('#nav').innerHTML =
-    items.slice(0,2).map(navBtn).join('') +
-    '<button class="nav-fab" id="fab">＋</button>' +
-    items.slice(2).map(navBtn).join('');
+  $('#nav').innerHTML = items.map(navBtn).join('');
 }
 function navBtn(n){
   return '<button class="nav-i" data-nav="' + n.id + '" data-t="' + esc(n.label) + '">' +
@@ -4180,6 +4572,7 @@ function goScreen(id, titulo){
   if(id === 's-comidas') renderCatalogo();
   if(id === 's-gastos')  renderGastos();
   if(id === 's-perfil')  renderPerfil();
+  if(id === 's-chef')    renderChef();
   state.screen = id;
   window.scrollTo(0,0);
 }
@@ -4197,8 +4590,8 @@ function pintarPicker(usuarios){
 
 /* El backend puede ser de una versión anterior y no devolver todas las tablas.
    Normalizamos aquí para que ninguna pantalla reciba undefined. */
-var TABLAS = ['usuarios','objetivos','objetivos_grupos','lugares','catalogo','comidas',
-              'dias','medidas','gastos','tags'];
+var TABLAS = ['usuarios','objetivos','objetivos_grupos','lugares','equipamiento',
+              'catalogo','comidas','dias','medidas','gastos','tags'];
 function normalizar(d){
   d = d || {};
   TABLAS.forEach(function(k){ if(!Array.isArray(d[k])) d[k] = []; });
@@ -4300,10 +4693,7 @@ document.addEventListener('click', function(ev){
     if(!state.user){ toast('Elige usuario primero', true); return; }
     abrirAdd('extra'); return;
   }
-  if(ev.target.closest('#fab')){
-    if(!state.user){ toast('Elige usuario primero', true); return; }
-    abrirAdd(); return;
-  }
+
 
   /* ---------- AÑADIR COMIDA ---------- */
   if((t = ev.target.closest('[data-close]'))){ $('#'+t.dataset.close).classList.remove('on'); return; }
@@ -4521,6 +4911,32 @@ document.addEventListener('click', function(ev){
       .catch(function(e){ toast('No se pudo borrar: ' + e.message, true); });
     return;
   }
+
+  /* ---------- CHEF ---------- */
+  if((t = ev.target.closest('[data-cmodo]'))){
+    chef.modo = t.dataset.cmodo;
+    if(chef.modo === 'nevera') chef.fuente = 'ia';
+    chef.plato = null; chef.idx = 0;
+    renderChef(); return;
+  }
+  if((t = ev.target.closest('[data-cfuente]'))){
+    chef.fuente = t.dataset.cfuente; chef.plato = null; chef.idx = 0;
+    renderChef(); return;
+  }
+  if(ev.target.closest('#chefGo')){
+    if(!state.user){ toast('Elige usuario primero', true); return; }
+    if(chef.modo === 'nevera' || chef.fuente === 'ia') proponerIA();
+    else proponerCatalogo();
+    return;
+  }
+  if(ev.target.closest('#plOtra')){
+    if(chef.plato && chef.plato.origen === 'catalogo' && chef.fuente === 'catalogo') proponerCatalogo();
+    else proponerIA();
+    return;
+  }
+  if(ev.target.closest('#plVideo')){ buscarVideo(chef.plato ? chef.plato.nombre : ''); return; }
+  if(ev.target.closest('#plGuardar')){ guardarPlatoCatalogo(); return; }
+  if(ev.target.closest('#plRegistrar')){ registrarPlato(); return; }
 
   /* ---------- PERFIL ---------- */
   if(ev.target.closest('#pfVerMed')){ abrirMedidas(); return; }
