@@ -717,7 +717,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .busy{position:fixed;inset:0;background:rgba(255,255,255,.93);z-index:800;display:none;
   flex-direction:column;align-items:center;justify-content:center;gap:15px;text-align:center;padding:30px}
 .busy.on{display:flex}
-.busy .bm{font-size:52px}
+.busy .bm{font-size:52px;width:52px;height:52px;display:flex;align-items:center;justify-content:center}
 .busy .bt2{font-size:15px;font-weight:600}
 .busy .bs{font-size:13px;color:var(--ink2)}
 
@@ -1353,10 +1353,10 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
 <!-- ================= BUSY ================= -->
 <div class="busy" id="busy">
-  <div class="bm">🥑</div>
+  <div class="bm" id="busyIco">🥑</div>
   <div class="spinner"></div>
   <div class="bt2" id="busyT">Analizando tu comida…</div>
-  <div class="bs">Suele tardar unos segundos.</div>
+  <div class="bs" id="busySub">Suele tardar unos segundos.</div>
 </div>
 
 <!-- ================= PLACEHOLDER ================= -->
@@ -1372,7 +1372,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.13.0';
+var APP_VERSION = 'v1.13.1';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1545,6 +1545,25 @@ function gruposDe(v){
     return GRUPOS_ALIAS[k] || k;
   }).filter(Boolean);
 }
+
+/* Overlay de espera. Cada tarea tiene su propio icono: así se distingue
+   de un vistazo si está analizando, guardando o pensando una receta.
+   Todos con respaldo a emoji, como el resto de iconos. */
+var BUSY = {
+  ia:      { ico:'ui_busy_ia',     emoji:'🤖', sub:'Suele tardar unos segundos.' },
+  foto:    { ico:'ui_busy_foto',   emoji:'📷', sub:'Preparando la imagen.' },
+  guardar: { ico:'ui_busy_guardar',emoji:'💾', sub:'Un momento.' },
+  chef:    { ico:'ui_busy_chef',   emoji:'👨‍🍳', sub:'Estoy mirando qué te encaja.' }
+};
+
+function busyOn(titulo, tipo){
+  var b = BUSY[tipo] || BUSY.ia;
+  $('#busyIco').innerHTML = icono(b.ico, b.emoji, 52);
+  $('#busyT').textContent = titulo;
+  $('#busySub').textContent = b.sub;
+  $('#busy').classList.add('on');
+}
+function busyOff(){ $('#busy').classList.remove('on'); }
 
 function toast(msg, err){
   var t = $('#toast'); t.textContent = msg;
@@ -2863,14 +2882,13 @@ function analizarTexto(){
   if(txt.length < 3){ toast('Cuenta un poco más', true); return; }
 
   $('#shDesc').classList.remove('on');
-  $('#busyT').textContent = 'Calculando nutrientes…';
-  $('#busy').classList.add('on');
+  busyOn('Calculando nutrientes…', 'ia');
 
   /* Sin reintentos: cada llamada a la IA cuesta, y si falla es mejor
      que lo decida el usuario. */
   api('analizarTexto', { descripcion: txt }, { reintentos:0 })
     .then(function(dat){
-      $('#busy').classList.remove('on');
+      busyOff();
       abrirForm(ctxForm({
         titulo:'Revisa lo que ha calculado',
         nombre:dat.nombre, ingredientes:dat.ingredientes,
@@ -2880,7 +2898,7 @@ function analizarTexto(){
       }));
     })
     .catch(function(e){
-      $('#busy').classList.remove('on');
+      busyOff();
       $('#shDesc').classList.add('on');
       toast('No se pudo calcular: ' + e.message, true);
     });
@@ -2923,16 +2941,15 @@ function comprimir(file, maxPx, calidad){
 /* Primero se enseña la foto y se deja añadir un detalle. Lo que escribe
    el usuario pesa más que lo que la IA crea ver. */
 function prepararFoto(file){
-  $('#busyT').textContent = 'Preparando la foto…';
-  $('#busy').classList.add('on');
+  busyOn('Preparando la foto…', 'foto');
   comprimir(file, 900, 0.72).then(function(dataUrl){
-    $('#busy').classList.remove('on');
+    busyOff();
     draft.foto = dataUrl;
     $('#fotoPrev').innerHTML = '<img src="' + dataUrl + '" alt="">';
     $('#fTexto').value = '';
     $('#shFoto').classList.add('on');
   }).catch(function(e){
-    $('#busy').classList.remove('on');
+    busyOff();
     draft.foto = '';
     toast('No se pudo leer la foto: ' + e.message, true);
   });
@@ -2941,14 +2958,13 @@ function prepararFoto(file){
 function analizarFoto(){
   var nota = $('#fTexto').value.trim();
   $('#shFoto').classList.remove('on');
-  $('#busyT').textContent = 'Analizando tu comida…';
-  $('#busy').classList.add('on');
+  busyOn('Analizando tu comida…', 'ia');
   Promise.resolve(draft.foto).then(function(dataUrl){
     if(!dataUrl) throw new Error('no hay foto');
     return api('analizarFoto',
       { imagen: dataUrl, mime:'image/jpeg', comentario: nota }, { reintentos:0 });
   }).then(function(dat){
-      $('#busy').classList.remove('on');
+      busyOff();
       abrirForm(ctxForm({
         titulo:'Revisa lo que detectó',
         nombre:dat.nombre, ingredientes:dat.ingredientes,
@@ -2958,7 +2974,7 @@ function analizarFoto(){
       }));
     })
     .catch(function(e){
-      $('#busy').classList.remove('on');
+      busyOff();
       $('#shFoto').classList.add('on');
       toast('No se pudo analizar: ' + e.message, true);
     });
@@ -3011,8 +3027,7 @@ function guardarComida(){
   if(!draft.items.length) return;
   var btn = $('#btnGuardar');
   btn.disabled = true;
-  $('#busyT').textContent = 'Guardando…';
-  $('#busy').classList.add('on');
+  busyOn('Guardando…', 'guardar');
 
   api('saveComidaGrupo', { payload: {
     grupo_id: draft.grupo_id, username: state.user, fecha: (draft.fecha || state.hoy),
@@ -3026,11 +3041,11 @@ function guardarComida(){
   }}).then(function(){
     return cargar();
   }).then(function(){
-    $('#busy').classList.remove('on');
+    busyOff();
     toast('Comida guardada ✓');
     goScreen('s-home');
   }).catch(function(e){
-    $('#busy').classList.remove('on');
+    busyOff();
     btn.disabled = false;
     toast('No se guardó: ' + e.message, true);
   });
@@ -3761,8 +3776,7 @@ function proponerIA(){
     toast('Dime qué tienes por casa', true); return;
   }
   var u = usuarioActual();
-  $('#busyT').textContent = 'Pensando qué te viene bien…';
-  $('#busy').classList.add('on');
+  busyOn('Pensando qué te viene bien…', 'chef');
 
   api('sugerirPlato', {
     contexto: contextoTexto(sit),
@@ -3772,14 +3786,14 @@ function proponerIA(){
     evitar: chef.vistos.slice(-5).join(', ')
   }, { reintentos:0 })
     .then(function(dat){
-      $('#busy').classList.remove('on');
+      busyOff();
       dat.origen = 'ia';
       chef.plato = dat;
       chef.vistos.push(dat.nombre);
       renderPlato(dat);
     })
     .catch(function(e){
-      $('#busy').classList.remove('on');
+      busyOff();
       toast('No se pudo proponer: ' + e.message, true);
     });
 }
