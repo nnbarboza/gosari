@@ -47,6 +47,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .ico{display:inline-flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;
   vertical-align:middle}
 .ico img{width:100%;height:100%;object-fit:contain;display:block}
+.ico{overflow:visible}
 
 /* ---------- HEADER ---------- */
 .hd{padding:14px 0 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
@@ -665,6 +666,21 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .chef-vacio{text-align:center;padding:34px 20px;color:var(--ink2);font-size:13.5px;line-height:1.55}
 .chef-vacio .e{font-size:44px;display:block;margin-bottom:14px}
 
+/* ---------- COMPROBADOR DE ICONOS ---------- */
+.ico-g{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--ink3);margin:16px 0 8px}
+.ico-g:first-child{margin-top:0}
+.ico-r{display:flex;align-items:center;gap:11px;padding:7px 0}
+.ico-r+.ico-r{border-top:1px solid var(--line)}
+.ico-b{width:38px;height:38px;border-radius:10px;background:#F5F6F7;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.ico-n{flex:1;min-width:0}
+.ico-n b{display:block;font-size:12.5px;font-weight:600;font-family:ui-monospace,Menlo,monospace}
+.ico-n span{display:block;font-size:11px;color:var(--ink2);margin-top:2px}
+.ico-s{font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 9px;flex-shrink:0}
+.ico-s.si{background:var(--green-l);color:#2F6B41}
+.ico-s.no{background:#F2F4F6;color:var(--ink3)}
+
 /* ---------- SHEET (modal inferior) ---------- */
 .sheet-bg{position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:400;display:none;
   align-items:flex-end;justify-content:center}
@@ -1058,6 +1074,11 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
   <div class="ctx" id="chefCtx"></div>
 
+  <div class="fld" style="margin-bottom:6px"><label>¿Algo que tener en cuenta? (opcional)</label>
+    <input id="chefPeticion" placeholder="Ej. algo rápido, sin horno, me apetece algo caliente">
+  </div>
+  <div class="cats" id="chefRapidos" style="margin-bottom:14px"></div>
+
   <div class="seg" id="chefFuente" style="margin-bottom:14px">
     <button data-cfuente="catalogo" class="on">De mi catálogo</button>
     <button data-cfuente="ia">Nueva idea</button>
@@ -1192,9 +1213,21 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <button class="sheet-x" data-close="shCfg">✕</button></div></div>
   <div class="sheet-b">
     <div id="cfgUser"></div>
+    <button class="btn-o" id="cfgIconos">🖼️ Comprobar iconos</button>
     <button class="btn-o" id="cfgCambiar">👤 Cambiar de usuario</button>
     <button class="btn-o" id="cfgRefrescar">🔄 Actualizar app</button>
     <p class="hint" id="cfgVer"></p>
+  </div>
+</div></div>
+
+<!-- ================= SHEET: COMPROBAR ICONOS ================= -->
+<div class="sheet-bg" id="shIconos"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3>Iconos</h3>
+    <button class="sheet-x" data-close="shIconos">✕</button></div></div>
+  <div class="sheet-b">
+    <p class="hint" style="margin:0 0 14px">Todos van en <b>img/iconos/</b> y en formato
+      <b>.webp</b>. En verde los que ya has subido; en gris los que siguen mostrando el emoji.</p>
+    <div id="icoLista"></div>
   </div>
 </div></div>
 
@@ -1372,7 +1405,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.13.1';
+var APP_VERSION = 'v1.14.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1383,11 +1416,20 @@ var USER_KEY  = 'gosari_user';
    Si el archivo no existe todavía, cae al emoji automáticamente.
    Para reemplazar un icono: subir el .webp con ese nombre. Nada más.
    ============================================================ */
+/* Algunas imágenes traen más margen transparente que otras y se ven más
+   pequeñas al mismo tamaño de caja. En vez de reexportarlas, se ajustan aquí.
+   1 = tal cual; 1.25 = un 25% más grande dentro de su hueco. */
+var ICONO_ESCALA = {
+  nav_chef: 1.3
+};
+
 function icono(nombre, emoji, px){
   px = px || 20;
+  var k = ICONO_ESCALA[nombre];
   return '<span class="ico" style="width:' + px + 'px;height:' + px + 'px;font-size:' +
     Math.round(px*0.92) + 'px">' +
-    '<img src="img/iconos/' + nombre + '.webp" alt="" data-fb="' + emoji + '">' +
+    '<img src="img/iconos/' + nombre + '.webp" alt="" data-fb="' + emoji + '"' +
+    (k && k !== 1 ? ' style="transform:scale(' + k + ')"' : '') + '>' +
     '</span>';
 }
 
@@ -3600,6 +3642,59 @@ function guardarGasto(){
 }
 
 /* ============================================================
+   COMPROBADOR DE ICONOS
+   Con más de cuarenta archivos es fácil equivocarse de nombre o de
+   carpeta. Esto dice cuáles cargan de verdad y cuáles siguen en emoji.
+   ============================================================ */
+function catalogoIconos(){
+  var g = [];
+  g.push({ t:'Arranque y cabecera', px:32, l:[
+    ['ui_splash','🥑','Pantalla al abrir la app'],
+    ['ui_entreno','🏋️','Toggle de día de entreno'],
+    ['ui_regla','🩸','Toggle de día de regla']
+  ]});
+  g.push({ t:'Navegación', px:26, l: NAV.map(function(x){ return [x.ico, x.emoji, x.label]; })
+    .concat([['nav_lugares','📍','Perfiles sin gastos']]) });
+  g.push({ t:'Mascotas de sección', px:40, l:[
+    ['mas_chef','👨‍🍳','Cabecera del Chef'],
+    ['mas_gastos','🧾','Cabecera de Gastos']
+  ]});
+  g.push({ t:'Macros', px:26, l: MACROS.map(function(m){ return [m.ico, m.emoji, m.label]; }) });
+  g.push({ t:'Grupos alimentarios', px:26, l: GRUPOS.map(function(x){ return [x.ico, x.emoji, x.label]; }) });
+  g.push({ t:'Categorías del catálogo', px:28, l: CATS_ORDEN.map(function(k){
+    return [CATS[k].ico, CATS[k].emoji, CATS[k].plural]; }) });
+  g.push({ t:'Medidas del perfil', px:24, l: MED_CAMPOS.map(function(m){ return [m.ico, m.emoji, m.label]; })
+    .concat([['med_imc','📊','IMC'],['med_trofeo','🏆','Score semanal']]) });
+  g.push({ t:'Pantalla de espera', px:30, l: Object.keys(BUSY).map(function(k){
+    return [BUSY[k].ico, BUSY[k].emoji, BUSY[k].sub]; }) });
+  return g;
+}
+
+function abrirIconos(){
+  $('#icoLista').innerHTML = catalogoIconos().map(function(g){
+    return '<div class="ico-g">' + esc(g.t) + '</div>' + g.l.map(function(i){
+      return '<div class="ico-r" data-ficha="' + esc(i[0]) + '">' +
+        '<span class="ico-b">' + icono(i[0], i[1], g.px) + '</span>' +
+        '<span class="ico-n"><b>' + esc(i[0]) + '.webp</b><span>' + esc(i[2]) + '</span></span>' +
+        '<span class="ico-s no">emoji</span></div>';
+    }).join('');
+  }).join('');
+
+  /* Marcar en verde los que carguen. El fallback global ya sustituye los que fallan. */
+  setTimeout(function(){
+    $$('#icoLista .ico-r').forEach(function(fila){
+      var img = fila.querySelector('img');
+      var badge = fila.querySelector('.ico-s');
+      if(img && img.complete && img.naturalWidth > 0){
+        badge.className = 'ico-s si'; badge.textContent = 'ok';
+      }
+    });
+  }, 700);
+
+  $('#shIconos').classList.add('on');
+}
+
+/* ============================================================
    CHEF — qué cocinar
    ============================================================ */
 var chef = { modo:'dia', fuente:'catalogo', plato:null, vistos:[], idx:0 };
@@ -3684,8 +3779,15 @@ function renderChefCtx(){
     (sit.hayComidas ? '' : '<div class="ctx-n">Aún no has registrado nada hoy, así que voy a lo seguro.</div>');
 }
 
+/* Atajos para lo que se pide una y otra vez. Se acumulan en el campo. */
+var CHEF_RAPIDOS = ['Rápido, menos de 15 min', 'Sin horno', 'Algo caliente',
+                    'Para llevar al trabajo', 'Con mucha proteína', 'Ligero'];
+
 function renderChef(){
   if(!state.data) return;
+  $('#chefRapidos').innerHTML = CHEF_RAPIDOS.map(function(t){
+    return '<button class="chip" data-crap="' + esc(t) + '">' + esc(t) + '</button>';
+  }).join('');
   $('#chefMas').innerHTML = icono('mas_chef', '👨‍🍳', 58);
   $('#chefNevera').style.display = chef.modo === 'nevera' ? 'block' : 'none';
   $('#chefCtx').style.display    = chef.modo === 'nevera' ? 'none' : 'block';
@@ -3780,6 +3882,7 @@ function proponerIA(){
 
   api('sugerirPlato', {
     contexto: contextoTexto(sit),
+    peticion: $('#chefPeticion').value.trim(),
     nevera: chef.modo === 'nevera' ? nevera : '',
     equipamiento: equipamientoDe().map(function(e){ return e.nombre; }).join(', '),
     restricciones: String(u.restricciones || ''),
@@ -4937,6 +5040,20 @@ document.addEventListener('click', function(ev){
     chef.fuente = t.dataset.cfuente; chef.plato = null; chef.idx = 0;
     renderChef(); return;
   }
+  if((t = ev.target.closest('[data-crap]'))){
+    var campo = $('#chefPeticion');
+    var actual = campo.value.trim();
+    var frase = t.dataset.crap;
+    /* Si ya estaba, se quita: el chip funciona como interruptor */
+    if(actual.indexOf(frase) >= 0){
+      campo.value = actual.replace(frase, '').replace(/,\s*,/g, ',').replace(/^[,\s]+|[,\s]+$/g, '');
+      t.classList.remove('on');
+    } else {
+      campo.value = actual ? actual + ', ' + frase : frase;
+      t.classList.add('on');
+    }
+    return;
+  }
   if(ev.target.closest('#chefGo')){
     if(!state.user){ toast('Elige usuario primero', true); return; }
     if(chef.modo === 'nevera' || chef.fuente === 'ia') proponerIA();
@@ -4981,6 +5098,7 @@ document.addEventListener('click', function(ev){
     $('#shCfg').classList.add('on');
     return;
   }
+  if(ev.target.closest('#cfgIconos')){ $('#shCfg').classList.remove('on'); abrirIconos(); return; }
   if(ev.target.closest('#cfgCambiar')){
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(CACHE_KEY);
