@@ -259,6 +259,21 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .chip{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:7px 13px;
   font-size:12.5px;font-weight:600;color:var(--ink2);white-space:nowrap;flex-shrink:0}
 .chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.atajos{margin:-8px 0 18px}
+.atajos-t{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink2);margin-bottom:8px}
+.atajos-r{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.atajos-r::-webkit-scrollbar{display:none}
+.atj{display:flex;align-items:center;gap:7px;border:1px solid var(--line2);background:var(--card);
+  border-radius:12px;padding:8px 11px;flex-shrink:0;max-width:66vw;text-align:left}
+.atj:disabled{opacity:.4}
+.atj-i{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0}
+.atj-b{display:flex;flex-direction:column;min-width:0}
+.atj-n{display:block;font-size:13px;font-weight:600;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.atj-k{display:block;font-size:11px;color:var(--ink2);font-weight:500}
+.combo-d{display:block;font-size:11.5px;font-weight:500;color:var(--ink2);margin-top:3px}
 .hora-row{display:flex;align-items:center;gap:10px;margin:-10px 0 20px}
 .hora-row label{font-size:12px;color:var(--ink2);font-weight:500}
 .hora-in{border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:8px 11px;
@@ -687,6 +702,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .sheet-bg.on{display:flex}
 .sheet{background:#fff;width:100%;max-width:440px;border-radius:22px 22px 0 0;
   max-height:88vh;display:flex;flex-direction:column;animation:up .25s ease}
+/* dvh descuenta el teclado de iOS. Con vh el sheet queda más alto que lo
+   visible y el buscador se va fuera de pantalla al escribir. */
+@supports (max-height: 88dvh){ .sheet{max-height:88dvh} }
 @keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
 .sheet-h{padding:16px 16px 12px;border-bottom:1px solid var(--line);flex-shrink:0}
 .sheet-h1{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -917,6 +935,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <input class="hora-in" id="inHora" type="time">
   </div>
 
+  <!-- Lo que repites en ESTE hueco. Sale de lo ya registrado, no se configura. -->
+  <div class="atajos" id="atajos" style="display:none">
+    <div class="atajos-t" id="atajosT">Lo de siempre</div>
+    <div class="atajos-r" id="atajosR"></div>
+  </div>
+
   <div class="two">
     <button class="big" id="btnBuscar">
       <span class="bi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A"
@@ -968,6 +992,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <div class="gchips" id="inParts"></div></div>
     </div>
   </div>
+
+  <!-- Guardar la combinación como una sola entrada del catálogo -->
+  <button class="btn-o" id="btnCombo" style="display:none">
+    📦 Guardar esto como una sola comida
+    <span class="combo-d" id="btnComboD"></span>
+  </button>
 
   <div class="card">
     <div class="card-hd"><div class="card-t">Resumen nutricional</div></div>
@@ -1405,7 +1435,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.14.1';
+var APP_VERSION = 'v1.15.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1835,6 +1865,7 @@ function vecesGrupoEn(grupos, comidasDelDia){
  * (Verificado con un barrido de 2160 combinaciones de hora, base y extra.)
  */
 function scoreDiario(fecha, e){
+  if(esVacaciones(fecha)) return null;
   var com = comidasDe(fecha);
   if(e === undefined) e = (fecha < state.hoy) ? 1 : expectativa(horaDecimalAhora());
   return scoreBruto(com, fecha, e);
@@ -1922,10 +1953,12 @@ function objGrupo(key){
   };
 }
 
-/** Raciones de un grupo en un rango: cada ítem registrado cuenta 1. */
+/** Raciones de un grupo en un rango: cada ítem registrado cuenta 1.
+    Los días de vacaciones no suman: son comidas de viaje, no hábitos. */
 function racionesGrupo(key, fechas){
   var n = 0;
   fechas.forEach(function(f){
+    if(esVacaciones(f)) return;
     comidasDe(f).forEach(function(c){
       if(gruposDe(c.grupos).indexOf(key) >= 0) n++;
     });
@@ -1933,9 +1966,18 @@ function racionesGrupo(key, fechas){
   return n;
 }
 
+/**
+ * Los 7 últimos días que cuentan, saltando vacaciones. Así una semana de viaje
+ * no diluye el score semanal (que divide por 7) ni lo hunde con días vacíos:
+ * la ventana simplemente se estira hacia atrás hasta juntar 7 días reales.
+ * Tope de 60 días para que un mes marcado entero no haga un bucle largo.
+ */
 function ventana7(){
   var f = [];
-  for(var i=6;i>=0;i--) f.push(masDias(state.hoy, -i));
+  for(var i=0; i<60 && f.length<7; i++){
+    var d = masDias(state.hoy, -i);
+    if(!esVacaciones(d)) f.unshift(d);
+  }
   return f;
 }
 
@@ -2086,6 +2128,19 @@ function conNombre(txt){
 }
 
 /* ---------- Mensajes: siempre con una acción, nunca un juicio ---------- */
+/* Un día de vacaciones no se evalúa, así que el mensaje no insinúa nada.
+   Nada de "retoma mañana" ni "compénsalo": no hay nada que compensar. */
+var TX_VACA = [
+  'Día de viaje. Esto no cuenta para nada, disfrútalo.',
+  'Estás fuera. Ni score ni semana: hoy no se mide.',
+  'Vacaciones. Lo que comas hoy no entra en las cuentas.',
+  'Modo viaje. Vuelves a la rutina cuando toque.'
+];
+function mensajeVacaciones(fecha){
+  return { mood:'fiesta', b:conNombre('Vacaciones, {n}.'),
+           t:'<span class="hl">' + esc(rotar(TX_VACA, fecha)) + '</span>' };
+}
+
 function mensajeDiario(score, fecha, e){
   if(score === null) return { mood:'espera', b:conNombre('Buenas, {n}.'),
     t:'El día está en blanco. <span class="hl">Empieza por el desayuno.</span>' };
@@ -2190,7 +2245,10 @@ function objetivoDe(fecha){
   var act = tiposDe(fecha), tipo = 'normal';
   /* Con varios activos manda el último de Objetivos: así "regla" puede
      sobreescribir a "entreno" con solo ordenar las filas del Sheet. */
-  tiposDia().forEach(function(k){ if(act.indexOf(k) >= 0) tipo = k; });
+  tiposDia().forEach(function(k){
+    if(k === TIPO_EXCLUIDO) return;        // no tiene objetivos propios
+    if(act.indexOf(k) >= 0) tipo = k;
+  });
   var o = ((state.data && state.data.objetivos) || []).filter(function(r){
     return String(r.username) === state.user && String(r.tipo_dia).trim().toLowerCase() === tipo;
   })[0];
@@ -2220,10 +2278,17 @@ function render(){
 }
 
 var TIPO_DIA_UI = {
-  entreno: { label:'Entreno', ico:'ui_entreno', emoji:'🏋️' },
-  regla:   { label:'Regla',   ico:'ui_regla',   emoji:'🩸' },
-  ayuno:   { label:'Ayuno',   ico:'ui_ayuno',   emoji:'⏳' }
+  entreno:    { label:'Entreno',    ico:'ui_entreno',    emoji:'🏋️' },
+  regla:      { label:'Regla',      ico:'ui_regla',      emoji:'🩸' },
+  ayuno:      { label:'Ayuno',      ico:'ui_ayuno',      emoji:'⏳' },
+  vacaciones: { label:'Vacaciones', ico:'ui_vacaciones', emoji:'🏖️' }
 };
+
+/* Vacaciones no es un tipo de objetivo: es una exclusión. No tiene fila en
+   Objetivos y el día no puntúa ni entra en la semana. Los gastos del viaje
+   sí cuentan: ese dinero se gastó de verdad. */
+var TIPO_EXCLUIDO = 'vacaciones';
+function esVacaciones(fecha){ return tiposDe(fecha).indexOf(TIPO_EXCLUIDO) >= 0; }
 
 /** Tipos de día definidos para este usuario en Objetivos, sin 'normal'.
     El orden de las filas manda: el último activo fija los objetivos. */
@@ -2234,6 +2299,8 @@ function tiposDia(){
     var t = String(o.tipo_dia||'').trim().toLowerCase();
     if(t && t !== 'normal' && vistos.indexOf(t) < 0) vistos.push(t);
   });
+  /* Vacaciones existe siempre, sin necesidad de fila en Objetivos. */
+  if(vistos.indexOf(TIPO_EXCLUIDO) < 0) vistos.push(TIPO_EXCLUIDO);
   return vistos;
 }
 
@@ -2283,7 +2350,8 @@ function renderResumen(){
   $('#macT').textContent = esHoy ? 'Resumen de hoy' : 'Resumen · ' + etiquetaDia(f).toLowerCase();
 
   /* --- Scoring diario --- */
-  var score = com.length ? scoreDiario(f) : null;
+  var vac = esVacaciones(f);
+  var score = (com.length && !vac) ? scoreDiario(f) : null;
   pintarAnillo('#ringDia', 45, score);
   $('#scoreNum').textContent = score === null ? '–' : score;
 
@@ -2292,12 +2360,13 @@ function renderResumen(){
   pintarAnillo('#ringSem', 33, sem ? sem.score : null);
   $('#scoreSem').textContent = sem ? sem.score : '–';
 
-  var m = mensajeDiario(score, f);
+  var m = vac ? mensajeVacaciones(f) : mensajeDiario(score, f);
   $('#scoreMsg').innerHTML = '<b>' + m.b + '</b>' + m.t;
   $('#semMsg').innerHTML = '<span>' + esc(mensajeSemanal(sem).t) + '</span>';
 
-  /* Por qué vale ese número: máx. 3 fortalezas y 2 prioridades, sin cifras */
-  var fc = factores(f);
+  /* Por qué vale ese número: máx. 3 fortalezas y 2 prioridades, sin cifras.
+     En vacaciones no hay nada que mejorar, así que no se juzga nada. */
+  var fc = vac ? { bien:[], mejor:[] } : factores(f);
   $('#fact').innerHTML =
     fc.bien.map(function(x){ return '<span class="fact-c si"><i>✓</i>' + esc(x) + '</span>'; }).join('') +
     fc.mejor.map(function(x){ return '<span class="fact-c no"><i>+</i>' + esc(x) + '</span>'; }).join('');
@@ -2561,11 +2630,14 @@ function renderSemana(){
   var head = '<thead><tr><th class="h-g">Grupo alimentario</th>' +
     DIAS_L.map(function(d, i){
       var f = fechas[i];
-      var sc = f > state.hoy ? null : scoreDe(f);
+      var vac = esVacaciones(f);
+      var sc = (f > state.hoy || vac) ? null : scoreDe(f);
       var cls = sc === null ? 'nada' : claseScore(sc);
       var hoyCls = f === state.hoy ? ' hoy' : '';
+      /* El día de viaje se marca, para que un hueco en la tabla se entienda. */
+      var txt = vac ? (TIPO_DIA_UI.vacaciones.emoji) : (sc === null ? '' : sc);
       return '<th><span class="h-d' + hoyCls + '">' + d + '</span>' +
-        '<span class="h-s ' + cls + '">' + (sc === null ? '' : sc) + '</span></th>';
+        '<span class="h-s ' + cls + '">' + txt + '</span></th>';
     }).join('') +
     '<th class="h-c wk-sep"></th></tr></thead>';
 
@@ -2573,7 +2645,8 @@ function renderSemana(){
     /* Solo se marca lo consumido. El color lo pone el grupo:
        verde saludable, ámbar carnes rojas, rojo ultra/capricho/permitido. */
     var dias = porDia.map(function(d){
-      var pres = d.fecha <= state.hoy && d.grupos.indexOf(g.key) >= 0;
+      var pres = d.fecha <= state.hoy && !esVacaciones(d.fecha) &&
+                 d.grupos.indexOf(g.key) >= 0;
       return '<td class="c-d"><span class="d' + (pres ? ' ' + g.sem : '') + '"></span></td>';
     }).join('');
 
@@ -2607,12 +2680,127 @@ function abrirAdd(tipo){
 
 function renderAdd(){
   renderMeta();
+  renderAtajos();
   renderAddGrid();
   renderItems();
   renderFuera();
   renderRings();
   renderConsejo();
+  renderCombo();
   $('#btnGuardar').disabled = draft.items.length === 0;
+}
+
+/* ============================================================
+   ATAJOS POR HUECO
+   ------------------------------------------------------------
+   Lo que más repites en ESTE hueco (desayuno, cena…) los últimos 60 días.
+   No es el catálogo ordenado por uso: el café con leche no tiene por qué
+   salir cuando estás registrando una cena. Sale de lo ya registrado, así que
+   no hay nada que configurar y mejora solo con el uso.
+
+   Mínimo 2 veces: con una sola vez no es un hábito, es una casualidad.
+   ============================================================ */
+var ATAJOS_DIAS = 60, ATAJOS_MIN = 2, ATAJOS_MAX = 4;
+
+function atajosDe(tipo){
+  var desde = masDias(state.hoy, -ATAJOS_DIAS), cuenta = {}, orden = [];
+  (state.data && state.data.comidas || []).forEach(function(c){
+    if(String(c.username) !== state.user) return;
+    if(tipoKey(c.tipo_comida) !== tipo) return;
+    if(fkey(c.fecha) < desde) return;
+    var nombre = String(c.nombre || '').trim();
+    if(!nombre) return;
+    /* Por catalogo_id si lo tiene; si no, por nombre, para que las comidas
+       descritas con la IA también cuenten. */
+    var k = String(c.catalogo_id || '').trim() || ('n:' + nombre.toLowerCase());
+    if(!cuenta[k]){ cuenta[k] = { n:0, ref:c }; orden.push(k); }
+    cuenta[k].n++;
+    cuenta[k].ref = c;                      // la última versión registrada
+  });
+  return orden.map(function(k){ return cuenta[k]; })
+    .filter(function(x){ return x.n >= ATAJOS_MIN; })
+    .sort(function(a,b){ return b.n - a.n; })
+    .slice(0, ATAJOS_MAX);
+}
+
+function renderAtajos(){
+  var lista = atajosDe(draft.tipo_comida);
+  var box = $('#atajos');
+  if(!lista.length){ box.style.display = 'none'; return; }
+
+  var td = tipoDef(draft.tipo_comida);
+  $('#atajosT').textContent = td ? 'Lo de siempre en ' + td.label.toLowerCase() : 'Lo de siempre';
+  $('#atajosR').innerHTML = lista.map(function(x, i){
+    var c = x.ref, cd = CATS[String(c.categoria||'plato').toLowerCase()] || CATS.plato;
+    var ya = draft.items.some(function(it){
+      return String(it.nombre||'').toLowerCase() === String(c.nombre||'').toLowerCase();
+    });
+    return '<button class="atj" data-atajo="' + i + '"' + (ya ? ' disabled' : '') + '>' +
+      '<span class="atj-i" style="background:' + cd.bg + '">' + icono(cd.ico, cd.emoji, 17) + '</span>' +
+      '<span class="atj-b"><span class="atj-n">' + esc(c.nombre) + '</span>' +
+      '<span class="atj-k">' + fmt(c.kcal) + ' kcal · ' + x.n + ' veces</span></span></button>';
+  }).join('');
+  box.style.display = 'block';
+}
+
+/** Una fila registrada → ítem del borrador. */
+function itemDesdeFila(c){
+  return {
+    nombre: c.nombre, ingredientes: c.ingredientes || '',
+    categoria: String(c.categoria||'plato').toLowerCase(),
+    kcal: num(c.kcal), proteinas_g: num(c.proteinas_g), carbohidratos_g: num(c.carbohidratos_g),
+    grasas_g: num(c.grasas_g), fibra_g: num(c.fibra_g),
+    grupos: String(c.grupos||''), catalogo_id: c.catalogo_id || ''
+  };
+}
+
+/* ============================================================
+   COMBOS — guardar una comida compuesta como una sola entrada
+   ------------------------------------------------------------
+   «Café con leche + galletas» son dos ítems que registras siempre juntos.
+   Esto los convierte en UNA entrada del catálogo con las macros sumadas y la
+   unión de sus grupos, así que la próxima vez es un solo toque.
+   ============================================================ */
+function comboDeDraft(){
+  var it = draft.items;
+  if(it.length < 2) return null;
+  var t = { kcal:0, proteinas_g:0, carbohidratos_g:0, grasas_g:0, fibra_g:0 };
+  var grupos = [];
+  it.forEach(function(x){
+    Object.keys(t).forEach(function(k){ t[k] += num(x[k]); });
+    gruposDe(x.grupos).forEach(function(g){ if(grupos.indexOf(g) < 0) grupos.push(g); });
+  });
+  return {
+    nombre: it.map(function(x){ return x.nombre; }).filter(String).join(' + '),
+    ingredientes: it.map(function(x){ return x.nombre; }).filter(String).join(', '),
+    kcal: Math.round(t.kcal),
+    proteinas_g: Math.round(t.proteinas_g*10)/10,
+    carbohidratos_g: Math.round(t.carbohidratos_g*10)/10,
+    grasas_g: Math.round(t.grasas_g*10)/10,
+    fibra_g: Math.round(t.fibra_g*10)/10,
+    grupos: grupos.join(',')
+  };
+}
+
+function renderCombo(){
+  var c = comboDeDraft();
+  $('#btnCombo').style.display = c ? 'block' : 'none';
+  if(c) $('#btnComboD').textContent = c.nombre.length > 46
+    ? c.nombre.slice(0,45) + '…' : c.nombre;
+}
+
+/* Abre el formulario de siempre con los números ya sumados: el nombre se
+   edita ahí y se revisa todo antes de crear la entrada. Nada de prompt(). */
+function guardarCombo(){
+  var c = comboDeDraft();
+  if(!c) return;
+  abrirForm({
+    modo:'catalogo', titulo:'Guardar como una comida', categoria:'plato',
+    nombre:c.nombre, ingredientes:c.ingredientes, grupos:c.grupos,
+    kcal:c.kcal, proteinas_g:c.proteinas_g, carbohidratos_g:c.carbohidratos_g,
+    grasas_g:c.grasas_g, fibra_g:c.fibra_g
+  });
+  $('#shForm').classList.add('on');
 }
 
 function renderMeta(){
@@ -2677,6 +2865,11 @@ function renderItems(){
 }
 
 function renderFuera(){
+  /* Un perfil fuera de gastos no puede ni registrar uno: sin esto, el nav le
+     esconde la pantalla pero el formulario le seguía ofreciendo el gasto. */
+  var puede = enGastos(state.user);
+  $('#fuera').style.display = puede ? '' : 'none';
+  if(!puede){ draft.fuera = false; draft.gasto = ''; draft.participantes = []; }
   $('#fuera').classList.toggle('on', !!draft.fuera);
   $('#swFuera').className = 'sw' + (draft.fuera ? ' on' : '');
   var sel = $('#inPago');
@@ -2780,16 +2973,21 @@ function renderPickRes(){
     $('#pickRes').innerHTML = '<div class="vacio">' +
       (q ? 'Nada con «' + esc(q) + '».' : 'Tu base de comidas está vacía.') +
       '<br>Créala abajo y quedará guardada.</div>';
-    return;
+  } else {
+    $('#pickRes').innerHTML = lista.map(function(c){
+      var cd = CATS[String(c.categoria||'plato').trim().toLowerCase()] || CATS.plato;
+      return '<button class="res" data-cid="' + esc(c.id) + '">' +
+        '<span class="res-i" style="background:' + cd.bg + '">' + icono(cd.ico, cd.emoji, 17) + '</span>' +
+        '<span class="res-n">' + esc(c.nombre) + '</span>' +
+        '<span class="res-k">' + fmt(c.kcal) + ' kcal</span>' +
+      '</button>';
+    }).join('');
   }
-  $('#pickRes').innerHTML = lista.map(function(c){
-    var cd = CATS[String(c.categoria||'plato').trim().toLowerCase()] || CATS.plato;
-    return '<button class="res" data-cid="' + esc(c.id) + '">' +
-      '<span class="res-i" style="background:' + cd.bg + '">' + icono(cd.ico, cd.emoji, 17) + '</span>' +
-      '<span class="res-n">' + esc(c.nombre) + '</span>' +
-      '<span class="res-k">' + fmt(c.kcal) + ' kcal</span>' +
-    '</button>';
-  }).join('');
+
+  /* Al filtrar, la lista se acorta pero el scroll se queda donde estaba y los
+     resultados aparecen abajo. Volver arriba en cada repintado. */
+  var cuerpo = $('#shPick .sheet-b');
+  if(cuerpo) cuerpo.scrollTop = 0;
 }
 
 /* ---------- Formulario de comida ---------- */
@@ -2870,9 +3068,14 @@ function confirmarForm(){
       ingredientes:it.ingredientes, kcal:it.kcal, proteinas_g:it.proteinas_g,
       carbohidratos_g:it.carbohidratos_g, grasas_g:it.grasas_g, fibra_g:it.fibra_g,
       grupos:it.grupos, creado_por:state.user
-    }}).then(function(){ return cargar(); })
-      .then(function(){ renderCatalogo(); toast(form.catalogo_id ? 'Actualizada ✓' : 'Añadida a tu base 📗'); })
-      .catch(function(e){ toast('No se guardó: ' + e.message, true); });
+    }}).then(function(c){
+      /* Antes esto hacía un getBootstrap completo para enterarse de una fila
+         que el backend ya devuelve. */
+      upsertCatalogoLocal(c);
+      renderCatalogo();
+      if(state.screen === 's-add') renderAdd();
+      toast(form.catalogo_id ? 'Actualizada ✓' : 'Añadida a tu base 📗');
+    }).catch(function(e){ toast('No se guardó: ' + e.message, true); });
     return;
   }
 
@@ -2889,7 +3092,7 @@ function confirmarForm(){
       kcal:it.kcal, proteinas_g:it.proteinas_g, carbohidratos_g:it.carbohidratos_g,
       grasas_g:it.grasas_g, fibra_g:it.fibra_g, grupos:it.grupos, creado_por:state.user
     }}).then(function(c){
-      if(state.data) state.data.catalogo.push(c);
+      upsertCatalogoLocal(c);
       toast('Guardada en tu base 📗');
     }).catch(function(e){ toast('No se guardó en la base: ' + e.message, true); });
   }
@@ -3064,15 +3267,124 @@ function abrirComidaExistente(gid){
   goScreen('s-add');
 }
 
-/* ---------- Guardar la comida ---------- */
+/* ============================================================
+   GUARDAR LA COMIDA — optimista
+   ------------------------------------------------------------
+   Antes: esperar la escritura y DESPUÉS un getBootstrap completo. Dos viajes
+   a Apps Script, el segundo leyendo diez pestañas, para enterarte de algo que
+   ya sabías. Eran seis o siete segundos mirando una pantalla de espera.
+
+   Ahora: las filas se construyen en local igual que las escribirá el backend,
+   se meten en el estado, y la pantalla se cierra al instante. La petición
+   viaja de fondo. Si falla, se deshace y te devuelve el formulario intacto.
+
+   Lo que el backend normaliza (grupos, horas, ids) se reconcilia al volver
+   con las filas reales que devuelve `rows`.
+   ============================================================ */
+
+/** Id del mismo estilo que los del Sheet, para no dejar rastros 'tmp_'. */
+function uid(){
+  var s = '';
+  for(var i=0;i<32;i++) s += '0123456789abcdef'.charAt(Math.floor(Math.random()*16));
+  return s;
+}
+
+/** Mete o actualiza una entrada del catálogo en local, sin recargar nada. */
+function upsertCatalogoLocal(c){
+  if(!state.data) return;
+  /* Si el backend no devolviera id, el merge local sería imposible y el
+     catálogo se quedaría desincronizado enseñando «Añadida». Mejor converger. */
+  if(!c || !c.id){ cargar().catch(function(){}); return; }
+  if(!Array.isArray(state.data.catalogo)) state.data.catalogo = [];
+  var arr = state.data.catalogo, i = -1;
+  for(var k=0;k<arr.length;k++){ if(String(arr[k].id) === String(c.id)){ i = k; break; } }
+  if(i >= 0) arr[i] = c; else arr.push(c);
+  guardarCache();
+}
+
+/** Las filas tal como las escribirá el backend, para pintarlas ya. */
+function filasLocales(pay, gid){
+  var fuera = !!pay.fuera_de_casa;
+  return (pay.items || []).map(function(it, i){
+    return {
+      id: it.id || (gid.slice(0,24) + _pad2(i)),
+      grupo_id: gid,
+      username: pay.username,
+      fecha: pay.fecha,
+      hora: horaKey(pay.hora),
+      tipo_comida: String(pay.tipo_comida || '').toLowerCase(),
+      categoria: String(it.categoria || 'plato').toLowerCase(),
+      nombre: it.nombre || '',
+      ingredientes: it.ingredientes || '',
+      porcion: it.porcion || '',
+      kcal: num(it.kcal),
+      proteinas_g: num(it.proteinas_g),
+      carbohidratos_g: num(it.carbohidratos_g),
+      grasas_g: num(it.grasas_g),
+      fibra_g: num(it.fibra_g),
+      grupos: gruposDe(it.grupos).join(','),
+      catalogo_id: it.catalogo_id || '',
+      lugar: pay.lugar || '',
+      /* El gasto solo en la primera fila, igual que el backend: si no, se
+         contaría una vez por ítem. */
+      fuera_de_casa: fuera,
+      gasto: (fuera && i === 0) ? num(pay.gasto) : '',
+      pagado_por: (fuera && i === 0) ? (pay.pagado_por || '') : '',
+      timestamp: new Date().toISOString()
+    };
+  });
+}
+function _pad2(n){ return (n < 10 ? '0' : '') + n; }
+
+/** El gasto enlazado, con las mismas reglas de en_gastos que el backend. */
+function gastoLocal(pay, gid){
+  if(!pay.fuera_de_casa || num(pay.gasto) <= 0 || !enGastos(pay.username)) return null;
+  var validos = usuariosGastos().map(function(u){ return String(u.username); });
+  var pagador = validos.indexOf(String(pay.pagado_por)) >= 0 ? String(pay.pagado_por) : String(pay.username);
+  var parts = String(pay.participantes || '').split(',').map(function(x){ return x.trim(); })
+    .filter(Boolean).filter(function(x){ return validos.indexOf(x) >= 0; });
+  if(!parts.length) parts = [pagador];
+  var prev = (state.data.gastos || []).filter(function(g){
+    return String(g.comida_grupo_id) === gid; })[0];
+  return {
+    id: prev ? prev.id : uid(),
+    fecha: pay.fecha,
+    tag: String(pay.tag_gasto || 'restaurante').toLowerCase(),
+    descripcion: (pay.items || []).map(function(i){ return i.nombre; })
+      .filter(String).slice(0,2).join(' + ') || 'Comida fuera',
+    importe: num(pay.gasto),
+    pagado_por: pagador,
+    participantes: parts.join(','),
+    comida_grupo_id: gid,
+    creado_por: pay.username,
+    timestamp: new Date().toISOString()
+  };
+}
+
+function snapshotComida(gid){
+  return {
+    comidas: (state.data.comidas || []).filter(function(c){ return String(c.grupo_id) === gid; }),
+    gastos:  (state.data.gastos  || []).filter(function(g){ return String(g.comida_grupo_id) === gid; })
+  };
+}
+function quitarComidaLocal(gid){
+  state.data.comidas = (state.data.comidas || []).filter(function(c){ return String(c.grupo_id) !== gid; });
+  state.data.gastos  = (state.data.gastos  || []).filter(function(g){ return String(g.comida_grupo_id) !== gid; });
+}
+function ponerComidaLocal(gid, filas, gasto){
+  quitarComidaLocal(gid);
+  state.data.comidas = state.data.comidas.concat(filas || []);
+  if(gasto) state.data.gastos.push(gasto);
+  guardarCache();
+}
+
 function guardarComida(){
   if(!draft.items.length) return;
-  var btn = $('#btnGuardar');
-  btn.disabled = true;
-  busyOn('Guardando…', 'guardar');
+  $('#btnGuardar').disabled = true;
 
-  api('saveComidaGrupo', { payload: {
-    grupo_id: draft.grupo_id, username: state.user, fecha: (draft.fecha || state.hoy),
+  var gid = draft.grupo_id || uid();
+  var pay = {
+    grupo_id: gid, username: state.user, fecha: (draft.fecha || state.hoy),
     hora: draft.hora, tipo_comida: draft.tipo_comida, lugar: draft.lugar || '',
     fuera_de_casa: draft.fuera, gasto: draft.fuera ? num(draft.gasto) : 0,
     pagado_por: draft.fuera ? (draft.pagado_por || state.user) : '',
@@ -3080,17 +3392,40 @@ function guardarComida(){
     participantes: draft.fuera ? draft.participantes.join(',') : '',
     descripcion_gasto: '',
     items: draft.items
-  }}).then(function(){
-    return cargar();
-  }).then(function(){
-    busyOff();
-    toast('Comida guardada ✓');
-    goScreen('s-home');
-  }).catch(function(e){
-    busyOff();
-    btn.disabled = false;
-    toast('No se guardó: ' + e.message, true);
-  });
+  };
+
+  var previo = snapshotComida(gid);                        // para poder deshacer
+  var draftPrevio = JSON.parse(JSON.stringify(draft));
+
+  ponerComidaLocal(gid, filasLocales(pay, gid), gastoLocal(pay, gid));
+  goScreen('s-home');
+  render();
+  toast('Comida guardada ✓');
+
+  api('saveComidaGrupo', { payload: pay })
+    .then(function(d){
+      /* `api()` ya resuelve a j.data, no al sobre entero.
+         Las filas del backend mandan: puede haber normalizado grupos u hora. */
+      if(d && d.rows && d.rows.length) ponerComidaLocal(gid, d.rows, d.gasto || null);
+      render();
+    })
+    .catch(function(e){
+      ponerComidaLocal(gid, previo.comidas, previo.gastos[0] || null);
+      previo.gastos.slice(1).forEach(function(g){ state.data.gastos.push(g); });
+
+      /* Si ya está componiendo otra comida, no le piso el borrador:
+         le aviso y le dejo seguir. */
+      if(state.screen === 's-add'){
+        render();
+        toast('La comida anterior no se guardó: ' + e.message, true);
+        return;
+      }
+      draft = draftPrevio;
+      renderAdd();
+      goScreen('s-add');
+      render();
+      toast('No se guardó: ' + e.message + '. Lo tienes tal cual estaba.', true);
+    });
 }
 
 /* ============================================================
@@ -3247,6 +3582,7 @@ function comidasFiltradas(fecha){
 }
 function racionesGrupoF(key, fechas){
   var n = 0;
+  fechas = fechas.filter(function(f){ return !esVacaciones(f); });
   fechas.forEach(function(f){
     comidasFiltradas(f).forEach(function(c){
       if(gruposDe(c.grupos).indexOf(key) >= 0) n++;
@@ -3370,9 +3706,18 @@ function eur(v){
   if(c === 100){ e += 1; c = 0; }
   return (neg ? '-' : '') + fmt(e) + ',' + String(c).padStart(2,'0') + ' €';
 }
+/**
+ * Entre quiénes se reparte un gasto. Filtra a los que participan en gastos:
+ * un username excluido (un perfil infantil) no se pinta en el reparto, así que
+ * su cuota desaparecía de los balances y los números no cuadraban sin que
+ * nada avisara. Si tras filtrar no queda nadie, se lo queda quien pagó.
+ */
 function partesDe(g){
-  var p = String(g.participantes||'').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
-  if(!p.length && g.pagado_por) p = [String(g.pagado_por)];
+  var validos = usuariosGastos().map(function(u){ return String(u.username); });
+  var p = String(g.participantes||'').split(',').map(function(s){ return s.trim(); })
+    .filter(Boolean).filter(function(x){ return validos.indexOf(x) >= 0; });
+  if(!p.length && g.pagado_por && validos.indexOf(String(g.pagado_por)) >= 0)
+    p = [String(g.pagado_por)];
   return p;
 }
 
@@ -3651,7 +3996,8 @@ function catalogoIconos(){
   g.push({ t:'Arranque y cabecera', px:32, l:[
     ['ui_splash','🥑','Pantalla al abrir la app'],
     ['ui_entreno','🏋️','Toggle de día de entreno'],
-    ['ui_regla','🩸','Toggle de día de regla']
+    ['ui_regla','🩸','Toggle de día de regla'],
+    ['ui_vacaciones','🏖️','Toggle de día de vacaciones']
   ]});
   g.push({ t:'Navegación', px:26, l: NAV.map(function(x){ return [x.ico, x.emoji, x.label]; })
     .concat([['nav_lugares','📍','Perfiles sin gastos']]) });
@@ -4725,11 +5071,15 @@ function catalogoMio(){
   });
 }
 
+function guardarCache(){
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ u:state.user, d:state.data })); } catch(e){}
+}
+
 function cargar(){
   return api('getBootstrap', { username: state.user }).then(function(d){
     state.data = normalizar(d);
     state.hoy  = state.data.hoy;
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ u:state.user, d:state.data })); } catch(e){}
+    guardarCache();
     render();
   });
 }
@@ -4853,6 +5203,13 @@ document.addEventListener('click', function(ev){
     $('#shPick').classList.remove('on');
     renderAdd(); return;
   }
+
+  if((t = ev.target.closest('[data-atajo]'))){
+    var at = atajosDe(draft.tipo_comida)[+t.dataset.atajo];
+    if(at){ draft.items.push(itemDesdeFila(at.ref)); renderAdd(); }
+    return;
+  }
+  if(ev.target.closest('#btnCombo')){ guardarCombo(); return; }
 
   if(ev.target.closest('#btnDescPick')){
     iaCtx={modo:'draft',categoria:pick.destino||'plato',catalogo_id:''};
