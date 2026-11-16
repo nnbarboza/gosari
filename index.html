@@ -276,6 +276,37 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .combo-d{display:block;font-size:11.5px;font-weight:500;color:var(--ink2);margin-top:3px}
 .hora-row{display:flex;align-items:center;gap:10px;margin:-10px 0 20px}
 .hora-row label{font-size:12px;color:var(--ink2);font-weight:500}
+/* --- Tu salud --- */
+.sal-r{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.sal-r:first-child{border-top:none}
+.sal-i{width:30px;height:30px;border-radius:9px;background:#F4F6F8;display:flex;align-items:center;
+  justify-content:center;font-size:16px;flex-shrink:0}
+.sal-b{flex:1;min-width:0}
+.sal-n{display:block;font-size:13.5px;font-weight:600;color:var(--ink)}
+.sal-d{display:block;font-size:11.5px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.sal-x{width:28px;height:28px;border-radius:50%;background:#F2F4F6;color:var(--ink2);
+  font-size:13px;flex-shrink:0}
+.sal-e{display:flex;gap:2px;flex-shrink:0;font-size:15px;line-height:1}
+.sal-vacio{font-size:12.5px;color:var(--ink2);padding:2px 0 10px;line-height:1.5}
+
+/* fila de síntoma en el popup */
+.sn-r{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid var(--line)}
+.sn-r:first-child{border-top:none}
+.sn-i{width:30px;height:30px;border-radius:9px;background:#F4F6F8;display:flex;align-items:center;
+  justify-content:center;font-size:16px;flex-shrink:0}
+.sn-n{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--ink)}
+.sn-niv{display:flex;gap:4px;flex-shrink:0}
+.sn-b{border:1px solid var(--line2);background:var(--card);border-radius:8px;padding:5px 8px;
+  font-size:11px;font-weight:600;color:var(--ink2);min-width:30px}
+.sn-b.on{background:var(--green);border-color:var(--green);color:#fff}
+.sn-r.on .sn-i{background:var(--green-xl)}
+
+.hora-b{display:flex;align-items:center;gap:7px;border:1px solid var(--line2);background:var(--card);
+  border-radius:999px;padding:6px 12px 6px 10px;color:var(--ink2);font-size:12.5px}
+.hora-bi{font-size:13px;line-height:1}
+.hora-b b{font-size:13.5px;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.hora-bx{color:var(--green);font-weight:600}
 .hora-in{border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:8px 11px;
   font-size:14px;font-weight:600;color:var(--ink);font-family:inherit;
   font-variant-numeric:tabular-nums}
@@ -852,6 +883,17 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <table class="wk" id="wk"></table>
   </div>
 
+  <!-- ================= TU SALUD ================= -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-t">Tu salud <span class="info-i" id="infoSalud">i</span></div>
+    </div>
+    <div id="salLista"></div>
+    <button class="btn-add" id="btnSalud">
+      <span style="font-size:17px;font-weight:400">＋</span> Añadir episodio
+    </button>
+  </div>
+
   <div class="pie">
     <button class="pie-b" id="btnRefresh">🔄 Actualizar app</button>
     <div class="pie-v" id="ver"></div>
@@ -930,9 +972,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 
   <div class="meta" id="metaRow"></div>
   <div class="meta" id="lugarRow" style="display:none"></div>
+  <!-- La hora sale del hueco. Solo aparece el campo si la tocas. -->
   <div class="hora-row">
-    <label for="inHora">Hora</label>
-    <input class="hora-in" id="inHora" type="time">
+    <button class="hora-b" id="btnHora">
+      <span class="hora-bi">🕑</span><b id="horaTx">--:--</b><span class="hora-bx">cambiar</span>
+    </button>
+    <input class="hora-in" id="inHora" type="time" style="display:none">
   </div>
 
   <!-- Lo que repites en ESTE hueco. Sale de lo ya registrado, no se configura. -->
@@ -1330,6 +1375,34 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   </div>
 </div></div>
 
+<!-- ================= SHEET: EPISODIO DE SALUD ================= -->
+<div class="sheet-bg" id="shSalud"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3 id="salT">Episodio</h3>
+    <button class="sheet-x" data-close="shSalud">✕</button></div></div>
+  <div class="sheet-b">
+    <div style="display:flex;gap:9px;margin-bottom:14px">
+      <div class="fld" style="flex:1"><label>Día</label>
+        <input type="date" id="salFecha"></div>
+      <div class="fld" style="flex:0 0 108px"><label>Hora</label>
+        <input type="time" id="salHora"></div>
+    </div>
+
+    <div class="fld" style="margin-bottom:4px"><label>¿Qué te ha pasado?</label></div>
+    <div id="salSintomas"></div>
+
+    <div class="fld" style="margin-top:16px"><label>Medicamentos</label>
+      <div class="gchips" id="salMeds" style="margin-bottom:8px"></div>
+      <input type="text" id="salMedsExtra" placeholder="Otro, o la dosis (ej. Almax, 2 sobres)"></div>
+
+    <div class="fld"><label>Comentarios</label>
+      <textarea id="salComent" rows="3"
+        placeholder="Ej. empezó dos horas después de comer, me duró toda la tarde"></textarea></div>
+
+    <button class="btn-g" id="salOk">Guardar episodio</button>
+    <button class="btn-o" id="salBorrar" style="color:var(--red);display:none">🗑️ Eliminar episodio</button>
+  </div>
+</div></div>
+
 <!-- ================= SHEET: FOTO ================= -->
 <div class="sheet-bg" id="shFoto"><div class="sheet">
   <div class="sheet-h"><div class="sheet-h1"><h3>Tu foto</h3>
@@ -1435,7 +1508,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.15.0';
+var APP_VERSION = 'v1.16.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -1546,10 +1619,21 @@ function nuevoDraft(tipo){
     for(var i=0;i<TIPOS.length;i++) if(h >= TIPOS[i].desde) tipo = TIPOS[i].key;
   }
   return {
-    grupo_id:'', fecha:(state.diaVer || state.hoy), tipo_comida:tipo, hora:horaAhora(),
-    lugar:'', items:[],
+    grupo_id:'', fecha:(state.diaVer || state.hoy), tipo_comida:tipo, hora:horaDeHueco(tipo),
+    horaManual:false, lugar:'', items:[],
     fuera:false, gasto:'', pagado_por:'', tag_gasto:'restaurante', participantes:[], foto:''
   };
+}
+
+/**
+ * La hora que le corresponde a un hueco. Desayuno son las 08:00 y punto: la
+ * hora exacta a la que registras no aporta nada y obligaba a tocar un campo
+ * en cada comida. Las extra sí usan el reloj, porque su sitio en el día es
+ * justamente su hora.
+ */
+function horaDeHueco(tipo){
+  var td = tipoDef(tipo);
+  return (td && td.hora) ? td.hora : horaAhora();
 }
 /** Cualquier hora → HH:mm. Descarta los Date de 1899 que devolvía Sheets. */
 function horaKey(v){
@@ -1667,6 +1751,9 @@ function loading(on){ $('#bar').style.width = on ? '70%' : '100%';
 var POR_POST = ['saveComida','deleteComida','saveComidaGrupo','deleteGrupo',
                 'saveCatalogo','deleteCatalogo','setDiaEntreno',
                 'saveMedida','deleteMedida','saveGasto','deleteGasto',
+                /* El comentario de un episodio puede ser largo: por GET
+                   acabaría en la URL, que sí tiene límite. */
+                'saveSalud','deleteSalud',
                 'analizarFoto','analizarTexto','sugerirPlato'];
 
 var API_TIMEOUT = 30000;
@@ -2271,6 +2358,7 @@ function render(){
   renderResumen();
   renderComidas();
   renderSemana();
+  renderSalud();
   if(state.screen === 's-comidas') renderCatalogo();
   if(state.screen === 's-gastos')  renderGastos();
   if(state.screen === 's-perfil')  renderPerfil();
@@ -2667,11 +2755,8 @@ function renderSemana(){
    AÑADIR COMIDA
    ============================================================ */
 function abrirAdd(tipo){
+  /* nuevoDraft ya pone la hora del hueco, sea hoy o un día pasado. */
   draft = nuevoDraft(tipo);
-  if(draft.fecha !== state.hoy){
-    var td = tipoDef(draft.tipo_comida);
-    if(td) draft.hora = td.hora;
-  }
   $('#addTitulo').textContent = draft.fecha === state.hoy
     ? 'Añadir comida' : 'Añadir · ' + etiquetaDia(draft.fecha).toLowerCase();
   renderAdd();
@@ -2808,7 +2893,7 @@ function renderMeta(){
     return '<button class="chip' + (draft.tipo_comida===t.key?' on':'') + '" data-tipo="' + t.key + '">' +
       esc(t.label) + '</button>';
   }).join('');
-  $('#inHora').value = draft.hora || '';
+  renderHora();
 
   /* Dónde se hizo la comida. Solo si el usuario tiene lugares definidos. */
   var lug = lugaresDe();
@@ -2819,6 +2904,15 @@ function renderMeta(){
         '" data-lugar="' + esc(l.id) + '">' + esc(l.icono || '📍') + ' ' + esc(l.nombre) + '</button>';
     }).join('');
   }
+}
+
+/* El campo solo se enseña si la ha tocado: si no, un botón con la hora. */
+function renderHora(){
+  $('#inHora').value = draft.hora || '';
+  $('#horaTx').textContent = draft.hora || '--:--';
+  var manual = !!draft.horaManual;
+  $('#btnHora').style.display = manual ? 'none' : 'flex';
+  $('#inHora').style.display  = manual ? 'block' : 'none';
 }
 
 function itemHTML(it, i){
@@ -2942,6 +3036,225 @@ function renderConsejo(){
   $('#consejoTx').innerHTML = esc(head) + '<em>' + esc(falta) + '</em>';
   $('#consejoM').innerHTML = '<img src="img/mascota/bien.webp" alt="" data-fb="🥑">';
   $('#consejo').style.display = 'flex';
+}
+
+/* ============================================================
+   TU SALUD
+   ------------------------------------------------------------
+   Episodios digestivos ligados a la comida. Deliberadamente NO tocan el
+   score: un episodio es un dato clínico, no un fallo de dieta. Si bajara la
+   nota, el incentivo sería no apuntarlo y el dato se perdería.
+
+   En el Sheet cada síntoma tiene su columna con el nivel dentro, así cruzar
+   episodios con comidas (ambas pestañas llevan fecha y hora) es una tabla
+   dinámica, no un ejercicio de partir cadenas.
+   ============================================================ */
+
+var SINTOMAS = [
+  { key:'deposiciones',  label:'Deposiciones',  ico:'sal_caca',     emoji:'💩' },
+  { key:'dolor',         label:'Dolor de panza', ico:'sal_dolor',   emoji:'😣' },
+  { key:'hinchazon',     label:'Hinchazón',     ico:'sal_hinchazon', emoji:'🎈' },
+  { key:'vomitos',       label:'Vómitos',       ico:'sal_vomitos',  emoji:'🤮' },
+  { key:'estrenimiento', label:'Estreñimiento', ico:'sal_estrenimiento', emoji:'🪨' }
+];
+var NIVELES = [
+  { key:'baja',  corto:'Baja' },
+  { key:'media', corto:'Media' },
+  { key:'alta',  corto:'Alta' }
+];
+var SAL_MAX_LISTA = 3;
+
+function sintomaDef(k){
+  return SINTOMAS.filter(function(x){ return x.key === k; })[0] || null;
+}
+
+/** Episodios del usuario, del más reciente al más antiguo. */
+function episodios(){
+  return ((state.data && state.data.salud) || [])
+    .filter(function(e){ return String(e.username) === state.user; })
+    .sort(function(a,b){
+      var fa = fkey(a.fecha) + ' ' + horaKey(a.hora);
+      var fb = fkey(b.fecha) + ' ' + horaKey(b.hora);
+      return fa < fb ? 1 : (fa > fb ? -1 : 0);
+    });
+}
+
+/** Qué síntomas trae un episodio, con su nivel. */
+function sintomasDe(e){
+  var out = [];
+  SINTOMAS.forEach(function(sn){
+    var v = String(e[sn.key] || '').trim().toLowerCase();
+    if(v) out.push({ def:sn, nivel:v });
+  });
+  return out;
+}
+
+function medicamentosMios(){
+  return ((state.data && state.data.medicamentos) || []).filter(function(m){
+    var u = String(m.username || '').trim();
+    return !u || u === state.user;     // sin username, vale para todos
+  });
+}
+
+function renderSalud(){
+  var lista = episodios().slice(0, SAL_MAX_LISTA);
+  if(!lista.length){
+    $('#salLista').innerHTML = '<div class="sal-vacio">Nada apuntado todavía. ' +
+      'Si un día te sienta mal algo, anótalo aquí: con unos cuantos episodios ' +
+      'empiezan a verse patrones.</div>';
+    return;
+  }
+  $('#salLista').innerHTML = lista.map(function(e){
+    var sn = sintomasDe(e);
+    var niv = sn.filter(function(x){ return x.nivel === 'alta'; }).length
+      ? 'alta' : (sn.filter(function(x){ return x.nivel === 'media'; }).length ? 'media' : 'baja');
+    var tit = sn.length
+      ? sn.map(function(x){ return x.def.label; }).join(' · ')
+      : 'Episodio';
+    var meds = String(e.medicamentos || '').trim();
+    var det = [etiquetaDia(fkey(e.fecha)), horaKey(e.hora)].filter(Boolean).join(' · ');
+    if(sn.length) det += ' · intensidad ' + niv;
+    if(meds) det += ' · ' + meds;
+    if(String(e.comentario||'').trim()) det += ' · ' + String(e.comentario).trim();
+
+    return '<div class="sal-r">' +
+      '<span class="sal-e">' + (sn.length
+        ? sn.map(function(x){ return icono(x.def.ico, x.def.emoji, 19); }).join('')
+        : icono('mas_salud', '🩺', 19)) + '</span>' +
+      '<span class="sal-b"><span class="sal-n">' + esc(tit) + '</span>' +
+        '<span class="sal-d">' + esc(det) + '</span></span>' +
+      '<button class="sal-x" data-saled="' + esc(e.id) + '">···</button>' +
+    '</div>';
+  }).join('');
+}
+
+/* ---------- El formulario del episodio ---------- */
+var sal = { id:'', fecha:'', hora:'', niveles:{}, meds:[], extra:'', comentario:'' };
+
+function abrirSalud(id){
+  var e = id ? episodios().filter(function(x){ return String(x.id) === String(id); })[0] : null;
+
+  sal = { id: e ? e.id : '', fecha: e ? fkey(e.fecha) : (state.diaVer || state.hoy),
+          hora: e ? (horaKey(e.hora) || horaAhora()) : horaAhora(),
+          niveles:{}, meds:[], extra:'', comentario: e ? String(e.comentario||'') : '' };
+
+  if(e){
+    SINTOMAS.forEach(function(sn){
+      var v = String(e[sn.key] || '').trim().toLowerCase();
+      if(v) sal.niveles[sn.key] = v;
+    });
+    /* Los que coinciden con un medicamento conocido van como chip; el resto,
+       al campo libre. Así reabrir un episodio no pierde lo que escribiste. */
+    var nombres = medicamentosMios().map(function(m){ return String(m.nombre); });
+    var sueltos = [];
+    String(e.medicamentos || '').split(',').map(function(x){ return x.trim(); })
+      .filter(Boolean).forEach(function(x){
+        if(nombres.indexOf(x) >= 0) sal.meds.push(x); else sueltos.push(x);
+      });
+    sal.extra = sueltos.join(', ');
+  }
+
+  $('#salT').textContent = e ? 'Editar episodio' : 'Nuevo episodio';
+  $('#salOk').textContent = e ? 'Guardar cambios' : 'Guardar episodio';
+  $('#salBorrar').style.display = e ? 'block' : 'none';
+  $('#salFecha').value = sal.fecha;
+  $('#salFecha').max = state.hoy;          // nada de episodios en el futuro
+  $('#salHora').value = sal.hora;
+  $('#salComent').value = sal.comentario;
+  $('#salMedsExtra').value = sal.extra;
+  renderSaludForm();
+  $('#shSalud').classList.add('on');
+}
+
+function renderSaludForm(){
+  $('#salSintomas').innerHTML = SINTOMAS.map(function(sn){
+    var act = sal.niveles[sn.key] || '';
+    return '<div class="sn-r' + (act ? ' on' : '') + '">' +
+      '<span class="sn-i">' + icono(sn.ico, sn.emoji, 17) + '</span>' +
+      '<span class="sn-n">' + esc(sn.label) + '</span>' +
+      '<span class="sn-niv">' + NIVELES.map(function(nv){
+        return '<button class="sn-b' + (act === nv.key ? ' on' : '') + '" ' +
+          'data-sn="' + sn.key + '" data-nv="' + nv.key + '">' + nv.corto + '</button>';
+      }).join('') + '</span></div>';
+  }).join('');
+
+  var meds = medicamentosMios();
+  $('#salMeds').style.display = meds.length ? 'flex' : 'none';
+  $('#salMeds').innerHTML = meds.map(function(m){
+    var on = sal.meds.indexOf(String(m.nombre)) >= 0;
+    return '<button class="gchip' + (on ? ' on' : '') + '" data-smed="' + esc(m.nombre) + '">' +
+      esc(m.icono || '💊') + ' ' + esc(m.nombre) + '</button>';
+  }).join('');
+}
+
+/** Lo que se manda como `medicamentos`: chips + lo escrito a mano. */
+function medsDeSalud(){
+  var out = sal.meds.slice();
+  String($('#salMedsExtra').value || '').split(',').map(function(x){ return x.trim(); })
+    .filter(Boolean).forEach(function(x){ if(out.indexOf(x) < 0) out.push(x); });
+  return out.join(',');
+}
+
+function guardarSalud(){
+  var comentario = String($('#salComent').value || '').trim();
+  var marcados = Object.keys(sal.niveles).filter(function(k){ return !!sal.niveles[k]; });
+  if(!marcados.length && !comentario){
+    toast('Marca algún síntoma o escribe un comentario', true);
+    return;
+  }
+
+  var id = sal.id || uid();
+  var pay = {
+    id: id, username: state.user,
+    fecha: $('#salFecha').value || state.hoy,
+    hora: $('#salHora').value || '',
+    comentario: comentario,
+    medicamentos: medsDeSalud()
+  };
+  SINTOMAS.forEach(function(sn){ pay[sn.key] = sal.niveles[sn.key] || ''; });
+
+  var previo = ((state.data.salud || []).filter(function(x){
+    return String(x.id) === String(id); })[0]) || null;
+
+  /* Optimista, igual que las comidas: se pinta ya y la petición va de fondo. */
+  ponerSaludLocal(id, Object.assign({ timestamp:new Date().toISOString() }, pay));
+  $('#shSalud').classList.remove('on');
+  render();
+  toast(sal.id ? 'Episodio actualizado ✓' : 'Episodio apuntado ✓');
+
+  api('saveSalud', { payload: pay }).then(function(fila){
+    if(fila && fila.id) ponerSaludLocal(id, fila);
+    render();
+  }).catch(function(e){
+    ponerSaludLocal(id, previo);
+    render();
+    toast('No se guardó: ' + e.message, true);
+  });
+}
+
+function ponerSaludLocal(id, fila){
+  if(!Array.isArray(state.data.salud)) state.data.salud = [];
+  state.data.salud = state.data.salud.filter(function(x){ return String(x.id) !== String(id); });
+  if(fila) state.data.salud.push(fila);
+  guardarCache();
+}
+
+function borrarSalud(){
+  var id = sal.id;
+  if(!id) return;
+  if(!confirm('¿Eliminar este episodio?')) return;
+  var previo = (state.data.salud || []).filter(function(x){ return String(x.id) === String(id); })[0];
+
+  ponerSaludLocal(id, null);
+  $('#shSalud').classList.remove('on');
+  render();
+  toast('Episodio eliminado');
+
+  api('deleteSalud', { id:id }).catch(function(e){
+    ponerSaludLocal(id, previo);
+    render();
+    toast('No se borró: ' + e.message, true);
+  });
 }
 
 /* ---------- Buscador ---------- */
@@ -3263,7 +3576,10 @@ function abrirComidaExistente(gid){
   renderAdd();
   $('#inPago').value = draft.pagado_por || state.user || '';
   $('#inGasto').value = draft.gasto;
-  $('#inHora').value = draft.hora || '';
+  /* Al editar manda la hora guardada, no la del hueco: si la cambiaste en su
+     día, reabrir la comida no puede deshacerlo. */
+  draft.horaManual = true;
+  renderHora();
   goScreen('s-add');
 }
 
@@ -4003,8 +4319,11 @@ function catalogoIconos(){
     .concat([['nav_lugares','📍','Perfiles sin gastos']]) });
   g.push({ t:'Mascotas de sección', px:40, l:[
     ['mas_chef','👨‍🍳','Cabecera del Chef'],
-    ['mas_gastos','🧾','Cabecera de Gastos']
+    ['mas_gastos','🧾','Cabecera de Gastos'],
+    ['mas_salud','🩺','Episodio sin síntomas marcados']
   ]});
+  g.push({ t:'Síntomas de Tu salud', px:26, l: SINTOMAS.map(function(x){
+    return [x.ico, x.emoji, x.label]; }) });
   g.push({ t:'Macros', px:26, l: MACROS.map(function(m){ return [m.ico, m.emoji, m.label]; }) });
   g.push({ t:'Grupos alimentarios', px:26, l: GRUPOS.map(function(x){ return [x.ico, x.emoji, x.label]; }) });
   g.push({ t:'Categorías del catálogo', px:28, l: CATS_ORDEN.map(function(k){
@@ -5054,7 +5373,8 @@ function pintarPicker(usuarios){
 /* El backend puede ser de una versión anterior y no devolver todas las tablas.
    Normalizamos aquí para que ninguna pantalla reciba undefined. */
 var TABLAS = ['usuarios','objetivos','objetivos_grupos','lugares','equipamiento',
-              'catalogo','comidas','dias','medidas','gastos','tags'];
+              'catalogo','comidas','dias','medidas','gastos','tags',
+              'salud','medicamentos'];
 function normalizar(d){
   d = d || {};
   TABLAS.forEach(function(k){ if(!Array.isArray(d[k])) d[k] = []; });
@@ -5166,7 +5486,44 @@ document.addEventListener('click', function(ev){
   if((t = ev.target.closest('[data-close]'))){ $('#'+t.dataset.close).classList.remove('on'); return; }
   if(ev.target.classList && ev.target.classList.contains('sheet-bg')){ ev.target.classList.remove('on'); return; }
 
-  if((t = ev.target.closest('[data-tipo]'))){ draft.tipo_comida = t.dataset.tipo; renderMeta(); return; }
+  if((t = ev.target.closest('[data-tipo]'))){
+    draft.tipo_comida = t.dataset.tipo;
+    /* La hora sigue al hueco, salvo que la hayas puesto tú a mano. */
+    if(!draft.horaManual) draft.hora = horaDeHueco(draft.tipo_comida);
+    renderMeta();
+    renderAtajos();          // los atajos son de ESE hueco
+    return;
+  }
+  /* ---------- TU SALUD ---------- */
+  if(ev.target.closest('#btnSalud')){
+    if(!state.user){ toast('Elige usuario primero', true); return; }
+    abrirSalud(''); return;
+  }
+  if((t = ev.target.closest('[data-saled]'))){ abrirSalud(t.dataset.saled); return; }
+  if((t = ev.target.closest('[data-sn]'))){
+    var sk = t.dataset.sn, nv = t.dataset.nv;
+    /* Volver a tocar el nivel activo lo quita: no hace falta un botón «ninguno». */
+    sal.niveles[sk] = (sal.niveles[sk] === nv) ? '' : nv;
+    renderSaludForm(); return;
+  }
+  if((t = ev.target.closest('[data-smed]'))){
+    var mn = t.dataset.smed, mi = sal.meds.indexOf(mn);
+    if(mi >= 0) sal.meds.splice(mi,1); else sal.meds.push(mn);
+    renderSaludForm(); return;
+  }
+  if(ev.target.closest('#salOk')){ guardarSalud(); return; }
+  if(ev.target.closest('#salBorrar')){ borrarSalud(); return; }
+  if(ev.target.closest('#infoSalud')){
+    toast('Apunta aquí lo que te sienta mal. No afecta a tu scoring.');
+    return;
+  }
+
+  if(ev.target.closest('#btnHora')){
+    draft.horaManual = true;
+    renderHora();
+    try { $('#inHora').focus(); } catch(e){}
+    return;
+  }
   if((t = ev.target.closest('[data-lugar]'))){
     draft.lugar = (draft.lugar === t.dataset.lugar) ? '' : t.dataset.lugar;
     renderMeta(); return;
@@ -5527,7 +5884,7 @@ document.addEventListener('input', function(ev){
   if(el.id === 'gImporte'){ actualizarSplit(); return; }
   if(!draft) return;
   if(el.id === 'pickQ'){ pick.q = el.value; renderPickRes(); return; }
-  if(el.id === 'inHora'){ draft.hora = el.value; return; }
+  if(el.id === 'inHora'){ draft.hora = el.value; draft.horaManual = true; return; }
   if(el.id === 'inGasto'){ draft.gasto = el.value; return; }
 });
 document.addEventListener('change', function(ev){
