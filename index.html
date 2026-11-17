@@ -277,8 +277,25 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .hora-row{display:flex;align-items:center;gap:10px;margin:-10px 0 20px}
 .hora-row label{font-size:12px;color:var(--ink2);font-weight:500}
 /* --- Tu salud --- */
+.sal-cta{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sal-c{display:flex;flex-direction:column;align-items:center;gap:7px;
+  border:1px solid var(--line2);background:var(--card);border-radius:14px;padding:15px 10px}
+.sal-c:active{background:#F7F9FA}
+.sal-ci{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;line-height:1}
+.sal-cn{display:block;font-size:13px;font-weight:600;color:var(--ink)}
+.sal-r:first-child{border-top:1px solid var(--line)}
+.sal-mini{display:flex;gap:10px;margin:14px 0 4px}
+.sal-k{flex:1;background:#F7F9FA;border-radius:12px;padding:12px 10px;text-align:center}
+.sal-k b{display:block;font-size:22px;font-weight:700;color:var(--ink);line-height:1.1}
+.sal-k span{display:block;font-size:11px;color:var(--ink2);margin-top:3px}
+.sal-rank{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--line)}
+.sal-rank:first-child{border-top:none}
+.sal-rank-n{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sal-rank-v{font-size:12.5px;font-weight:600;color:var(--ink2);
+  font-variant-numeric:tabular-nums;flex-shrink:0}
 .sal-r{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
-.sal-r:first-child{border-top:none}
 .sal-i{width:30px;height:30px;border-radius:9px;background:#F4F6F8;display:flex;align-items:center;
   justify-content:center;font-size:16px;flex-shrink:0}
 .sal-b{flex:1;min-width:0}
@@ -887,11 +904,24 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div class="card">
     <div class="card-hd">
       <div class="card-t">Tu salud <span class="info-i" id="infoSalud">i</span></div>
+      <div class="navd">
+        <button class="navd-s" id="btnSalStats" title="Estadísticas">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2" stroke-linecap="round"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
+        </button>
+      </div>
     </div>
-    <div id="salLista"></div>
-    <button class="btn-add" id="btnSalud">
-      <span style="font-size:17px;font-weight:400">＋</span> Añadir episodio
+    <!-- Dos accesos, nada más. Lo registrado vive detrás del desplegable. -->
+    <div class="sal-cta">
+      <button class="sal-c" id="btnSalud"><span class="sal-ci" id="salCiEp"></span>
+        <span class="sal-cn">Episodio</span></button>
+      <button class="sal-c" id="btnMedic"><span class="sal-ci" id="salCiMed"></span>
+        <span class="sal-cn">Medicación</span></button>
+    </div>
+    <button class="grp-more" id="salMas" style="display:none">
+      <span id="salMasTx">Ver registros</span> <span class="cv">⌄</span>
     </button>
+    <div id="salLista" style="display:none"></div>
   </div>
 
   <div class="pie">
@@ -1375,6 +1405,13 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   </div>
 </div></div>
 
+<!-- ================= SHEET: STATS DE SALUD ================= -->
+<div class="sheet-bg" id="shSalStats"><div class="sheet">
+  <div class="sheet-h"><div class="sheet-h1"><h3>Tu salud</h3>
+    <button class="sheet-x" data-close="shSalStats">✕</button></div></div>
+  <div class="sheet-b" id="ssBody"></div>
+</div></div>
+
 <!-- ================= SHEET: EPISODIO DE SALUD ================= -->
 <div class="sheet-bg" id="shSalud"><div class="sheet">
   <div class="sheet-h"><div class="sheet-h1"><h3 id="salT">Episodio</h3>
@@ -1387,7 +1424,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <input type="time" id="salHora"></div>
     </div>
 
-    <div class="fld" style="margin-bottom:4px"><label>¿Qué te ha pasado?</label></div>
+    <div class="fld" style="margin-bottom:4px" id="salSintT"><label>¿Qué te ha pasado?</label></div>
     <div id="salSintomas"></div>
 
     <div class="fld" style="margin-top:16px"><label>Medicamentos</label>
@@ -1508,7 +1545,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 /* ============================================================
    GOSARI — v0.1.0
    ============================================================ */
-var APP_VERSION = 'v1.16.0';
+var APP_VERSION = 'v1.17.0';
 var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcHdrMd3VgpJ9OT6rFiKgz4lhG9QFjO2f_SSumEjY5UT6wi9Mu1-lW9zO2830qHniVwA/exec';
 var CACHE_KEY = 'gosari_cache_v1';
 var USER_KEY  = 'gosari_user';
@@ -3062,7 +3099,19 @@ var NIVELES = [
   { key:'media', corto:'Media' },
   { key:'alta',  corto:'Alta' }
 ];
-var SAL_MAX_LISTA = 3;
+var SAL_MAX_LISTA = 8;
+var salAbierto = false;
+
+/* Dos cosas en la misma tabla, separadas por `tipo`. Las filas anteriores a
+   esta versión no lo traen: cuentan como episodio. */
+var TIPO_SALUD = {
+  episodio:   { label:'Episodio',   ico:'sal_episodio',   emoji:'🏥' },
+  medicacion: { label:'Medicación', ico:'sal_medicacion', emoji:'💊' }
+};
+function tipoSalud(e){
+  var t = String((e && e.tipo) || '').trim().toLowerCase();
+  return TIPO_SALUD[t] ? t : 'episodio';
+}
 
 function sintomaDef(k){
   return SINTOMAS.filter(function(x){ return x.key === k; })[0] || null;
@@ -3097,14 +3146,36 @@ function medicamentosMios(){
 }
 
 function renderSalud(){
-  var lista = episodios().slice(0, SAL_MAX_LISTA);
-  if(!lista.length){
-    $('#salLista').innerHTML = '<div class="sal-vacio">Nada apuntado todavía. ' +
-      'Si un día te sienta mal algo, anótalo aquí: con unos cuantos episodios ' +
-      'empiezan a verse patrones.</div>';
-    return;
-  }
+  $('#salCiEp').innerHTML  = icono(TIPO_SALUD.episodio.ico,   TIPO_SALUD.episodio.emoji, 28);
+  $('#salCiMed').innerHTML = icono(TIPO_SALUD.medicacion.ico, TIPO_SALUD.medicacion.emoji, 28);
+
+  var todos = episodios();
+  var lista = todos.slice(0, SAL_MAX_LISTA);
+
+  /* Sin nada apuntado no se enseña ni el desplegable: la card se queda en los
+     dos accesos. Esto no es información que apetezca tener delante cada día. */
+  $('#salMas').style.display = todos.length ? 'flex' : 'none';
+  if(!todos.length) salAbierto = false;
+  $('#salMas').classList.toggle('abierto', salAbierto);
+  $('#salMasTx').textContent = salAbierto
+    ? 'Ver menos'
+    : 'Ver mis registros (' + todos.length + ')';
+  $('#salLista').style.display = (salAbierto && todos.length) ? 'block' : 'none';
+  if(!salAbierto || !todos.length){ $('#salLista').innerHTML = ''; return; }
+
   $('#salLista').innerHTML = lista.map(function(e){
+    if(tipoSalud(e) === 'medicacion'){
+      var meds = String(e.medicamentos || '').trim();
+      var detM = [etiquetaDia(fkey(e.fecha)), horaKey(e.hora)].filter(Boolean).join(' · ');
+      if(String(e.comentario||'').trim()) detM += ' · ' + String(e.comentario).trim();
+      return '<div class="sal-r">' +
+        '<span class="sal-e">' +
+          icono(TIPO_SALUD.medicacion.ico, TIPO_SALUD.medicacion.emoji, 19) + '</span>' +
+        '<span class="sal-b"><span class="sal-n">' + esc(meds || 'Medicación') + '</span>' +
+          '<span class="sal-d">' + esc(detM) + '</span></span>' +
+        '<button class="sal-x" data-saled="' + esc(e.id) + '">···</button>' +
+      '</div>';
+    }
     var sn = sintomasDe(e);
     var niv = sn.filter(function(x){ return x.nivel === 'alta'; }).length
       ? 'alta' : (sn.filter(function(x){ return x.nivel === 'media'; }).length ? 'media' : 'baja');
@@ -3120,7 +3191,7 @@ function renderSalud(){
     return '<div class="sal-r">' +
       '<span class="sal-e">' + (sn.length
         ? sn.map(function(x){ return icono(x.def.ico, x.def.emoji, 19); }).join('')
-        : icono('mas_salud', '🩺', 19)) + '</span>' +
+        : icono(TIPO_SALUD.episodio.ico, TIPO_SALUD.episodio.emoji, 19)) + '</span>' +
       '<span class="sal-b"><span class="sal-n">' + esc(tit) + '</span>' +
         '<span class="sal-d">' + esc(det) + '</span></span>' +
       '<button class="sal-x" data-saled="' + esc(e.id) + '">···</button>' +
@@ -3128,13 +3199,130 @@ function renderSalud(){
   }).join('');
 }
 
+/* ---------- Estadísticas de salud ----------
+   Tres cosas y nada más: cuánto llevas limpio, cómo va la cosa por meses, y
+   de qué estás tirando. El análisis fino se hace en el Sheet, que para eso
+   cada síntoma tiene su columna. */
+
+function abrirStatsSalud(){
+  renderStatsSalud();
+  $('#shSalStats').classList.add('on');
+}
+
+/** Días completos entre dos fechas YYYY-MM-DD. */
+function diasEntre(a, b){
+  var pa = String(a).split('-'), pb = String(b).split('-');
+  var da = Date.UTC(+pa[0], +pa[1]-1, +pa[2]);
+  var db = Date.UTC(+pb[0], +pb[1]-1, +pb[2]);
+  return Math.round((db - da) / 86400000);
+}
+
+/** La racha más larga sin ningún episodio, en días. */
+function rachaSinEpisodios(fechas){
+  if(!fechas.length) return 0;
+  var orden = fechas.slice().sort();
+  var mejor = diasEntre(orden[orden.length-1], state.hoy);
+  for(var i=1;i<orden.length;i++){
+    var hueco = diasEntre(orden[i-1], orden[i]) - 1;
+    if(hueco > mejor) mejor = hueco;
+  }
+  return Math.max(0, mejor);
+}
+
+function renderStatsSalud(){
+  var todos = episodios();
+  var eps  = todos.filter(function(e){ return tipoSalud(e) === 'episodio'; });
+  var tomas = todos.filter(function(e){ return tipoSalud(e) === 'medicacion'; });
+
+  if(!todos.length){
+    $('#ssBody').innerHTML = '<div class="grp-vacio" style="border:none">' +
+      'Todavía no has apuntado nada.<br>Con unos cuantos registros esto ' +
+      'empieza a contar algo.</div>';
+    return;
+  }
+
+  /* --- 1. Días desde el último, y la mejor racha --- */
+  var fechasEp = eps.map(function(e){ return fkey(e.fecha); }).filter(Boolean);
+  var ultimo = fechasEp.length ? fechasEp.slice().sort()[fechasEp.length-1] : '';
+  var desde = ultimo ? Math.max(0, diasEntre(ultimo, state.hoy)) : null;
+  var racha = rachaSinEpisodios(fechasEp);
+
+  var html =
+    '<div class="sal-mini">' +
+      '<div class="sal-k"><b>' + (desde === null ? '–' : desde) + '</b>' +
+        '<span>días sin episodios</span></div>' +
+      '<div class="sal-k"><b>' + racha + '</b><span>mejor racha</span></div>' +
+      '<div class="sal-k"><b>' + eps.length + '</b><span>episodios en total</span></div>' +
+    '</div>' +
+    '<div class="ch-n">' + (desde === null
+      ? 'Aún no has apuntado ningún episodio.'
+      : (desde === 0 ? 'Hoy has tenido uno. La racha vuelve a empezar mañana.'
+        : 'El último fue el ' + esc(etiquetaDia(ultimo).toLowerCase()) + '.')) + '</div>';
+
+  /* --- 2. Episodios por mes, últimos 6 --- */
+  var hoyP = state.hoy.split('-'), meses = [];
+  for(var i=5;i>=0;i--){
+    var m = +hoyP[1]-1-i, a = +hoyP[0];
+    while(m < 0){ m += 12; a--; }
+    meses.push({ anio:a, mes:m });
+  }
+  var cols = meses.map(function(mm){
+    var pre = mm.anio + '-' + String(mm.mes+1).padStart(2,'0');
+    var n = eps.filter(function(e){ return fkey(e.fecha).indexOf(pre) === 0; }).length;
+    return { label:MESES_C[mm.mes], valores:{ d:n } };
+  });
+  var totalSeis = cols.reduce(function(a,c){ return a + c.valores.d; }, 0);
+
+  html += '<div class="ch-t" style="margin-top:22px">Episodios por mes</div>' +
+    barrasApiladas(cols, [{ key:'d', label:'Episodios', color:'#EF4444' }], { alto:160 }) +
+    '<div class="ch-n"><b>' + totalSeis + '</b> en los últimos seis meses. ' +
+      'Si la barra baja mes a mes, algo está funcionando.</div>';
+
+  /* --- 3. De qué estás tirando --- */
+  var cuenta = {}, orden = [];
+  todos.forEach(function(e){
+    String(e.medicamentos || '').split(',').map(function(x){ return x.trim(); })
+      .filter(Boolean)
+      /* El campo libre es para la dosis además del nombre («Almax, 2 sobres»),
+         así que al partir por comas entran trozos como «2 sobres». En el
+         ranking estorban: lo que empieza por un número es una dosis, no un
+         medicamento. En el Sheet se guarda todo tal cual. */
+      .filter(function(m){ return !/^\d/.test(m); })
+      .forEach(function(m){
+        if(!cuenta[m]){ cuenta[m] = 0; orden.push(m); }
+        cuenta[m]++;
+      });
+  });
+  var rank = orden.sort(function(a,b){ return cuenta[b] - cuenta[a]; }).slice(0, 6);
+  var maxM = rank.length ? cuenta[rank[0]] : 0;
+
+  html += '<div class="ch-t" style="margin-top:22px">Lo que más tomas</div>';
+  html += rank.length
+    ? rank.map(function(m){
+        var ic = medicamentosMios().filter(function(x){ return String(x.nombre) === m; })[0];
+        return '<div class="sal-rank">' +
+          '<span class="sal-ci" style="width:22px;height:22px;font-size:16px">' +
+            esc(ic && ic.icono ? ic.icono : '💊') + '</span>' +
+          '<span class="sal-rank-n">' + esc(m) + '</span>' +
+          '<span class="sal-rank-v">' + cuenta[m] + (cuenta[m] === 1 ? ' vez' : ' veces') + '</span>' +
+        '</div>';
+      }).join('') +
+      '<div class="ch-n">' + tomas.length + ' tomas sueltas apuntadas, más las que ' +
+        'anotaste dentro de un episodio.</div>'
+    : '<div class="grp-vacio" style="border:none">Nada apuntado todavía.</div>';
+
+  $('#ssBody').innerHTML = html;
+}
+
 /* ---------- El formulario del episodio ---------- */
 var sal = { id:'', fecha:'', hora:'', niveles:{}, meds:[], extra:'', comentario:'' };
 
-function abrirSalud(id){
+function abrirSalud(id, tipo){
   var e = id ? episodios().filter(function(x){ return String(x.id) === String(id); })[0] : null;
+  var tp = e ? tipoSalud(e) : (TIPO_SALUD[tipo] ? tipo : 'episodio');
 
-  sal = { id: e ? e.id : '', fecha: e ? fkey(e.fecha) : (state.diaVer || state.hoy),
+  sal = { id: e ? e.id : '', tipo: tp,
+          fecha: e ? fkey(e.fecha) : (state.diaVer || state.hoy),
           hora: e ? (horaKey(e.hora) || horaAhora()) : horaAhora(),
           niveles:{}, meds:[], extra:'', comentario: e ? String(e.comentario||'') : '' };
 
@@ -3154,14 +3342,24 @@ function abrirSalud(id){
     sal.extra = sueltos.join(', ');
   }
 
-  $('#salT').textContent = e ? 'Editar episodio' : 'Nuevo episodio';
-  $('#salOk').textContent = e ? 'Guardar cambios' : 'Guardar episodio';
+  var esMed = tp === 'medicacion';
+  $('#salT').textContent = e
+    ? (esMed ? 'Editar medicación' : 'Editar episodio')
+    : (esMed ? 'Nueva medicación' : 'Nuevo episodio');
+  $('#salOk').textContent = e ? 'Guardar cambios'
+    : (esMed ? 'Guardar medicación' : 'Guardar episodio');
   $('#salBorrar').style.display = e ? 'block' : 'none';
+  /* En una toma no hay nada que marcar: el bloque de síntomas desaparece. */
+  $('#salSintT').style.display    = esMed ? 'none' : 'block';
+  $('#salSintomas').style.display = esMed ? 'none' : 'block';
   $('#salFecha').value = sal.fecha;
   $('#salFecha').max = state.hoy;          // nada de episodios en el futuro
   $('#salHora').value = sal.hora;
   $('#salComent').value = sal.comentario;
   $('#salMedsExtra').value = sal.extra;
+  $('#salComent').placeholder = esMed
+    ? 'Ej. para dormir, media pastilla'
+    : 'Ej. empezó dos horas después de comer, me duró toda la tarde';
   renderSaludForm();
   $('#shSalud').classList.add('on');
 }
@@ -3197,21 +3395,26 @@ function medsDeSalud(){
 
 function guardarSalud(){
   var comentario = String($('#salComent').value || '').trim();
+  var meds = medsDeSalud();
+  var esMed = sal.tipo === 'medicacion';
   var marcados = Object.keys(sal.niveles).filter(function(k){ return !!sal.niveles[k]; });
-  if(!marcados.length && !comentario){
+
+  if(esMed){
+    if(!meds && !comentario){ toast('Elige un medicamento o escribe cuál', true); return; }
+  } else if(!marcados.length && !comentario && !meds){
     toast('Marca algún síntoma o escribe un comentario', true);
     return;
   }
 
   var id = sal.id || uid();
   var pay = {
-    id: id, username: state.user,
+    id: id, username: state.user, tipo: sal.tipo,
     fecha: $('#salFecha').value || state.hoy,
     hora: $('#salHora').value || '',
     comentario: comentario,
-    medicamentos: medsDeSalud()
+    medicamentos: meds
   };
-  SINTOMAS.forEach(function(sn){ pay[sn.key] = sal.niveles[sn.key] || ''; });
+  SINTOMAS.forEach(function(sn){ pay[sn.key] = esMed ? '' : (sal.niveles[sn.key] || ''); });
 
   var previo = ((state.data.salud || []).filter(function(x){
     return String(x.id) === String(id); })[0]) || null;
@@ -3219,8 +3422,9 @@ function guardarSalud(){
   /* Optimista, igual que las comidas: se pinta ya y la petición va de fondo. */
   ponerSaludLocal(id, Object.assign({ timestamp:new Date().toISOString() }, pay));
   $('#shSalud').classList.remove('on');
+  salAbierto = true;          // si estaba cerrado, se abre para que lo veas
   render();
-  toast(sal.id ? 'Episodio actualizado ✓' : 'Episodio apuntado ✓');
+  toast(sal.id ? 'Actualizado ✓' : (esMed ? 'Medicación apuntada ✓' : 'Episodio apuntado ✓'));
 
   api('saveSalud', { payload: pay }).then(function(fila){
     if(fila && fila.id) ponerSaludLocal(id, fila);
@@ -3242,13 +3446,13 @@ function ponerSaludLocal(id, fila){
 function borrarSalud(){
   var id = sal.id;
   if(!id) return;
-  if(!confirm('¿Eliminar este episodio?')) return;
+  if(!confirm('¿Eliminar este registro?')) return;
   var previo = (state.data.salud || []).filter(function(x){ return String(x.id) === String(id); })[0];
 
   ponerSaludLocal(id, null);
   $('#shSalud').classList.remove('on');
   render();
-  toast('Episodio eliminado');
+  toast('Registro eliminado');
 
   api('deleteSalud', { id:id }).catch(function(e){
     ponerSaludLocal(id, previo);
@@ -4319,11 +4523,12 @@ function catalogoIconos(){
     .concat([['nav_lugares','📍','Perfiles sin gastos']]) });
   g.push({ t:'Mascotas de sección', px:40, l:[
     ['mas_chef','👨‍🍳','Cabecera del Chef'],
-    ['mas_gastos','🧾','Cabecera de Gastos'],
-    ['mas_salud','🩺','Episodio sin síntomas marcados']
+    ['mas_gastos','🧾','Cabecera de Gastos']
   ]});
   g.push({ t:'Síntomas de Tu salud', px:26, l: SINTOMAS.map(function(x){
-    return [x.ico, x.emoji, x.label]; }) });
+    return [x.ico, x.emoji, x.label]; })
+    .concat([[TIPO_SALUD.episodio.ico, TIPO_SALUD.episodio.emoji, 'Botón de episodio (cruz)'],
+             [TIPO_SALUD.medicacion.ico, TIPO_SALUD.medicacion.emoji, 'Botón de medicación (pastilla)']]) });
   g.push({ t:'Macros', px:26, l: MACROS.map(function(m){ return [m.ico, m.emoji, m.label]; }) });
   g.push({ t:'Grupos alimentarios', px:26, l: GRUPOS.map(function(x){ return [x.ico, x.emoji, x.label]; }) });
   g.push({ t:'Categorías del catálogo', px:28, l: CATS_ORDEN.map(function(k){
@@ -5497,8 +5702,14 @@ document.addEventListener('click', function(ev){
   /* ---------- TU SALUD ---------- */
   if(ev.target.closest('#btnSalud')){
     if(!state.user){ toast('Elige usuario primero', true); return; }
-    abrirSalud(''); return;
+    abrirSalud('', 'episodio'); return;
   }
+  if(ev.target.closest('#btnMedic')){
+    if(!state.user){ toast('Elige usuario primero', true); return; }
+    abrirSalud('', 'medicacion'); return;
+  }
+  if(ev.target.closest('#salMas')){ salAbierto = !salAbierto; renderSalud(); return; }
+  if(ev.target.closest('#btnSalStats')){ abrirStatsSalud(); return; }
   if((t = ev.target.closest('[data-saled]'))){ abrirSalud(t.dataset.saled); return; }
   if((t = ev.target.closest('[data-sn]'))){
     var sk = t.dataset.sn, nv = t.dataset.nv;

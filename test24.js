@@ -14,7 +14,11 @@ const BOOT={ok:true,data:{hoy:HOY,
  medicamentos:[{username:'nico',id:'almax',nombre:'Almax',icono:'🥛',orden:1,activo:true},
                {username:'nico',id:'omeprazol',nombre:'Omeprazol',icono:'💊',orden:2,activo:true},
                {username:'gina',id:'apiretal',nombre:'Apiretal',icono:'🍼',orden:1,activo:true}],
- salud:[{id:'s1',username:'nico',fecha:AYER,hora:'22:10',deposiciones:'',dolor:'media',
+ salud:[{id:'sm',username:'nico',fecha:AYER,hora:'23:50',tipo:'medicacion',deposiciones:'',
+         dolor:'',hinchazon:'',vomitos:'',estrenimiento:'',comentario:'',medicamentos:'Melatonina'},
+        /* s1 y s2 SIN columna tipo a propósito: las filas anteriores a esta
+           versión tienen que seguir contando como episodio. */
+        {id:'s1',username:'nico',fecha:AYER,hora:'22:10',deposiciones:'',dolor:'media',
          hinchazon:'alta',vomitos:'',estrenimiento:'',comentario:'Después de la pizza',
          medicamentos:'Almax,infusión de menta'},
         {id:'s2',username:'nico',fecha:'2026-11-01',hora:'09:00',deposiciones:'alta',
@@ -66,7 +70,18 @@ setTimeout(async()=>{
 
  /* ================= 1. LA CARD, Y DÓNDE ESTÁ ================= */
  ok('existe el bloque de salud', !!d.querySelector('#salLista'));
- ok('con su botón', !!d.querySelector('#btnSalud'));
+ ok('con el CTA de episodio', !!d.querySelector('#btnSalud'));
+ ok('y el de medicación', !!d.querySelector('#btnMedic'));
+ ok('los dos son de icono',
+    !!d.querySelector('#salCiEp img')&&!!d.querySelector('#salCiMed img'));
+ ok('cruz para el episodio', d.querySelector('#salCiEp img').dataset.fb==='🏥',
+    d.querySelector('#salCiEp img').dataset.fb);
+ ok('pastilla para la medicación', d.querySelector('#salCiMed img').dataset.fb==='💊',
+    d.querySelector('#salCiMed img').dataset.fb);
+ ok('con su icono de stats arriba a la derecha', !!d.querySelector('#btnSalStats'));
+ ok('igual que el de la semana',
+    d.querySelector('#btnSalStats').className===d.querySelector('#btnStats').className,
+    d.querySelector('#btnSalStats').className);
  const wk=d.querySelector('#s-home .wk').closest('.card');
  const salCard=d.querySelector('#salLista').closest('.card');
  ok('el título es Tu salud', salCard.querySelector('.card-t').textContent.trim().startsWith('Tu salud'),
@@ -77,11 +92,33 @@ setTimeout(async()=>{
     salCard.compareDocumentPosition(d.querySelector('#s-home .pie'))
       &w.Node.DOCUMENT_POSITION_FOLLOWING);
 
- /* ================= 2. LISTADO DE EPISODIOS ================= */
+ /* ================= 2. COLAPSADO ================= */
+ ok('arranca colapsado', d.querySelector('#salLista').style.display==='none',
+    d.querySelector('#salLista').style.display);
+ ok('y sin pintar nada dentro', d.querySelector('#salLista').innerHTML==='',
+    d.querySelector('#salLista').innerHTML.slice(0,40));
+ ok('hay un desplegable', d.querySelector('#salMas').style.display!=='none');
+ ok('que dice cuántos hay', T('#salMasTx')==='Ver mis registros (3)', T('#salMasTx'));
+ click(d.querySelector('#salMas'));
+ ok('al tocarlo se abre', d.querySelector('#salLista').style.display!=='none');
+ ok('y cambia el texto', T('#salMasTx')==='Ver menos', T('#salMasTx'));
+ ok('con la flecha girada', d.querySelector('#salMas').classList.contains('abierto'));
+ click(d.querySelector('#salMas'));
+ ok('y vuelve a cerrarse', d.querySelector('#salLista').style.display==='none');
+ click(d.querySelector('#salMas'));
+
+ /* ================= 2b. LISTADO ================= */
  const filas=[...d.querySelectorAll('#salLista .sal-r')];
- ok('lista los episodios de nico', filas.length===2, filas.length);
+ ok('lista los registros de nico', filas.length===3, filas.length);
  ok('sin los de gina', !T('#salLista').includes('de la niña'), T('#salLista'));
- ok('el más reciente primero', filas[0].textContent.includes('Hinchazón'), filas[0].textContent);
+ /* La toma de medicación es de las 23:50, más tarde que el episodio */
+ ok('la toma suelta va primera', filas[0].textContent.includes('Melatonina'), filas[0].textContent);
+ ok('y se pinta con la pastilla', filas[0].querySelector('.sal-e img').dataset.fb==='💊',
+    filas[0].querySelector('.sal-e img').dataset.fb);
+ ok('sin hablar de síntomas', !filas[0].textContent.includes('intensidad'), filas[0].textContent);
+ filas.shift();   // a partir de aquí, los episodios
+ ok('el episodio más reciente después', filas[0].textContent.includes('Hinchazón'),
+    filas[0].textContent);
  ok('nombra los dos síntomas',
     filas[0].textContent.includes('Dolor de panza')&&filas[0].textContent.includes('Hinchazón'),
     filas[0].textContent);
@@ -94,10 +131,16 @@ setTimeout(async()=>{
  ok('cada fila se puede abrir', filas.every(f=>!!f.querySelector('[data-saled]')));
 
  ok('episodios() ordena por fecha y hora',
-    w.episodios().map(e=>e.id).join()==='s1,s2', w.episodios().map(e=>e.id).join());
+    w.episodios().map(e=>e.id).join()==='sm,s1,s2', w.episodios().map(e=>e.id).join());
+ ok('una fila sin tipo cuenta como episodio',
+    w.tipoSalud({id:'s1'})==='episodio', w.tipoSalud({id:'s1'}));
+ ok('y la marcada, como medicación',
+    w.tipoSalud({tipo:'medicacion'})==='medicacion', w.tipoSalud({tipo:'medicacion'}));
+ ok('un tipo inventado cae en episodio',
+    w.tipoSalud({tipo:'loquesea'})==='episodio', w.tipoSalud({tipo:'loquesea'}));
  ok('sintomasDe saca nivel y definición',
-    w.sintomasDe(BOOT.data.salud[0]).map(x=>x.def.key+':'+x.nivel).join()==='dolor:media,hinchazon:alta',
-    w.sintomasDe(BOOT.data.salud[0]).map(x=>x.def.key+':'+x.nivel).join());
+    w.sintomasDe(BOOT.data.salud[1]).map(x=>x.def.key+':'+x.nivel).join()==='dolor:media,hinchazon:alta',
+    w.sintomasDe(BOOT.data.salud[1]).map(x=>x.def.key+':'+x.nivel).join());
  ok('y nada si no hay síntomas', w.sintomasDe({})
     .length===0);
 
@@ -143,6 +186,8 @@ setTimeout(async()=>{
  const meds=[...d.querySelectorAll('#salMeds [data-smed]')].map(b=>b.dataset.smed);
  ok('chips de sus medicamentos', meds.join()==='Almax,Omeprazol', meds.join());
  ok('sin los de gina', !meds.includes('Apiretal'), meds.join());
+ ok('el popup se abrió como episodio', w.sal.tipo==='episodio', w.sal.tipo);
+ ok('con el bloque de síntomas visible', d.querySelector('#salSintomas').style.display!=='none');
 
  /* marcar, cambiar y desmarcar un nivel */
  click(d.querySelector('[data-sn="hinchazon"][data-nv="media"]'));
@@ -185,6 +230,7 @@ setTimeout(async()=>{
  const ps=POST('saveSalud');
  ok('la petición salió', !!ps);
  ok('manda username', ps.payload.username==='nico', ps.payload.username);
+ ok('y el tipo episodio', ps.payload.tipo==='episodio', ps.payload.tipo);
  ok('una clave por síntoma',
     ['deposiciones','dolor','hinchazon','vomitos','estrenimiento']
       .every(k=>k in ps.payload), Object.keys(ps.payload).join());
@@ -241,11 +287,104 @@ setTimeout(async()=>{
  ok('y avisa', T('#toast').toLowerCase().includes('no se guardó'), T('#toast'));
  fallar=null;
 
+ /* ================= 6b. CTA DE MEDICACIÓN ================= */
+ click(d.querySelector('#btnMedic'));
+ ok('abre el popup', d.querySelector('#shSalud').classList.contains('on'));
+ ok('en modo medicación', w.sal.tipo==='medicacion', w.sal.tipo);
+ ok('con su título', T('#salT').toLowerCase().includes('medicación'), T('#salT'));
+ ok('el botón lo dice', T('#salOk').toLowerCase().includes('medicación'), T('#salOk'));
+ /* Una toma no tiene síntomas: ese bloque no pinta nada aquí */
+ ok('sin bloque de síntomas', d.querySelector('#salSintomas').style.display==='none',
+    d.querySelector('#salSintomas').style.display);
+ ok('ni su etiqueta', d.querySelector('#salSintT').style.display==='none');
+ ok('pero sí fecha y hora',
+    !!d.querySelector('#salFecha').value&&!!d.querySelector('#salHora').value);
+ ok('y los chips de medicamentos', d.querySelectorAll('#salMeds [data-smed]').length===2,
+    d.querySelectorAll('#salMeds [data-smed]').length);
+
+ /* sin elegir nada no se guarda */
+ const nPost=posts.filter(x=>x.action==='saveSalud').length;
+ click(d.querySelector('#salOk'));
+ ok('vacía no se guarda', posts.filter(x=>x.action==='saveSalud').length===nPost);
+ ok('y te lo dice', T('#toast').toLowerCase().includes('medicamento'), T('#toast'));
+
+ click(d.querySelector('[data-smed="Omeprazol"]'));
+ d.querySelector('#salHora').value='23:00';
+ const nMed=w.state.data.salud.length;
+ click(d.querySelector('#salOk'));
+ await espera(160);
+ const pm=POST('saveSalud');
+ ok('se guarda la toma', w.state.data.salud.length===nMed+1,
+    nMed+' → '+w.state.data.salud.length);
+ ok('con tipo medicacion', pm.payload.tipo==='medicacion', pm.payload.tipo);
+ ok('con el medicamento', pm.payload.medicamentos==='Omeprazol', pm.payload.medicamentos);
+ ok('y sin ningún síntoma',
+    ['deposiciones','dolor','hinchazon','vomitos','estrenimiento']
+      .every(k=>pm.payload[k]===''), JSON.stringify(pm.payload));
+ ok('al guardar se despliega la lista', d.querySelector('#salLista').style.display!=='none');
+ ok('y se ve en la card', T('#salLista').includes('Omeprazol'), T('#salLista'));
+
+ /* reabrirla vuelve en modo medicación */
+ const idMed=pm.payload.id;
+ click(d.querySelector('[data-saled="'+idMed+'"]'));
+ ok('reabre como medicación', w.sal.tipo==='medicacion', w.sal.tipo);
+ ok('sin síntomas otra vez', d.querySelector('#salSintomas').style.display==='none');
+ d.querySelector('#shSalud').classList.remove('on');
+
+ /* ================= 6c. STATS DE SALUD ================= */
+ click(d.querySelector('#btnSalStats'));
+ ok('abre el modal de stats', d.querySelector('#shSalStats').classList.contains('on'));
+ const kpis=[...d.querySelectorAll('#ssBody .sal-k')];
+ ok('tres números arriba', kpis.length===3, kpis.length);
+ ok('días sin episodios', kpis[0].textContent.includes('días sin episodios'), kpis[0].textContent);
+ ok('mejor racha', kpis[1].textContent.includes('mejor racha'), kpis[1].textContent);
+ ok('total de episodios', kpis[2].textContent.includes('episodios en total'), kpis[2].textContent);
+ /* En el bloque 5 se guardó un episodio de HOY, así que el contador está a 0 */
+ ok('cuenta bien los días', kpis[0].querySelector('b').textContent==='0',
+    kpis[0].querySelector('b').textContent);
+ ok('y lo dice con palabras', T('#ssBody').includes('Hoy has tenido uno'), T('#ssBody').slice(0,200));
+ ok('y solo cuenta episodios', kpis[2].querySelector('b').textContent==='2',
+    kpis[2].querySelector('b').textContent);
+
+ ok('hay barras por mes', T('#ssBody').includes('Episodios por mes'), T('#ssBody').slice(0,60));
+ ok('pintadas en SVG', d.querySelectorAll('#ssBody svg').length>=1);
+ ok('seis meses', (T('#ssBody').match(/ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic/g)||[]).length>=6,
+    (T('#ssBody').match(/ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic/g)||[]).join());
+
+ const rank=[...d.querySelectorAll('#ssBody .sal-rank')];
+ ok('ranking de medicamentos', rank.length>=2, rank.length);
+ ok('cuenta las veces', rank[0].textContent.includes('vez')||rank[0].textContent.includes('veces'),
+    rank[0].textContent);
+ ok('suma los de episodios y los sueltos',
+    T('#ssBody').includes('Melatonina')&&T('#ssBody').includes('Almax'), T('#ssBody'));
+ ok('incluye lo escrito a mano', T('#ssBody').includes('Buscapina'), T('#ssBody'));
+ /* «Buscapina, 1 comprimido» se parte por la coma; la dosis no es un fármaco */
+ ok('pero no la dosis', !T('#ssBody').includes('1 comprimido'), T('#ssBody'));
+
+ /* diasEntre y la racha, en seco */
+ ok('diasEntre cuenta bien', w.diasEntre('2026-11-01','2026-11-16')===15,
+    w.diasEntre('2026-11-01','2026-11-16'));
+ ok('cruza meses', w.diasEntre('2026-10-30','2026-11-02')===3, w.diasEntre('2026-10-30','2026-11-02'));
+ ok('la racha mira también hasta hoy',
+    w.rachaSinEpisodios(['2026-11-01','2026-11-05'])===11,
+    w.rachaSinEpisodios(['2026-11-01','2026-11-05']));
+ ok('y coge el hueco mayor',
+    w.rachaSinEpisodios(['2026-01-01','2026-06-01','2026-11-16'])===167,
+    w.rachaSinEpisodios(['2026-01-01','2026-06-01','2026-11-16']));
+ ok('sin episodios, racha cero', w.rachaSinEpisodios([])===0);
+ d.querySelector('#shSalStats').classList.remove('on');
+
  /* ================= 7. GINA TAMBIÉN TIENE EL BLOQUE ================= */
  w.state.user='gina'; w.render();
  ok('gina tiene bloque de salud', !!d.querySelector('#btnSalud'));
+ ok('y su CTA de medicación', !!d.querySelector('#btnMedic'));
  ok('con su propio episodio', T('#salLista').includes('de la niña'), T('#salLista'));
  ok('y no los de nico', !T('#salLista').includes('pizza'), T('#salLista'));
+ /* Venimos de guardar, así que la lista está abierta: se cierra para leer
+    el contador del desplegable. */
+ click(d.querySelector('#salMas'));
+ ok('su contador es el suyo', T('#salMasTx')==='Ver mis registros (1)', T('#salMasTx'));
+ click(d.querySelector('#salMas'));
  click(d.querySelector('#btnSalud'));
  const medsG=[...d.querySelectorAll('#salMeds [data-smed]')].map(b=>b.dataset.smed);
  ok('y sus propios medicamentos', medsG.join()==='Apiretal', medsG.join());
@@ -415,9 +554,13 @@ function contrato(){
  SEED.Medicamentos.forEach(r=>ctx._append(hojas.Medicamentos,r));
  const m=hojas.Medicamentos._rows, mh=m[0];
  ok('CONTRATO: el primer medicamento en su columna',
-    m[1][mh.indexOf('nombre')]==='Omeprazol', m[1][mh.indexOf('nombre')]);
- ok('CONTRATO: y su id donde toca', m[1][mh.indexOf('id')]==='omeprazol', m[1][mh.indexOf('id')]);
- ok('CONTRATO: cuatro semillas', m.length===5, m.length-1);
+    m[1][mh.indexOf('nombre')]==='Stress', m[1][mh.indexOf('nombre')]);
+ ok('CONTRATO: y su id donde toca', m[1][mh.indexOf('id')]==='stress', m[1][mh.indexOf('id')]);
+ ok('CONTRATO: las seis semillas', m.length===7, m.length-1);
+ ok('CONTRATO: y son las que pidió',
+    m.slice(1).map(r=>r[mh.indexOf('nombre')]).join()===
+      'Stress,Melatonina,Vitamina,Ibuprofeno,Paracetamol,Suero',
+    m.slice(1).map(r=>r[mh.indexOf('nombre')]).join());
 
  /* El bootstrap devuelve las dos tablas nuevas */
  const boot=JSON.parse(ctx.handleGetBootstrap({username:'nico'}).getContent());
